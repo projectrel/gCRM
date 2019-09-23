@@ -16,10 +16,10 @@ SWITCH($type){
         $select = "SELECT V.vg_id AS `id`, V.name AS `название`";
         $join = "";
         $join .= "\nLEFT JOIN (
-    SELECT O.vg_id, SUM(O.sum_vg) AS `sum`
-    FROM orders O
+    SELECT VD.vg_id, SUM(O.sum_vg) AS `sum`
+    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id=$branch_id))" : "")."
-    GROUP BY O.vg_id
+    GROUP BY VD.vg_id
 ) MMM ON MMM.vg_id = V.vg_id";
         $select .= ", IFNULL(MMM.sum, 0) AS `sum`";
 
@@ -33,10 +33,10 @@ ORDER BY sum";
         $select = "SELECT concat(V.vg_id, '-', F.fiat_id) AS `id`, V.name AS `название`, F.full_name AS `валюта`";
         $join = "";
         $join .= "\nLEFT JOIN (
-    SELECT O.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
-    FROM orders O
+    SELECT VD.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
+    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id=$branch_id))" : "")."
-    GROUP BY O.vg_id, O.fiat_id
+    GROUP BY VD.vg_id, O.fiat_id
 ) MMM ON MMM.vg_id = V.vg_id AND MMM.fiat_id = F.fiat_id";
         $select .= ", IFNULL(MMM.sum, 0) AS `sum`";
 

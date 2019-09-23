@@ -170,13 +170,13 @@ $(document).ready(function () {
 			dataType: 'JSON',
             cache: false,
             success: function (res) {
+                console.log(res);
                 if (res.error) {
                     createAlertTable(res.error, 'Владелец');
                     return;
                 }
                 const container = $('#owners-lists-container');
                 container.empty();
-                console.log(res);
                 container.append(res.data || "");
             },
             error: function () {

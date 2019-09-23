@@ -60,6 +60,6 @@ if (isset($client_id, $user_id)) {
     ));
 
 
-    
+
     return false;
 }

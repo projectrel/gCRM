@@ -18,7 +18,7 @@ if (isset($_POST['vg_id']) && isset($_POST['client_id'])) {
     $last_order = mysqli_fetch_assoc($connection->query("
     SELECT order_id
     FROM orders
-    WHERE client_id='$client_id' AND vg_id='$vg_id'
+    WHERE client_id='$client_id' AND vg_data_id='$vg_id'
     ORDER BY `date` DESC
     LIMIT 1
    "))['order_id'];
