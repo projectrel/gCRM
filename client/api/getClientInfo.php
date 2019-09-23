@@ -26,8 +26,8 @@ $vg = mysqli_fetch_assoc($connection->query("
     FROM vg_data D
     INNER JOIN virtualgood V ON V.vg_id = D.vg_id
     INNER JOIN(
-        SELECT vg_id, real_out_percent AS outp, fiat_id
-        FROM orders
+        SELECT VD.vg_id, real_out_percent AS outp, fiat_id
+        FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
         WHERE client_id IN (
             SELECT client_id
             FROM clients
