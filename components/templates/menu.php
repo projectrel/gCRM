@@ -2,6 +2,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/funcs.php";
 $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
 ?>
+<nav>
 <div id="menu" page="<?php echo $curPage ?>">
     <ul>
         <li>
@@ -23,7 +24,12 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
         <li><a href="../../content/fiats.php" class=' . ($curPage === 'fiats' ? '"active" disabled' : '') . '>Валюты</a>
         </li>';
         else echo '' ?>
-        <li><a href="../../content/vgs.php" class=<?php echo($curPage === 'vgs' ? '"active" disabled' : '') ?>>VG</a>
+        <li><a href="#">VG +</a>
+            <ul>
+                <li><a href="#">Buy</a></li>
+                <br>
+                <li><a href="#">Info</a></li>
+            </ul>
         </li>
         <li><a href="../../content/orders.php" class=<?php echo($curPage === 'orders' ? '"active" disabled' : '') ?>>Продажи</a>
         </li>
@@ -49,3 +55,4 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
         <li><a class="menu-logout-btn" href="../../api/auth/logout.php">Выйти</a></li>
     </ul>
 </div>
+</nav>
