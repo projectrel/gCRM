@@ -259,16 +259,17 @@ $(document).ready(function () {
                 fiat,
                 loginByVg,
             },
-            dataType: "JSON",
+            dataType: "html",
             cache: false,
             success: function (res) {
+                console.log(res);
                 try {
                     if (res.error) {
                         createAlertTable(res.error, "Заказ и транзакция")
                         return;
                     }
                     if (res['success'] == false) {
-                        createAlertTable('success', "Заказ");
+                       createAlertTable('success', "Заказ");
                         $('#Order-transaction-info-modal #error-url').text(res['url']).attr('href', res['url']);
                         $('#Order-transaction-info-modal').append(`<div>Код ошибки: ${res['code'] || "неизвестен"}</div>`)
                         $('#Order-transaction-info-modal').append(`<div>Ошибка: ${res['message'] || "неизвестна"}</div>`)
@@ -277,17 +278,17 @@ $(document).ready(function () {
                             fadeDelay: 0
                         });
                     }else{
-                        createAlertTable("success", "Заказ и транзакция");
-                        setTimeout(() => location.reload(), 300)
+                       createAlertTable("success", "Заказ и транзакция");
+                       setTimeout(() => location.reload(), 300)
                     }
                 } catch {
-                    createAlertTable("success", "Заказ и транзакция");
-                    setTimeout(() => location.reload(), 300);
+                   createAlertTable("success", "Заказ и транзакция");
+                   setTimeout(() => location.reload(), 300);
                 }
 
             },
             error: function () {
-                createAlertTable("connectionError", "Заказ");
+               createAlertTable("connectionError", "Заказ");
             },
             complete: function () {
                 setTimeout(function () {
