@@ -18,11 +18,10 @@ FROM orders O
 INNER JOIN fiats F ON O.fiat_id = F.fiat_id 
 INNER JOIN clients C ON C.client_id = O.client_id 
 INNER JOIN users U ON U.user_id = C.user_id
-INNER JOIN vg_data VD ON VD.vg_data_id = O.vg_data_id
-INNER JOIN virtualgood V ON V.vg_id = VD.vg_id
+INNER JOIN virtualgood V ON V.vg_id = O.vg_id
 INNER JOIN branch B ON U.branch_id = B.branch_id
 INNER JOIN methods_of_obtaining MOO ON O.method_id = MOO.method_id
-
+INNER JOIN vg_data VD ON VD.vg_data_id = O.vg_data_id
 ORDER BY `date` DESC
 ');
         $clients = $connection->query('
@@ -46,9 +45,9 @@ FROM orders O
 INNER JOIN fiats F ON O.fiat_id = F.fiat_id 
 INNER JOIN clients C ON C.client_id = O.client_id 
 INNER JOIN users U ON U.user_id = C.user_id
-INNER JOIN vg_data VD ON VD.vg_data_id = O.vg_data_id
-INNER JOIN virtualgood V ON V.vg_id = VD.vg_id
+INNER JOIN virtualgood V ON V.vg_id = O.vg_id
 INNER JOIN methods_of_obtaining MOO ON O.method_id = MOO.method_id
+INNER JOIN vg_data VD ON VD.vg_data_id = O.vg_data_id
 WHERE U.branch_id = '$branch_id'
 ORDER BY `date` DESC
 ");

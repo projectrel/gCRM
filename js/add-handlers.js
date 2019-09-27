@@ -13,13 +13,12 @@ $(document).ready(function () {
     function addBranch() {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
-        const name = $("#add-branch-form #nameField").val();
-        const ik_id = $("#add-branch-form #ikId").val();
+        let name = $("#add-branch-form #nameField").val();
         $.ajax({
             url: "../api/add/branch.php",
             type: "POST",
             data: {
-                    name, ik_id
+                    name,
                 },
                 dataType: "JSON",
                 cache: false,
@@ -170,13 +169,13 @@ $(document).ready(function () {
 			dataType: 'JSON',
             cache: false,
             success: function (res) {
-                console.log(res);
                 if (res.error) {
                     createAlertTable(res.error, 'Владелец');
                     return;
                 }
                 const container = $('#owners-lists-container');
                 container.empty();
+                console.log(res);
                 container.append(res.data || "");
             },
             error: function () {
