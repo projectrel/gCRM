@@ -73,6 +73,9 @@ $('tr').on('click', (e) => {
         case "globalVG-edit":
             fillGlobalVGlInfo(mainParent);
             break;
+        case "VGPurchase-edit":
+            // TODO add modal
+            break;
         case "info":
             fillAdditionalInfo(mainParent);
             break;

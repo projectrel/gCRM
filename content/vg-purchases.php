@@ -5,16 +5,19 @@ include_once '../components/templates/template.php';
 include_once '../db.php';
 
 
-$options['type'] = 'VG-PURCHASE';
-$options['text'] = 'VG-PURCHASE';
+$options['type'] = 'VGPurchase';
+$options['text'] = 'Закупки VG';
 $options['edit'] = 2;
-$options['btn'] = 2;
+$options['btn'] = 1;
 session_start();
 //$options['btn-max'] = 2;
 $options['btn-text'] = 'Добавить';
 
-$data['vg-purchases'] = $connection->query("
-    SELECT * FROM virtualgood WHERE active=1
+$data['vgs'] = $connection->query("
+    SELECT * FROM vg_data WHERE  branch_id = ".$_SESSION['branch_id']."
+");
+$data['fiats'] = $connection->query("
+    SELECT fiat_id, full_name FROM fiats
 ");
 echo template(display_data($connection -> query('
 SELECT VP.vg_purchase_id AS `id`, VP.vg_purchase_id AS `номер закупки`,  concat(U.last_name, " ", U.first_name) AS `агент`, VD.name AS `vg`, F.name AS `валюта`, VP.vg_purchase_sum AS `сума`, 

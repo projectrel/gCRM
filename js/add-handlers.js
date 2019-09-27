@@ -585,7 +585,59 @@ $(document).ready(function () {
         });
 
     }
+    $.validate({
+        form: '#add-vg-purchase-form',
+        modules: 'security',
+        lang: 'ru',
+        onSuccess: function () {
+            addVgPurchase();
+            return false;
+        }
+    });
 
+    function addVgPurchase() {
+        $(".loader").show();
+        $(".modal-submit").prop("disabled", true);
+        let password = $("#add-user-form #passField").val();
+        let login = $("#add-user-form #loginField").val();
+        let first_name = $("#add-user-form #firstNameField").val();
+        let last_name = $("#add-user-form #lastNameField").val();
+        let branch = $("#add-user-form #branchField").val();
+        let role = $("#add-user-form #roleField").val();
+        let telegram = $("#add-user-form #telegram").val();
+        $.ajax({
+            url: "../api/add/vgPurchase.php",
+            type: "POST",
+            data: {
+                password: password,
+                login: login,
+                first_name: first_name,
+                last_name: last_name,
+                branch: branch,
+                role: role,
+                telegram,
+            },
+            dataType: "JSON",
+            cache: false,
+            success: function (res) {
+                if (res.error) {
+                    createAlertTable(res.error, "Пользователь");
+                    return;
+                }
+                createAlertTable(res.status, "Пользователь");
+            },
+            error: function () {
+                createAlertTable("connectionError", "Пользователь");
+            },
+            complete: function () {
+                setTimeout(function () {
+                    $(".modal-submit").prop("disabled", false);
+                    $(".loader").fadeOut("slow");
+                }, 100);
+            }
+        });
+
+    }
 
     //Fiat
     $.validate({
