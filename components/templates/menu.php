@@ -56,4 +56,4 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
     </ul>
 </div>
 </nav>
-<script src="js/dropDrownMenu.js"></script>
+<script src="../js/dropDrownMenu.js"></script>
