@@ -265,7 +265,9 @@ function display_tree_table()
 
 function getOutGoTypes($connection)
 {
-    //  OR outgo_type_id = 1  |this we need coz we should take root type every time
+    include_once $_SERVER['DOCUMENT_ROOT'] . "/config.php";
+    $root_type = ROOT_TYPE;
+    $vg_purchase_type = VG_PURCHASE_TYPE;
     session_start();
     $branch_id = $_SESSION['branch_id'];
     switch (accessLevel()) {
@@ -277,10 +279,10 @@ function getOutGoTypes($connection)
             break;
         case 1:
         case 2:
-        $res = mysqliToArray($connection->query("SELECT outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`
+            $res = mysqliToArray($connection->query("SELECT outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`
                 FROM `outgo_types` OT
                 LEFT OUTER JOIN `outgo_types_relative` OTR ON OT.outgo_type_id = OTR.parent_id
-                WHERE branch_id =$branch_id OR outgo_type_id = '1'
+                WHERE branch_id =$branch_id OR outgo_type_id = '$root_type' OR outgo_type_id = '$vg_purchase_type'
                 GROUP BY outgo_type_id, outgo_name"));
             break;
     }

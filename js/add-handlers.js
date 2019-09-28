@@ -598,36 +598,30 @@ $(document).ready(function () {
     function addVgPurchase() {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
-        let password = $("#add-user-form #passField").val();
-        let login = $("#add-user-form #loginField").val();
-        let first_name = $("#add-user-form #firstNameField").val();
-        let last_name = $("#add-user-form #lastNameField").val();
-        let branch = $("#add-user-form #branchField").val();
-        let role = $("#add-user-form #roleField").val();
-        let telegram = $("#add-user-form #telegram").val();
+        const vg_id = $("#add-vg-purchase-form #vgField").val();
+        const fiat_id = $("#add-vg-purchase-form #fiatField").val();
+        const vg_sum = $("#add-vg-purchase-form #vgSumField").val();
+        const on_credit = $("#add-vg-purchase-form #onCreditField").is(':checked');
         $.ajax({
             url: "../api/add/vgPurchase.php",
             type: "POST",
             data: {
-                password: password,
-                login: login,
-                first_name: first_name,
-                last_name: last_name,
-                branch: branch,
-                role: role,
-                telegram,
+                vg_id,
+                fiat_id,
+                vg_sum,
+                on_credit,
             },
             dataType: "JSON",
             cache: false,
             success: function (res) {
                 if (res.error) {
-                    createAlertTable(res.error, "Пользователь");
+                    createAlertTable(res.error, "Закупка VG");
                     return;
                 }
-                createAlertTable(res.status, "Пользователь");
+                createAlertTable(res.status, "Закупка VG");
             },
             error: function () {
-                createAlertTable("connectionError", "Пользователь");
+                createAlertTable("connectionError", "Закупка VG");
             },
             complete: function () {
                 setTimeout(function () {
