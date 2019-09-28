@@ -430,7 +430,7 @@ h1 {
     white-space: normal !important;
 }
 
-#menu ul {
+#menu .outer-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -978,10 +978,11 @@ nav.vertical a{
 
 .info-submenu{
 	margin-top: -30px;
+    position: static !important;
 }
 
-.drop-down{
-	height: auto !important;
+li .drop-down{
+	
 }
 
 .submenu{

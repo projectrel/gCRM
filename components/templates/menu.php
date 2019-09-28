@@ -4,7 +4,7 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
 ?>
 <nav>
 <div id="menu" page="<?php echo $curPage ?>">
-    <ul>
+    <ul class="outer-list">
         <li>
             <a href="../.." class=<?php echo(!$curPage ? '"active" disabled' : '') ?>>Главная</a></li>
         <li><a href="../../content/clients.php" class=<?php echo($curPage === 'clients' ? '"active" disabled' : '') ?>>Клиенты</a>
@@ -24,8 +24,8 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
         <li><a href="../../content/fiats.php" class=' . ($curPage === 'fiats' ? '"active" disabled' : '') . '>Валюты</a>
         </li>';
         else echo '' ?>
-        <li><a>VG &#x2193</a>
-            <ul class="drop-down">
+        <li><a>VG <i class="fa fa-arrow-down"></i></a>
+            <ul id="drop-down" class="drop-down">
                 <li class="submenu"><a href="#">Buy</a></li>
                 <br/>
                 <li class="submenu info-submenu"><a href="#">Info</a></li>
@@ -56,4 +56,4 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
     </ul>
 </div>
 </nav>
-<script src="js/dropDrownMenu.js"></script>
+<script src="../js/dropDrownMenu.js"></script>
