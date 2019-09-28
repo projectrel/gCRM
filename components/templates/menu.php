@@ -24,8 +24,13 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
         <li><a href="../../content/fiats.php" class=' . ($curPage === 'fiats' ? '"active" disabled' : '') . '>Валюты</a>
         </li>';
         else echo '' ?>
+<<<<<<< HEAD
         <li><a>VG <i class="fa fa-arrow-down"></i></a>
             <ul id="drop-down" class="drop-down">
+=======
+        <li><a>VG &#x2193</a>
+            <ul class="drop-down">
+>>>>>>> 69fc9823e7e69d60726c68d05c155a4f5acdd910
                 <li class="submenu"><a href="#">Buy</a></li>
                 <br/>
                 <li class="submenu info-submenu"><a href="#">Info</a></li>

@@ -978,11 +978,18 @@ nav.vertical a{
 
 .info-submenu{
 	margin-top: -30px;
+<<<<<<< HEAD
     position: static !important;
 }
 
 li .drop-down{
 	
+=======
+}
+
+.drop-down{
+	height: auto !important;
+>>>>>>> 69fc9823e7e69d60726c68d05c155a4f5acdd910
 }
 
 .submenu{
