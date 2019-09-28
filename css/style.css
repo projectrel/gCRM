@@ -981,11 +981,11 @@ nav.vertical a{
     position: static !important;
 }
 
-li .drop-down{
-	
+.drop-down{
+	height: auto !important;
 }
 
 .submenu{
-	display: block
+	display: block;
     background-color: #272a2d;
 }
