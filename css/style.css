@@ -430,7 +430,7 @@ h1 {
     white-space: normal !important;
 }
 
-#menu .outer-list {
+#menu ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -967,25 +967,4 @@ a[disabled] {
     cursor: pointer;
     font-weight: 600;
     color: #5491F5;
-}
-
-nav.vertical a{
-    display:block;
-    text-decoration:none;
-    padding:10px 15px;
-    transition:0.2s;
-}
-
-.info-submenu{
-	margin-top: -30px;
-    position: static !important;
-}
-
-.drop-down{
-	height: auto !important;
-}
-
-.submenu{
-	display: block;
-    background-color: #272a2d;
 }

@@ -472,6 +472,7 @@ function editBranch() {
     $(".loader").show();
     $(".modal-submit").prop("disabled", true);
     let name = $("#edit-branch-form #editNameField").val();
+    let ik_id = $("#edit-branch-form #editIkId").val();
     let money = $("#edit-branch-form #editMoneyField").val();
     let id = $("#edit-branch-form #edit-branch-title").attr('branch-id');
     $.ajax({
@@ -481,6 +482,7 @@ function editBranch() {
             name,
             branch_id: id,
             money,
+            ik_id,
         },
         dataType: "JSON",
         cache: false,

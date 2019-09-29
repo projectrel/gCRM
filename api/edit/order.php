@@ -27,7 +27,11 @@ $callmaster = clean($_POST['callmaster']);
 $method_id = clean($_POST['method_id']);
 $fiat = clean($_POST['fiat']);
 $sum_currency = ($sum_vg * $out_percent) / 100;
-$rollback_sum = $sum_vg * $rollback_1 / 100;
+$in_percent = mysqli_fetch_assoc($connection->query("
+            SELECT in_percent
+            FROM vg_data
+            WHERE vg_data_id = '$vg'"))['in_percent'];
+$rollback_sum = (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
 $shares = $_POST['shares'];
 session_start();
 $user_id = $_SESSION['id'];
