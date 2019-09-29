@@ -13,13 +13,12 @@ $(document).ready(function () {
     function addBranch() {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
-        const name = $("#add-branch-form #nameField").val();
-        const ik_id = $("#add-branch-form #ikId").val();
+        let name = $("#add-branch-form #nameField").val();
         $.ajax({
             url: "../api/add/branch.php",
             type: "POST",
             data: {
-                    name, ik_id
+                    name,
                 },
                 dataType: "JSON",
                 cache: false,
@@ -170,13 +169,13 @@ $(document).ready(function () {
 			dataType: 'JSON',
             cache: false,
             success: function (res) {
-                console.log(res);
                 if (res.error) {
                     createAlertTable(res.error, 'Владелец');
                     return;
                 }
                 const container = $('#owners-lists-container');
                 container.empty();
+                console.log(res);
                 container.append(res.data || "");
             },
             error: function () {
@@ -259,17 +258,16 @@ $(document).ready(function () {
                 fiat,
                 loginByVg,
             },
-            dataType: "html",
+            dataType: "JSON",
             cache: false,
             success: function (res) {
-                console.log(res);
                 try {
                     if (res.error) {
                         createAlertTable(res.error, "Заказ и транзакция")
                         return;
                     }
                     if (res['success'] == false) {
-                       createAlertTable('success', "Заказ");
+                        createAlertTable('success', "Заказ");
                         $('#Order-transaction-info-modal #error-url').text(res['url']).attr('href', res['url']);
                         $('#Order-transaction-info-modal').append(`<div>Код ошибки: ${res['code'] || "неизвестен"}</div>`)
                         $('#Order-transaction-info-modal').append(`<div>Ошибка: ${res['message'] || "неизвестна"}</div>`)
@@ -278,17 +276,17 @@ $(document).ready(function () {
                             fadeDelay: 0
                         });
                     }else{
-                       createAlertTable("success", "Заказ и транзакция");
-                       setTimeout(() => location.reload(), 300)
+                        createAlertTable("success", "Заказ и транзакция");
+                        setTimeout(() => location.reload(), 300)
                     }
                 } catch {
-                   createAlertTable("success", "Заказ и транзакция");
-                   setTimeout(() => location.reload(), 300);
+                    createAlertTable("success", "Заказ и транзакция");
+                    setTimeout(() => location.reload(), 300);
                 }
 
             },
             error: function () {
-               createAlertTable("connectionError", "Заказ");
+                createAlertTable("connectionError", "Заказ");
             },
             complete: function () {
                 setTimeout(function () {

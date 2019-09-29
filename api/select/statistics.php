@@ -89,10 +89,10 @@ foreach ($weeks as $week) {
     $start = $week[0];
     $end = $week[1];
     $join .= "\nLEFT JOIN (
-    SELECT VD.vg_id, SUM(O.sum_vg) AS `sum`
-    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
+    SELECT O.vg_id, SUM(O.sum_vg) AS `sum`
+    FROM orders O
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id='$branch_id'))" : "")."
-    GROUP BY VD.vg_id
+    GROUP BY O.vg_id
 ) ".$L." ON ".$L.".vg_id = V.vg_id";
     $select .= ", IFNULL(".$L.".sum, 0) AS `".$week_names[$index-1-$offset]."`";
 }
@@ -103,10 +103,10 @@ foreach ($months as $month) {
     $start = $month[0];
     $end = $month[1];
     $join .= "\nLEFT JOIN (
-    SELECT VD.vg_id, SUM(O.sum_vg) AS `sum`
-    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
+    SELECT O.vg_id, SUM(O.sum_vg) AS `sum`
+    FROM orders O
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id='$branch_id'))" : "")."
-    GROUP BY VD.vg_id
+    GROUP BY O.vg_id
 ) ".$L." ON ".$L.".vg_id = V.vg_id";
     $select .= ", IFNULL(".$L.".sum, 0) AS `".$month_names[$month[2]]." ".$month[3]."`";
 }
@@ -117,10 +117,10 @@ foreach ($years as $year) {
     $start = $year[0];
     $end = $year[1];
     $join .= "\nLEFT JOIN (
-    SELECT VD.vg_id, SUM(O.sum_vg) AS `sum`
-    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
+    SELECT O.vg_id, SUM(O.sum_vg) AS `sum`
+    FROM orders O
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id='$branch_id'))" : "")."
-    GROUP BY VD.vg_id
+    GROUP BY O.vg_id
 ) ".$L." ON ".$L.".vg_id = V.vg_id";
     $select .= ", IFNULL(".$L.".sum, 0) AS `".$year[2]."`";
 }
@@ -147,10 +147,10 @@ foreach ($weeks as $week) {
     $start = $week[0];
     $end = $week[1];
     $join .= "\nLEFT JOIN (
-    SELECT VD.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
-    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
+    SELECT O.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
+    FROM orders O
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id='$branch_id'))" : "")."
-    GROUP BY VD.vg_id, O.fiat_id
+    GROUP BY O.vg_id, O.fiat_id
 ) ".$L." ON ".$L.".vg_id = V.vg_id AND ".$L.".fiat_id = FF.fiat_id";
     $select .= ", IFNULL(".$L.".sum, 0) AS `".$week_names[$index-1-$offset]."`";
 }
@@ -161,10 +161,10 @@ foreach ($months as $month) {
     $start = $month[0];
     $end = $month[1];
     $join .= "\nLEFT JOIN (
-    SELECT VD.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
-    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
+    SELECT O.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
+    FROM orders O
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id='$branch_id'))" : "")."
-    GROUP BY VD.vg_id, O.fiat_id
+    GROUP BY O.vg_id, O.fiat_id
 ) ".$L." ON ".$L.".vg_id = V.vg_id AND ".$L.".fiat_id = FF.fiat_id";
     $select .= ", IFNULL(".$L.".sum, 0) AS `".$month_names[$month[2]]." ".$month[3]."`";
 }
@@ -175,10 +175,10 @@ foreach ($years as $year) {
     $start = $year[0];
     $end = $year[1];
     $join .= "\nLEFT JOIN (
-    SELECT VD.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
-    FROM orders O INNER JOIN vg_data VD ON O.vg_data_id = VD.vg_data_id
+    SELECT O.vg_id, SUM(O.sum_currency) AS `sum`, O.fiat_id
+    FROM orders O
     WHERE (O.date >= '".$start."' AND O.date <= '".$end."')".(!iCan(3) ? " AND O.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id='$branch_id'))" : "")."
-    GROUP BY VD.vg_id, O.fiat_id
+    GROUP BY O.vg_id, O.fiat_id
 ) ".$L." ON ".$L.".vg_id = V.vg_id AND ".$L.".fiat_id = FF.fiat_id";
     $select .= ", IFNULL(".$L.".sum, 0) AS `".$year[2]."`";
 }
@@ -195,8 +195,7 @@ JOIN fiats FF
 GROUP BY V.vg_id, FF.fiat_id
 ORDER BY V.name";
 
-include_once '../../dev/ChromePhp.php';
-ChromePhp::log($querry);
+
 $result .= display_data($connection->query($querry), $options);
 
 
