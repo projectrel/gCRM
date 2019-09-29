@@ -11,6 +11,10 @@ function branchAddModal($data)
             Название
                 <input id="nameField" data-validation="required length" data-validation-length="min1" placeholder="Название" type="text" name="name">
             </p>
+               <p>
+            Interkassa id
+                <input id="ikId"   placeholder="Interkassa id" type="text" name="ik_id">
+            </p>
             </div>
             <input class="modal-submit" type="submit" value="Добавить">
             
@@ -34,6 +38,10 @@ function branchEditModal()
             <p>
             Название
                 <input id="editNameField" data-validation="required length" data-validation-length="min1" placeholder="Название" type="text" name="name">
+            </p>
+              <p>
+            Interkassa id
+                <input id="editIkId"   placeholder="Interkassa id" type="text" name="ik_id">
             </p>
             </div>
             <input class="modal-submit" type="submit" value="Сохранить">
