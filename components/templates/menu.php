@@ -2,8 +2,9 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/funcs.php";
 $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
 ?>
+<nav>
 <div id="menu" page="<?php echo $curPage ?>">
-    <ul>
+    <ul class="outer-list">
         <li>
             <a href="../.." class=<?php echo(!$curPage ? '"active" disabled' : '') ?>>Главная</a></li>
         <li><a href="../../content/clients.php" class=<?php echo($curPage === 'clients' ? '"active" disabled' : '') ?>>Клиенты</a>
@@ -23,7 +24,11 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
         <li><a href="../../content/fiats.php" class=' . ($curPage === 'fiats' ? '"active" disabled' : '') . '>Валюты</a>
         </li>';
         else echo '' ?>
-        <li><a href="../../content/vgs.php" class=<?php echo($curPage === 'vgs' ? '"active" disabled' : '') ?>>VG</a>
+        <li class="drop-list"><a>VG <i id="arrow" class="fa fa-arrow-down"></i></a>
+            <ul id="drop-down">
+                <li class="submenu"><a href="#">Buy</a></li>
+                <li class="submenu info-submenu"><a href="#">Info</a></li>
+            </ul>
         </li>
         <li><a href="../../content/orders.php" class=<?php echo($curPage === 'orders' ? '"active" disabled' : '') ?>>Продажи</a>
         </li>
@@ -46,6 +51,8 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
         <li><a href="../../content/projects.php"
                class=<?php echo($curPage === 'projects' ? '"active" disabled' : '') ?>>Проекты</a>
         </li>
-        <li><a class="menu-logout-btn" href="../../api/auth/logout.php">Выйти</a></li>
+        <li id="exit"><a class="menu-logout-btn" href="../../api/auth/logout.php">Выйти</a></li>
     </ul>
 </div>
+</nav>
+<script src="../js/dropDownMenu.js"></script>
