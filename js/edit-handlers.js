@@ -357,57 +357,6 @@ function editVG() {
 }
 
 
-//VG Purchase
-$.validate({
-    form: '#edit-vg-purchase-form',
-    modules: '',
-    lang: 'ru',
-    onSuccess: function () {
-        editVGPurchase();
-        return false;
-    }
-});
-
-function editVGPurchase() {
-    $(".loader").show();
-    $(".modal-submit").prop("disabled", true);
-    let vg_id = $("#edit-vg-purchase-form #editVgField").val();
-    let fiat_id = $("#edit-vg-purchase-form #editFiatField").val();
-    let on_credit = $("#edit-vg-purchase-form #editOnCreditField").is(':checked');
-    let vg_sum = $("#edit-vg-purchase-form #editVgSumField").val();
-    let vg_purchase_id = $("#edit-vg-purchase-form #edit-vg-purchase-title").attr('vg-purchase-id');
-    $.ajax({
-        url: "../api/edit/vgPurchase.php",
-        type: "POST",
-        data: {
-            vg_id,
-            fiat_id,
-            on_credit,
-            vg_sum,
-            vg_purchase_id,
-        },
-        dataType: "JSON",
-        cache: false,
-        success: function (res) {
-            if (res.error) {
-                createAlertTable(res.error, 'VG');
-                return;
-            }
-            createAlertTable(res.status, "VG");
-        },
-        error: function () {
-            createAlertTable("connectionError", "VG");
-        },
-        complete: function () {
-            setTimeout(function () {
-                $(".modal-submit").prop("disabled", false);
-                $(".loader").fadeOut("slow");
-            }, 100);
-        }
-    });
-}
-
-
 //Fiat
 $.validate({
     form: '#edit-fiat-form',
