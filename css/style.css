@@ -430,7 +430,7 @@ h1 {
     white-space: normal !important;
 }
 
-#menu ul {
+#menu .outer-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -443,7 +443,7 @@ h1 {
 }
 
 @media (min-width: 512px) {
-    #menu ul li:last-child {
+    #menu ul #exit{
         position: absolute;
         bottom: 0;
     }
@@ -967,4 +967,21 @@ a[disabled] {
     cursor: pointer;
     font-weight: 600;
     color: #5491F5;
+}
+
+nav.vertical a{
+    display:block;
+    text-decoration:none;
+    padding:10px 15px;
+    transition:0.2s;
+}
+
+.submenu .info-submenu{
+	margin-top: -30px;
+    position: static;
+}
+
+.submenu{
+	display: block;
+    background-color: #272a2d;
 }
