@@ -424,7 +424,6 @@ function fillVGPurchaseEditForm(target) {
             $('#edit-vg-purchase-form #editOnCreditField').val(res['vg_purchase_on_credit']);
             $('#edit-vg-purchase-form #editVgSumField').val(res['vg_purchase_sum']);
             $('.loader').fadeOut('fast');
-            console.log(res);
             $('#VGPurchase-edit-Modal').modal();
 
         },
