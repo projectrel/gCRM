@@ -46,10 +46,10 @@ function vgPurchaseAddModal($data)
 
 function vgPurchaseEditModal($data)
 {
-    return '
+    $output = '
 <div id="VGPurchase-edit-Modal" class="modal" action="" role="form">
 <form id="edit-vg-purchase-form">
-  <h2 class="modal-title" id="edit-vg-title">Редактировать закупку VG</h2>
+  <h2 class="modal-title" id="edit-vg-purchase-title">Редактировать закупку VG</h2>
   <div class="modal-inputs">
   <p>
   <select id="editVgField" data-validation="required">
@@ -82,4 +82,5 @@ function vgPurchaseEditModal($data)
   <input class="modal-submit" type="submit" value="Сохранить">
   </form>
 </div>';
+    return $output;
 }

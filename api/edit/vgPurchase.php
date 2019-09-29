@@ -1,10 +1,12 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . "/funcs.php";
 include_once("../../db.php");
-if (!isset($_POST['vg_id'], $_POST['vg_sum'], $_POST['on_credit'], $_POST['fiat_id'])) {
+include_once("../../dev/ChromePhp.php");
+if (!isset($_POST['vg_id'], $_POST['vg_data_id'], $_POST['vg_sum'], $_POST['on_credit'], $_POST['fiat_id'])) {
     return error("empty");
 }
 session_start();
+$vg_data_id = clean($_POST['vg_data_id']);
 $branch_id = $_SESSION['branch_id'];
 $user_id = $_SESSION['id'];
 $sum_vg = clean($_POST['vg_sum']);
@@ -13,10 +15,10 @@ $fiat_id = clean($_POST['fiat_id']);
 $on_credit = clean($_POST['on_credit']) === "true" ? 1 : 0;
 $sum_currency = mysqli_fetch_assoc($connection->query("SELECT in_percent FROM vg_data WHERE vg_data_id = '$vg_id'"))['in_percent'] / 100 * $sum_vg;
 
-if (!addPurchase($connection, $user_id, $vg_id, $sum_vg, $sum_currency, $fiat_id, $on_credit)) {
+if (!updatePurchase($connection, $user_id, $vg_id, $sum_vg, $sum_currency, $fiat_id, $on_credit)) {
     return error("failed");
 }
-if (!addOutgo($connection, $user_id, $fiat_id, $sum_currency)) {
+if (!updateOutgo($connection, $user_id, $fiat_id, $sum_currency)) {
     return error("failed");
 }
 if (!updateBranchBalance($connection, $branch_id, $fiat_id, $sum_currency)) {
@@ -28,7 +30,7 @@ if (!updateVGBalance($connection, $vg_id, $sum_vg)) {
 echo json_encode(array("status" => "success"));
 
 
-function addPurchase($connection, $user_id, $vg_id, $sum_vg, $sum_currency, $fiat_id, $on_credit)
+function updatePurchase($connection, $user_id, $vg_id, $sum_vg, $sum_currency, $fiat_id, $on_credit)
 {
     $vg_purchase_credit = $on_credit ? $sum_vg : 0;
     $add_vg_purchase = ($connection->query("
@@ -53,7 +55,7 @@ function updateBranchBalance($connection, $branch_id, $fiat_id, $sum_currency)
     return $update_balance;
 }
 
-function addOutgo($connection, $user_id, $fiat_id, $sum)
+function updateOutgo($connection, $user_id, $fiat_id, $sum)
 {
     include_once $_SERVER['DOCUMENT_ROOT'] . "/config.php";
     $vg_purchase_type = VG_PURCHASE_TYPE;

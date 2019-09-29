@@ -195,8 +195,7 @@ JOIN fiats FF
 GROUP BY V.vg_id, FF.fiat_id
 ORDER BY V.name";
 
-include_once '../../dev/ChromePhp.php';
-ChromePhp::log($querry);
+
 $result .= display_data($connection->query($querry), $options);
 
 
