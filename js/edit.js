@@ -2,7 +2,6 @@ checkUserData();
 $('tr').on('click', (e) => {
     const target = $(e.target);
     const mainParent = target.parent().parent();
-
     switch (target.attr('modal')) {
         case "#Debt-Modal":
             $('[href*="#Debt-Modal"]').first()[0].click();
@@ -55,8 +54,8 @@ $('tr').on('click', (e) => {
         case "Branch-edit":
             fillBranchEditForm(mainParent);
             break;
-            case "Project-edit":
-                fillProjectEditForm(mainParent);
+        case "Project-edit":
+            fillProjectEditForm(mainParent);
             break;
         case "Client-edit":
             fillClientEditForm(mainParent);
@@ -72,6 +71,9 @@ $('tr').on('click', (e) => {
             break;
         case "globalVG-edit":
             fillGlobalVGlInfo(mainParent);
+            break;
+        case "VGPurchase-edit":
+            fillVGPurchaseEditForm(mainParent);
             break;
         case "info":
             fillAdditionalInfo(mainParent);
@@ -340,6 +342,7 @@ function fillBranchEditForm(target) {
         },
     });
 }
+
 function fillProjectEditForm(target) {
     $('.loader').show();
     let project_id = target.attr('itemid');
@@ -365,6 +368,7 @@ function fillProjectEditForm(target) {
         },
     });
 }
+
 function fillVGEditForm(target) {
     $('.loader').show();
     let vg_id = target.attr('itemid');
@@ -389,6 +393,35 @@ function fillVGEditForm(target) {
             $('#edit-vg-form #editKeyField').val(res['key']);
             $('.loader').fadeOut('fast');
             $('#VG-edit-Modal').modal();
+
+        },
+        error: function () {
+        },
+    });
+}
+function fillVGPurchaseEditForm(target) {
+    $('.loader').show();
+    let vg_purchase_id = target.attr('itemid');
+    $.ajax({
+        url: "../api/select/vgPurchase.php",
+        type: "POST",
+        dataType: 'JSON',
+        data: {
+            vg_purchase_id,
+        },
+        cache: false,
+        success: function (res) {
+            if (res.error) {
+                createAlertTable(res.error, "Данные закупки");
+                return;
+            }
+            $('#edit-vg-purchase-form #edit-vg-title').text(`Изменить данные закупки № ${res['vg_purchase_id']}`).attr('vg_purchase_id', res['vg_purchase_id']);
+            $('#edit-vg-purchase-form #editVgField').val(res['vg_data_id']);
+            $('#edit-vg-purchase-form #editFiatField').val(res['fiat_id']);
+            $('#edit-vg-purchase-form #editOnCreditField').val(res['vg_purchase_on_credit']);
+            $('#edit-vg-purchase-form #editVgSumField').val(res['vg_purchase_sum']);
+            $('.loader').fadeOut('fast');
+            $('#VGPurchase-edit-Modal').modal();
 
         },
         error: function () {
