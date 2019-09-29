@@ -19,9 +19,10 @@ if (!addPurchase($connection, $user_id, $vg_id, $sum_vg, $sum_currency, $fiat_id
 if (!addOutgo($connection, $user_id, $fiat_id, $sum_currency)) {
     return error("failed");
 }
-if (!updateBranchBalance($connection, $branch_id, $fiat_id, $sum_currency)) {
-    return error("failed");
-}
+if (!$on_credit)
+    if (!updateBranchBalance($connection, $branch_id, $fiat_id, $sum_currency)) {
+        return error("failed");
+    }
 if (!updateVGBalance($connection, $vg_id, $sum_vg)) {
     return error("failed");
 }

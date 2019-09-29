@@ -7,7 +7,7 @@ include_once '../db.php';
 
 $options['type'] = 'VGPurchase';
 $options['text'] = 'Закупки VG';
-$options['edit'] = 2;
+$options['edit'] = 1;
 $options['btn'] = 1;
 session_start();
 //$options['btn-max'] = 2;

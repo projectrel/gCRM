@@ -38,7 +38,7 @@ function vgPurchaseAddModal($data)
   </form>
 </div>';
     session_start();
-    if (iCan(2))
+    if (iCan(1))
         $output .= vgPurchaseEditModal($data);
 
     return $output;
