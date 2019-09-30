@@ -28,6 +28,7 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
             <ul id="drop-down">
                 <li class="submenu"><a href="../../content/vg-purchases.php">Закупки VG</a></li>
                 <li class="submenu info-submenu"><a href="../../content/vgs.php">Инфо</a></li>
+                <li class="submenu vg-debt-submenu"><a href="../../content/vg-debts.php">Задолженность</a></li>
             </ul>
         </li>
         <li><a href="../../content/orders.php" class=<?php echo($curPage === 'orders' ? '"active" disabled' : '') ?>>Продажи</a>

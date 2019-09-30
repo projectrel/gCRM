@@ -481,7 +481,7 @@ h1 {
     background: #555;
 }
 
-#menu li:hover {
+#menu li a:hover {
     font-weight: bold;
 }
 

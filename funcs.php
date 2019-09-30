@@ -168,6 +168,8 @@ function chooseAddModal($name, $data, $more_data = NULL)
             return fiatAddModal($data);
         case "VGPurchase":
             return vgPurchaseAddModal($more_data);
+        case "VGDebt":
+            return vgDebtAddModal($more_data);
         case "globalVG":
             return globalVgAddModal();
         case "MethodsOfObtaining":

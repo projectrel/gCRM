@@ -69,6 +69,9 @@ $('tr').on('click', (e) => {
         case "Fiat-edit":
             fillFiatEditForm(mainParent);
             break;
+        case "VGDebt-edit":
+            // TODO add modal
+            break;
         case "globalVG-edit":
             fillGlobalVGlInfo(mainParent);
             break;

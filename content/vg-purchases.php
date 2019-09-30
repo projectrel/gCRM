@@ -7,11 +7,11 @@ include_once '../db.php';
 
 $options['type'] = 'VGPurchase';
 $options['text'] = 'Закупки VG';
-$options['edit'] = 1;
+$options['edit'] = 2;
 $options['btn'] = 1;
 session_start();
 //$options['btn-max'] = 2;
-$options['btn-text'] = 'Добавить';
+$options['btn-text'] = 'Закупить';
 
 $data['vgs'] = $connection->query("
     SELECT * FROM vg_data WHERE  branch_id = " . $_SESSION['branch_id'] . "
