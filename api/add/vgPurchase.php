@@ -25,9 +25,10 @@ if (!$on_credit) {
     if (!updateBranchBalance($connection, $branch_id, $fiat_id, $sum_currency)) {
         return error("failed");
     }
-    if (!addOutgo($connection, $user_id, $fiat_id, $sum_currency, $purchase_unique_key)) {
+    if (!addOutgo($connection, $user_id, $fiat_id, $sum_currency, $branch_id, $vg_id)) {
         return error("failed");
     }
+
 } else {
     if (!updateDebtBalance($connection, $fiat_id, $sum_currency, $purchase_unique_key)) {
         return error("failed");
@@ -81,16 +82,16 @@ function updateDebtBalance($connection, $fiat_id, $sum_currency, $purchase_uniqu
 }
 
 
-function addOutgo($connection, $user_id, $fiat_id, $sum, $purchase_unique_key)
+function addOutgo($connection, $user_id, $fiat_id, $sum, $branch_id, $vg_id)
 {
     include_once $_SERVER['DOCUMENT_ROOT'] . "/config.php";
     $vg_purchase_type = VG_PURCHASE_TYPE;
-    $vg_purchase_id = mysqli_fetch_assoc($connection->query("SELECT vg_purchase_id FROM vg_purchases WHERE vg_purchase_unique_key = '$purchase_unique_key'"))['vg_purchase_id'];
+
     $addOutgo = ($connection->query("
            INSERT INTO `outgo`
-           (`user_id`, `fiat_id`, `outgo_type_id`, `date`, `sum`, `vg_purchase_id`) 
+           (`user_id`, `fiat_id`, `outgo_type_id`, `date`, `sum`, `branch_id`, `vg_data_id`) 
            VALUES 
-           ('$user_id','$fiat_id','$vg_purchase_type',now(),'$sum', '$vg_purchase_id' )"));
+           ('$user_id','$fiat_id','$vg_purchase_type',now(),'$sum','$branch_id', '$vg_id' )"));
     return $addOutgo;
 
 
