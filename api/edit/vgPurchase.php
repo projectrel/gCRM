@@ -14,12 +14,11 @@ $fiat_id = clean($_POST['fiat_id']);
 $on_credit = clean($_POST['on_credit']) === "true" ? 1 : 0;
 $sum_currency = mysqli_fetch_assoc($connection->query("SELECT in_percent FROM vg_data WHERE vg_data_id = '$vg_id'"))['in_percent'] / 100 * $sum_vg;
 
-
 if (!updateOutgo($connection, $vg_purchase_id, $user_id, $fiat_id, $sum_currency, $on_credit)) {
     return error("failed");
 }
 
-if (!updateBranchBalance($connection, $vg_purchase_id, $on_credit, $branch_id, $fiat_id, $sum_currency)) {
+if (!updateBranchAndDebtBalance($connection, $vg_purchase_id, $on_credit, $branch_id, $fiat_id, $sum_currency)) {
     return error("failed");
 }
 
@@ -52,27 +51,32 @@ function editVGBalance($connection, $vg_purchase_id, $vg_id, $sum_vg)
     return $edit_balance;
 }
 
-function updateBranchBalance($connection, $vg_purchase_id, $on_credit, $branch_id, $fiat_id, $sum_currency)
+function updateBranchAndDebtBalance($connection, $vg_purchase_id, $on_credit, $branch_id, $fiat_id, $sum_currency)
 {
     $update_balance = true;
-    $old_on_credit = mysqli_fetch_assoc($connection->
-    query("SELECT vg_purchase_on_credit 
-           FROM `vg_purchases` WHERE `vg_purchase_sum` = '$vg_purchase_id'"))['vg_purchase_on_credit'];
-    if (!$old_on_credit) {
-        $old_sum_currency = mysqli_fetch_assoc($connection->
-        query("SELECT vg_purchase_sum_currency 
-               FROM `vg_purchases` WHERE `vg_purchase_sum` = '$vg_purchase_id'"))['vg_purchase_sum_currency'];
+    $old_purchase_data = mysqli_fetch_assoc($connection->
+    query("SELECT vg_purchase_on_credit, vg_purchase_sum_currency
+           FROM `vg_purchases` WHERE `vg_purchase_id` = '$vg_purchase_id'"));
+    $old_sum_currency = $old_purchase_data['vg_purchase_sum_currency'];
+    $old_on_credit = $old_purchase_data['vg_purchase_on_credit'];;
+    if (!$old_on_credit || $old_on_credit == "0") {
+
         if (!$on_credit) {
             $update_balance = ($connection->query("
         UPDATE payments SET `sum` = `sum` - '$sum_currency' + '$old_sum_currency' WHERE `branch_id` = '$branch_id' AND `fiat_id` = '$fiat_id'"));
         } else {
             $update_balance = ($connection->query("
         UPDATE payments SET `sum` = `sum` + '$old_sum_currency' WHERE `branch_id` = '$branch_id' AND `fiat_id` = '$fiat_id'"));
+
+            updateDebtBalance($connection, $vg_purchase_id, $fiat_id, $sum_currency, 0);
         }
     } else {
         if (!$on_credit) {
             $update_balance = ($connection->query("
         UPDATE payments SET `sum` = `sum` - '$sum_currency' WHERE `branch_id` = '$branch_id' AND `fiat_id` = '$fiat_id'"));
+            updateDebtBalance($connection, $vg_purchase_id, $fiat_id, 0, $old_sum_currency);
+        } else {
+            updateDebtBalance($connection, $vg_purchase_id, $fiat_id, $sum_currency, $old_sum_currency);
         }
     }
 
@@ -108,4 +112,25 @@ function updateOutgo($connection, $vg_purchase_id, $user_id, $fiat_id, $sum, $on
     return $editOutgo;
 
 
+}
+
+
+function updateDebtBalance($connection, $vg_purchase_id, $fiat_id, $sum_currency, $old_sum_currency)
+{
+
+    $vg_data_id = mysqli_fetch_assoc($connection->
+    query("SELECT vg_data_id 
+           FROM `vg_purchases` WHERE `vg_purchase_id` = '$vg_purchase_id'"))['vg_data_id'];
+
+    $payment_is_exists = mysqli_fetch_assoc($connection->query("
+         SELECT * FROM payments WHERE fiat_id = '$fiat_id' AND vg_data_debt_id = '$vg_data_id'"));
+    if (count($payment_is_exists)) {
+        $payment_id = $payment_is_exists['payment_id'];
+        $update_debt_balance = $connection->query("
+        UPDATE payments SET `sum` = `sum` + '$sum_currency' - '$old_sum_currency' WHERE payment_id = '$payment_id'");
+    } else {
+        $update_debt_balance = $connection->query("
+        INSERT INTO payments (`fiat_id`, `sum`, `vg_data_debt_id`) VALUES ('$fiat_id', '$sum_currency', '$vg_data_id')");
+    }
+    return $update_debt_balance;
 }

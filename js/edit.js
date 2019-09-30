@@ -409,7 +409,7 @@ function fillVGPurchaseEditForm(target) {
     let vg_purchase_id = target.attr('itemid');
     $.ajax({
         url: "../api/select/vgPurchase.php",
-        type: "POST",
+        type: "GET",
         dataType: 'JSON',
         data: {
             vg_purchase_id,
@@ -424,7 +424,7 @@ function fillVGPurchaseEditForm(target) {
             $('#edit-vg-purchase-form #edit-vg-purchase-title').text(`Изменить данные закупки № ${res['vg_purchase_id']}`).attr('vg-purchase-id', res['vg_purchase_id']);
             $('#edit-vg-purchase-form #editVgField').val(res['vg_data_id']);
             $('#edit-vg-purchase-form #editFiatField').val(res['fiat_id']);
-            $('#edit-vg-purchase-form #editOnCreditField').val(res['vg_purchase_on_credit']);
+            $('#edit-vg-purchase-form #editOnCreditField').prop('checked', (res['vg_purchase_on_credit'] == 1));
             $('#edit-vg-purchase-form #editVgSumField').val(res['vg_purchase_sum']);
             $('.loader').fadeOut('fast');
             $('#VGPurchase-edit-Modal').modal();

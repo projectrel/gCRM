@@ -22,11 +22,14 @@ if (!updateVGBalance($connection, $vg_id, $sum_vg)) {
 }
 
 if (!$on_credit) {
-
     if (!updateBranchBalance($connection, $branch_id, $fiat_id, $sum_currency)) {
         return error("failed");
     }
     if (!addOutgo($connection, $user_id, $fiat_id, $sum_currency, $purchase_unique_key)) {
+        return error("failed");
+    }
+} else {
+    if (!updateDebtBalance($connection, $fiat_id, $sum_currency, $purchase_unique_key)) {
         return error("failed");
     }
 }
@@ -58,6 +61,25 @@ function updateBranchBalance($connection, $branch_id, $fiat_id, $sum_currency)
         UPDATE payments SET `sum` = `sum` - '$sum_currency' WHERE `branch_id` = '$branch_id' AND `fiat_id` = '$fiat_id'"));
     return $update_balance;
 }
+
+function updateDebtBalance($connection, $fiat_id, $sum_currency, $purchase_unique_key)
+{
+    $vg_data_id = mysqli_fetch_assoc($connection->query("
+        SELECT vg_data_id FROM vg_purchases WHERE vg_purchase_unique_key = '$purchase_unique_key'"))['vg_data_id'];
+
+    $payment_is_exists = mysqli_fetch_assoc($connection->query("
+         SELECT * FROM payments WHERE fiat_id = '$fiat_id' AND vg_data_debt_id = '$vg_data_id'"));
+    if (count($payment_is_exists)) {
+        $payment_id = $payment_is_exists['payment_id'];
+        $update_debt_balance = $connection->query("
+        UPDATE payments SET `sum` = `sum` + '$sum_currency' WHERE payment_id = '$payment_id'");
+    } else {
+        $update_debt_balance = $connection->query("
+        INSERT INTO payments (`fiat_id`, `sum`, `vg_data_debt_id`) VALUES ('$fiat_id', '$sum_currency', '$vg_data_id')");
+    }
+    return $update_debt_balance;
+}
+
 
 function addOutgo($connection, $user_id, $fiat_id, $sum, $purchase_unique_key)
 {

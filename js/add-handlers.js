@@ -19,27 +19,27 @@ $(document).ready(function () {
             url: "../api/add/branch.php",
             type: "POST",
             data: {
-                    name, ik_id
-                },
-                dataType: "JSON",
-                cache: false,
-                success: function (res) {
-                    if (res.error) {
-                        createAlertTable(res.error, 'Предприятие');
-                        return;
-                    }
-                    createAlertTable(res.status, "Предприятие");
-                },
-                error: function () {
-                    createAlertTable("connectionError", "Предприятие");
-                },
-                complete: function () {
-                    setTimeout(function () {
-                        $(".modal-submit").prop("disabled", false);
-                        $(".loader").fadeOut("slow");
-                    }, 100);
+                name, ik_id
+            },
+            dataType: "JSON",
+            cache: false,
+            success: function (res) {
+                if (res.error) {
+                    createAlertTable(res.error, 'Предприятие');
+                    return;
                 }
-            });
+                createAlertTable(res.status, "Предприятие");
+            },
+            error: function () {
+                createAlertTable("connectionError", "Предприятие");
+            },
+            complete: function () {
+                setTimeout(function () {
+                    $(".modal-submit").prop("disabled", false);
+                    $(".loader").fadeOut("slow");
+                }, 100);
+            }
+        });
 
     }
 
@@ -119,7 +119,8 @@ $(document).ready(function () {
                 vg_id, client_id,
             },
             cache: false,
-            success: function (res) {;
+            success: function (res) {
+                ;
                 if (res.error) {
                     createAlertTable(res.error, "Данные ВГ");
                     return;
@@ -167,7 +168,7 @@ $(document).ready(function () {
             data: {
                 vg_id, client_id
             },
-			dataType: 'JSON',
+            dataType: 'JSON',
             cache: false,
             success: function (res) {
                 console.log(res);
@@ -269,7 +270,7 @@ $(document).ready(function () {
                         return;
                     }
                     if (res['success'] == false) {
-                       createAlertTable('success', "Заказ");
+                        createAlertTable('success', "Заказ");
                         $('#Order-transaction-info-modal #error-url').text(res['url']).attr('href', res['url']);
                         $('#Order-transaction-info-modal').append(`<div>Код ошибки: ${res['code'] || "неизвестен"}</div>`)
                         $('#Order-transaction-info-modal').append(`<div>Ошибка: ${res['message'] || "неизвестна"}</div>`)
@@ -277,18 +278,18 @@ $(document).ready(function () {
                             fadeDuration: 500,
                             fadeDelay: 0
                         });
-                    }else{
-                       createAlertTable("success", "Заказ и транзакция");
-                       setTimeout(() => location.reload(), 300)
+                    } else {
+                        createAlertTable("success", "Заказ и транзакция");
+                        setTimeout(() => location.reload(), 300)
                     }
                 } catch {
-                   createAlertTable("success", "Заказ и транзакция");
-                   setTimeout(() => location.reload(), 300);
+                    createAlertTable("success", "Заказ и транзакция");
+                    setTimeout(() => location.reload(), 300);
                 }
 
             },
             error: function () {
-               createAlertTable("connectionError", "Заказ");
+                createAlertTable("connectionError", "Заказ");
             },
             complete: function () {
                 setTimeout(function () {
@@ -388,7 +389,7 @@ $(document).ready(function () {
             dataType: "JSON",
             cache: false,
             success: function (res) {
-                if(res.error){
+                if (res.error) {
                     createAlertTable(res.error, "Тип расходов");
                     return;
                 }
@@ -406,6 +407,7 @@ $(document).ready(function () {
         });
 
     }
+
 //Client
 
     $.validate({
@@ -456,7 +458,7 @@ $(document).ready(function () {
                     createAlertTable(res.error, 'Клиент');
                     return;
                 }
-                if (res.id){
+                if (res.id) {
                     const opt = document.createElement('option');
                     opt.value = res.id;
                     opt.innerText = first_name + ' ' + last_name;
@@ -585,6 +587,7 @@ $(document).ready(function () {
         });
 
     }
+
     $.validate({
         form: '#add-vg-purchase-form',
         modules: 'security',
@@ -727,6 +730,52 @@ $(document).ready(function () {
 
     }
 
+    //Payback VG debt
+    $.validate({
+        form: '#payback-vg-debt-form',
+        modules: '',
+        lang: 'ru',
+        onSuccess: function () {
+            paybackVGDebt();
+            return false;
+        }
+    });
+
+    function paybackVGDebt() {
+        $(".loader").show();
+        $(".modal-submit").prop("disabled", true);
+        const vg_id = $("#payback-vg-debt-form #vgDebtField").val();
+        const fiat_id = $("#payback-vg-debt-form #fiatDebtField").val();
+        const currency_sum = $("#payback-vg-debt-form #vgSumDebtField").val();
+        $.ajax({
+            url: "../api/operate/vgDebt.php",
+            type: "POST",
+            data: {
+                vg_id, fiat_id, currency_sum
+            },
+            dataType: "html",
+            cache: false,
+            success: function (res) {
+                if (res.error) {
+                    createAlertTable(res.error, "Выплата задолженности по VG");
+                    return;
+                }
+                // createAlertTable(res.status, "Выплата задолженности по VG");
+                console.log(res);
+            },
+            error: function () {
+                createAlertTable("connectionError", "Выплата задолженности по VG");
+            },
+            complete: function () {
+                setTimeout(function () {
+                    $(".modal-submit").prop("disabled", false);
+                    $(".loader").fadeOut("slow");
+                }, 100);
+            }
+        });
+
+    }
+
     //GlobalVG
     $.validate({
         form: '#add-globalVg-form',
@@ -851,7 +900,7 @@ $(document).ready(function () {
                 id, fiat, number,
             },
             cache: false,
-            dataType:"json",
+            dataType: "json",
             success: function (res) {
                 createAlertTable(res.status || res.error, "Откат");
             },

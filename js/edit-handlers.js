@@ -390,13 +390,13 @@ function editVGPurchase() {
         cache: false,
         success: function (res) {
             if (res.error) {
-                createAlertTable(res.error, 'VG');
+                createAlertTable(res.error, 'Закупка VG');
                 return;
             }
-            createAlertTable(res.status, "VG");
+            createAlertTable(res.status, "Закупка VG");
         },
         error: function () {
-            createAlertTable("connectionError", "VG");
+            createAlertTable("connectionError", "Закупка VG");
         },
         complete: function () {
             setTimeout(function () {
