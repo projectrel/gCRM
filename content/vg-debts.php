@@ -7,7 +7,7 @@ include_once '../db.php';
 
 $options['type'] = 'VGDebt';
 $options['text'] = 'Задолженность по VG';
-$options['edit'] = 1;
+$options['edit'] = 0;
 $options['btn'] = 1;
 session_start();
 //$options['btn-max'] = 2;

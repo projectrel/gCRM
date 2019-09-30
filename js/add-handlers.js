@@ -753,14 +753,14 @@ $(document).ready(function () {
             data: {
                 vg_id, fiat_id, currency_sum
             },
-            dataType: "html",
+            dataType: "json",
             cache: false,
             success: function (res) {
                 if (res.error) {
                     createAlertTable(res.error, "Выплата задолженности по VG");
                     return;
                 }
-                // createAlertTable(res.status, "Выплата задолженности по VG");
+               createAlertTable(res.status, "Выплата задолженности по VG");
                 console.log(res);
             },
             error: function () {

@@ -34,10 +34,6 @@ function vgDebtAddModal($data)
   <input class="modal-submit" type="submit" value="Погасить">
   </form>
 </div>';
-    session_start();
-    if (iCan(1))
-        $output .= vgPurchaseEditModal($data);
-
     return $output;
 }
 
