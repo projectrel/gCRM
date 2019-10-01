@@ -27,10 +27,6 @@ function vgPurchaseAddModal($data)
 </select>
   </p>
   <p>
-  <span>Оплата в долг</span>
-  <input id="onCreditField" type="checkbox" name="credit" >
-  </p>
-  <p>
   <input id="vgSumField" data-validation="required length" data-validation-length="min1" placeholder="Количество" type="number" name="vg">
   </p>
   </div>
@@ -70,10 +66,6 @@ function vgPurchaseEditModal($data)
         }
     $output .='
 </select>
-  </p>
-  <p>
-  <span>Оплата в долг</span>
-  <input id="editOnCreditField" type="checkbox" name="credit" >
   </p>
   <p>
   <input id="editVgSumField" data-validation="required length" data-validation-length="min1" placeholder="Количество" type="number" name="vg">

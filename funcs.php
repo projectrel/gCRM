@@ -80,8 +80,6 @@ function makeTable($data, $options)
                 <div class="knobs"></div>
                 </div>
             </td>';
-            } else if ($col == 'куплено в долг') {
-                $output .= '<td class=' . $index . '-f>' . ($val == 0 ? 'Нет' : 'Да') . '</td>';
             } else if ($col == 'участие в балансе') {
                 $output .= '<td class=' . $index . '-f title="' . $val . '"><p style="display: none">' . $val . '</p>
                 <div class="button b2" id="button-10">

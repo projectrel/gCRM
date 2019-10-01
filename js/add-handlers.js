@@ -604,7 +604,6 @@ $(document).ready(function () {
         const vg_id = $("#add-vg-purchase-form #vgField").val();
         const fiat_id = $("#add-vg-purchase-form #fiatField").val();
         const vg_sum = $("#add-vg-purchase-form #vgSumField").val();
-        const on_credit = $("#add-vg-purchase-form #onCreditField").is(':checked');
         $.ajax({
             url: "../api/add/vgPurchase.php",
             type: "POST",
@@ -612,7 +611,6 @@ $(document).ready(function () {
                 vg_id,
                 fiat_id,
                 vg_sum,
-                on_credit,
             },
             dataType: "JSON",
             cache: false,
