@@ -18,10 +18,11 @@ $outgo_vg_purchase_type = VG_PURCHASE_TYPE;
 
 
 echo template(display_data($connection->query("
-SELECT O.outgo_id AS id, VD.name AS `vg`, O.sum AS `сумма`, F.full_name AS 'валюта'
+SELECT O.outgo_id AS id, VD.name AS `vg`, O.sum AS `сумма`, F.full_name AS 'валюта', O.date AS `дата`
 FROM outgo O
 INNER JOIN vg_data VD ON VD.vg_data_id = O.vg_data_id
 INNER JOIN fiats F ON F.fiat_id = O.fiat_id
 WHERE O.outgo_type_id = '$outgo_vg_purchase_type' AND O.branch_id = " . $_SESSION['branch_id'] . "
+ORDER BY O.date DESC
 "), $options, NULL));
 

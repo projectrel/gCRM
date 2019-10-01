@@ -25,5 +25,6 @@ VD.name AS `vg`, VP.vg_purchase_sum AS `сумма`,  F.full_name AS `валют
 FROM vg_purchases VP INNER JOIN users U ON VP.user_id = U.user_id INNER JOIN fiats F ON VP.fiat_id = F.fiat_id
 INNER JOIN vg_data VD ON VP.vg_data_id = VD.vg_data_id
 WHERE U.branch_id = ' . $_SESSION['branch_id'] . '
+ORDER BY VP.date DESC
 '), $options, $data));
 

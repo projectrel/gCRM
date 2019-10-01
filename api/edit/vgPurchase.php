@@ -94,7 +94,7 @@ function updateDebtBalanceSub($connection, $old_vg_data_id, $vg_id_data_id, $old
 
             $update_debt_balance = $connection->query("
         UPDATE payments SET `sum` = `sum` + '$sum_currency'  WHERE payment_id = '$payment_id'");
-            
+
         } else {
 
             $update_debt_balance = $connection->query("
