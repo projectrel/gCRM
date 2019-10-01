@@ -45,10 +45,6 @@ $user_data = mysqli_fetch_assoc($connection->query("
 if (!heCan($user_data['role'], 1)) {
     return error("denied");
 }
-$vg_id = mysqli_fetch_assoc($connection->query("
-            SELECT vg_id
-            FROM vg_data
-            WHERE vg_data_id = '$vg'"))['vg_id'];
 if ($callmaster) {
     $query="INSERT INTO `orders`
         (`vg_data_id`, `client_id`, `sum_vg`, `real_out_percent`, `sum_currency`, `method_id`, `rollback_sum`, `rollback_1`, `date`, `callmaster`, `order_debt`, `description`, `fiat_id`, `loginByVg`)
@@ -61,9 +57,15 @@ if ($callmaster) {
         ('$vg', '$client', '$sum_vg', '$out_percent', '$sum_currency','$method_id', '$rollback_sum', '$rollback_1', '$date', '$debt', '$description', '$fiat', '$login_by_vg') ";
 		}
 
+$update_vg_balance = ($connection->query("
+        UPDATE vg_data SET `vg_amount` = `vg_amount` - '$sum_vg' WHERE `vg_data_id` = '$vg'"));
+if(!$update_vg_balance){
+    error("failed");
+}
 
 $add_order = $connection->
 query($query);
+
 if ($add_order) {
     $in_percent = mysqli_fetch_assoc($connection->query("
             SELECT in_percent

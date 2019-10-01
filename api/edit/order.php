@@ -49,6 +49,11 @@ if ($user_data && (heCan($user_data['role'], 2))) {
                      WHERE order_id ='$order_id'"));
     $sharesChanged = true;
 
+    if ($order_data['vg_data_id'] != $vg_data_id || $order_data['sum_vg'] != $sum_vg) {
+        if (!updateVgBalance($connection, $order_data, $vg_data_id, $sum_vg)) {
+            error("failed");
+        }
+    }
     if ($sharesChanged) {
         $connection->
         query("DELETE FROM shares
@@ -84,15 +89,15 @@ if ($user_data && (heCan($user_data['role'], 2))) {
     if ((int)$prev_method_participated === (int)$participates_in_balance) {
         if ($order_data['sum_currency'] != $sum_currency) {
             $money = $sum_currency - $order_data['sum_currency'];
-            if((int)$participates_in_balance){
+            if ((int)$participates_in_balance) {
                 updateBranchMoney($connection, $branch_id, $money, $fiat);
             }
 
         }
     } else {
-        if((int)$prev_method_participated === 1){
-            updateBranchMoney($connection, $branch_id, - $order_data['sum_currency'], $fiat);
-        }else{
+        if ((int)$prev_method_participated === 1) {
+            updateBranchMoney($connection, $branch_id, -$order_data['sum_currency'], $fiat);
+        } else {
             updateBranchMoney($connection, $branch_id, $order_data['sum_currency'], $fiat);
         }
     }
@@ -170,6 +175,16 @@ if ($user_data && (heCan($user_data['role'], 2))) {
     error("denied");
     return false;
 
+}
+
+function updateVgBalance($connection, $old_order_data, $vg_data_id, $sum_vg)
+{
+    $old_vg_sum = $old_order_data['sum_vg'];
+    $old_vg_data_id = $old_order_data['vg_data_id'];
+    return $connection->
+        query("UPDATE vg_data SET `vg_amount` = `vg_amount` + '$old_vg_sum' WHERE `vg_data_id` = $old_vg_data_id") &&
+        $connection->
+        query("UPDATE vg_data SET `vg_amount` = `vg_amount` - '$sum_vg' WHERE `vg_data_id` = $vg_data_id");
 }
 
 

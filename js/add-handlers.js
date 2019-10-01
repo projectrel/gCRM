@@ -120,7 +120,6 @@ $(document).ready(function () {
             },
             cache: false,
             success: function (res) {
-                ;
                 if (res.error) {
                     createAlertTable(res.error, "Данные ВГ");
                     return;
