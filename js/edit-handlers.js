@@ -373,7 +373,6 @@ function editVGPurchase() {
     $(".modal-submit").prop("disabled", true);
     let vg_id = $("#edit-vg-purchase-form #editVgField").val();
     let fiat_id = $("#edit-vg-purchase-form #editFiatField").val();
-    let on_credit = $("#edit-vg-purchase-form #editOnCreditField").is(':checked');
     let vg_sum = $("#edit-vg-purchase-form #editVgSumField").val();
     let vg_purchase_id = $("#edit-vg-purchase-form #edit-vg-purchase-title").attr('vg-purchase-id');
     $.ajax({
@@ -382,7 +381,6 @@ function editVGPurchase() {
         data: {
             vg_id,
             fiat_id,
-            on_credit,
             vg_sum,
             vg_purchase_id,
         },
@@ -394,6 +392,55 @@ function editVGPurchase() {
                 return;
             }
             createAlertTable(res.status, "Закупка VG");
+        },
+        error: function () {
+            createAlertTable("connectionError", "Закупка VG");
+        },
+        complete: function () {
+            setTimeout(function () {
+                $(".modal-submit").prop("disabled", false);
+                $(".loader").fadeOut("slow");
+            }, 100);
+        }
+    });
+}
+
+
+//VG Purchase debt payback
+$.validate({
+    form: '#edit-payback-vg-purchase-debt-form',
+    modules: '',
+    lang: 'ru',
+    onSuccess: function () {
+        editVGDebtPayback();
+        return false;
+    }
+});
+
+function editVGDebtPayback() {
+    $(".loader").show();
+    $(".modal-submit").prop("disabled", true);
+    const vg_id = $("#edit-payback-vg-purchase-debt-form #editVgDebtField").val();
+    const fiat_id = $("#edit-payback-vg-purchase-debt-form #editFiaDebttField").val();
+    const debt_sum = $("#edit-payback-vg-purchase-debt-form #editVgSumDebtField").val()
+    const outgo_id = $("#edit-payback-vg-purchase-debt-form #edit-vg-purchase-debt-title").attr('vg-payback-debt-id');
+    $.ajax({
+        url: "../api/edit/vgPaybackDebt.php",
+        type: "POST",
+        data: {
+            vg_id,
+            fiat_id,
+            debt_sum,
+            outgo_id,
+        },
+        dataType: "JSON",
+        cache: false,
+        success: function (res) {
+            if (res.error) {
+                createAlertTable(res.error, 'Оплата VG');
+                return;
+            }
+            createAlertTable(res.status, "Оплата VG");
         },
         error: function () {
             createAlertTable("connectionError", "Закупка VG");

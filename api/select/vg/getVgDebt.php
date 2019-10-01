@@ -1,6 +1,6 @@
 <?php
-include_once("../../db.php");
-include_once("../../funcs.php");
+include_once("../../../db.php");
+include_once("../../../funcs.php");
 if (!isset($_GET['fiat_id'], $_GET['vg_id']))
     error("empty");
 $fiat_id = clean($_GET['fiat_id']);

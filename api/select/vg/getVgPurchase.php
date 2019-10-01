@@ -1,7 +1,7 @@
 <?php
 if (isset($_GET['vg_purchase_id'])) {
-    include_once("../../db.php");
-    include_once("../../funcs.php");
+    include_once("../../../db.php");
+    include_once("../../../funcs.php");
     $vg_purchase_id = clean($_GET['vg_purchase_id']);
     session_start();
     $vg_data = mysqli_fetch_assoc($connection->query("

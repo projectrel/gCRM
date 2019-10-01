@@ -112,7 +112,7 @@ $(document).ready(function () {
         let client_id = $('#Order-Modal #clientField').val();
         if (!vg_id && !client_id) return;
         $.ajax({
-            url: "../api/select/getLoginByVg.php",
+            url: "../api/select/vg/getLoginByVg.php",
             type: "GET",
             dataType: 'json',
             data: {
@@ -144,6 +144,15 @@ $(document).ready(function () {
                 } else {
                     $('#Order-Modal #obtainingField').val($("#obtainingField option:first").val());
                 }
+                if (res.callmaster > 0) {
+                    $('#Order-Modal #rollback1Field').val(res.rollback);
+                    $('#Order-Modal #callmasterField').val(res.callmaster);
+                    $('#rollbacks-lists-container').css({display: 'grid'});
+                } else {
+                    $('#Order-Modal #rollback1Field').val();
+                    $('#Order-Modal #callmasterField').val(-1);
+                    $('#rollbacks-lists-container').css({display: 'none'});
+                }
             },
             error: function () {
             },
@@ -163,7 +172,7 @@ $(document).ready(function () {
         $('.loader').show();
 
         $.ajax({
-            url: "../api/select/getVGOwners.php",
+            url: "../api/select/vg/getVGOwners.php",
             type: "POST",
             data: {
                 vg_id, client_id

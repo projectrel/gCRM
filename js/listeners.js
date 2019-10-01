@@ -7,7 +7,7 @@ $(document).ready(function () {
             return;
         }
         $('.loader').show();
-        $.get('../api/select/getVgDebt.php', {vg_id, fiat_id}, () => {
+        $.get('../api/select/vg/getVgDebt.php', {vg_id, fiat_id}, () => {
         }, "json")
             .error(function () {
                 $('.loader').fadeOut('fast');

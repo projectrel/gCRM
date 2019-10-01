@@ -1,6 +1,6 @@
 <?php
-include_once("../../db.php");
-include_once("../../funcs.php");
+include_once("../../../db.php");
+include_once("../../../funcs.php");
 $client_id = clean($_GET['client_id']);
 $vg_id = clean($_GET['vg_id']);
 $res = mysqli_fetch_assoc($connection->
