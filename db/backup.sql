@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 27 2019 г., 15:31
+-- Время создания: Окт 05 2019 г., 20:03
 -- Версия сервера: 5.6.41
 -- Версия PHP: 5.6.38
 
@@ -21,6 +21,34 @@ SET time_zone = "+00:00";
 --
 -- База данных: `crm5.2`
 --
+
+DELIMITER $$
+--
+-- Процедуры
+--
+CREATE DEFINER=`root`@`%` PROCEDURE `getVGDebts` ()  READS SQL DATA
+SELECT DISTINCT VD.name AS `VG`, P.sum  AS `сумма задолженности`, F.full_name AS `валюта`
+FROM vg_data VD INNER JOIN vg_purchases VP ON VD.vg_data_id = VP.vg_data_id 
+INNER JOIN fiats F ON F.fiat_id = VP.fiat_id
+INNER JOIN payments P ON P.fiat_id = VP.fiat_id and P.vg_data_debt_id = VP.vg_data_id
+WHERE P.sum > 0$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `getVGProcessing` ()  NO SQL
+SELECT concat(V.name, ", ",VD.name), 
+vg_prev_amount AS 'прошлое расчетное количество', 
+vg_prev_api_amount AS 'прошлое количество по API',
+vg_amount AS 'текущее расчетное количество', 
+vg_api_amount AS 'текущее количество по API'
+FROM virtualgood V 
+INNER JOIN vg_data VD ON V.vg_id = VD.vg_id$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `test` (IN `bR` INT(11))  READS SQL DATA
+SELECT DISTINCT  VD.name, F.name AS `kek`
+FROM vg_data VD INNER JOIN vg_purchases VP ON VD.vg_data_id = VP.vg_data_id
+INNER JOIN fiats F ON F.fiat_id = VP.fiat_id
+WHERE VD.branch_id = bR$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -40,11 +68,12 @@ CREATE TABLE `branch` (
 --
 
 INSERT INTO `branch` (`branch_id`, `branch_name`, `active`, `ik_id`) VALUES
-(1, 'main', 0, '5d2c387f1ae1bdf68a8b4567'),
-(3, 'eligendi', 0, '5d2c387f1ae1bdf68a8b4567'),
-(5, 'adipisci', 0, '5d2c387f1ae1bdf68a8b4567'),
+(1, 'main', 1, '5d2c387f1ae1bdf68a8b4567'),
+(3, 'eligendi', 1, '5d2c387f1ae1bdf68a8b4567'),
+(5, 'adipisci', 1, '5d2c387f1ae1bdf68a8b4567'),
 (9, 'Di &co', 1, '5d2c387f1ae1bdf68a8b4567'),
-(10, 'new-test', 1, '5d2c387f1ae1bdf68a8b4567');
+(10, 'new-test', 1, '5d2c387f1ae1bdf68a8b4567'),
+(11, 'tttt', 1, '21dawfrwefawfw23');
 
 -- --------------------------------------------------------
 
@@ -75,10 +104,10 @@ CREATE TABLE `clients` (
 --
 
 INSERT INTO `clients` (`client_id`, `user_id`, `last_name`, `first_name`, `byname`, `phone_number`, `email`, `description`, `telegram`, `max_debt`, `password`, `pay_page`, `pay_in_debt`, `payment_system`, `login`) VALUES
-(55, 26, 'Юрчик-наталья', 'Наталья', '', '', '', 'Жена и брат Саши из купидиона, каменец-подольского', '', '0.00', '', 0, 0, 0, ''),
+(55, 26, 'Юрчик-наталья', 'Наталья2', '', '', '', 'Жена и брат Саши из купидиона, каменец-подольского', '', '0.00', '', 0, 0, 0, ''),
 (56, 26, '', 'Аркадий', '438472', '', '', 'Карликовый армян', '', '0.00', '', 0, 0, 0, '438472'),
 (57, 26, 'Луганский', 'Дима', '862117', '', '', 'С него надо бы в дальнейшем давать откат Леше1', '', '0.00', '', 0, 0, 0, '862117'),
-(58, 26, 'Киев (Игоря)', 'Богдан', '110642', '', '', 'старый клиент Игоря', '', '0.00', '', 0, 0, 0, '110642'),
+(58, 26, 'Киев (Игоря)', 'Богданн', '805137', '', '', 'старый клиент Игоря', '', '0.00', '203OOWWZ4v0rT6', 0, 0, 0, '805137'),
 (59, 26, '', 'Саша Полтава', '706154', '', '', '', '', '0.00', '', 0, 0, 0, '706154'),
 (60, 26, '', 'Дима Мельник', '326087', '', '', 'старый клиент Игоря', '', '30000.00', '14Za166Or1va2r', 1, 1, 0, '326087'),
 (61, 26, '', 'Женя Осинский (Игоря)', '303242', '', '', '', '', '0.00', '6vr3eOv6Z2Z234', 0, 0, 0, '303242'),
@@ -87,7 +116,7 @@ INSERT INTO `clients` (`client_id`, `user_id`, `last_name`, `first_name`, `bynam
 (64, 26, '', 'Гена 2 (другой)', '974358', '', '', '', '', '0.00', '', 0, 0, 0, '974358'),
 (65, 26, '', 'Вова белка', '167408', '', '', '', '', '0.00', '', 0, 0, 0, '167408'),
 (66, 26, '', 'Сева Днепр', '800445', '', '', '', '', '0.00', '', 0, 0, 0, '800445'),
-(67, 26, '', 'Юра (раньше с Дено)', '576210', '', '', '', '', '0.00', '', 0, 0, 0, '576210'),
+(67, 26, 'Second', 'Юра (раньше с Дено)', '640287', '', '', '', '', '0.00', '8W4Z5250231ve8', 0, 0, 0, '640287'),
 (68, 26, '', 'Вадим Ровно', '530870', '', '', '', '', '0.00', '', 0, 0, 0, '530870'),
 (69, 26, '', 'Саша север', '136455', '', '', '', '', '0.00', '', 0, 0, 0, '136455'),
 (70, 26, '', 'Дима Анжела (славянск)', '475684', '', '', '', '', '0.00', '', 0, 0, 0, '475684'),
@@ -114,7 +143,8 @@ INSERT INTO `clients` (`client_id`, `user_id`, `last_name`, `first_name`, `bynam
 (91, 26, 'Авив', 'Каменец', '', '', '', '', '', '0.00', '', 0, 0, 0, ''),
 (92, 26, 'Саша', 'Одесса', '', '', '', '', '', '0.00', '', 0, 0, 0, ''),
 (93, 26, 'Люба', 'Левитана', '', '', '', '', '', '0.00', '', 0, 0, 0, ''),
-(94, 26, 'Сергей', 'Днепр', '', '', '', '', '', '0.00', '', 0, 0, 0, '');
+(94, 26, 'Сергей', 'Днепр', '', '', '', '', '', '0.00', '', 0, 0, 0, ''),
+(95, 31, 'sdifisdfisdfas', 'asdfsdfasdfa', '3228', '2134123423', 'r2rr@ksdc.cim', '', 'fdsfefewaf', '100000.00', '1488', 1, 1, 0, '3228');
 
 -- --------------------------------------------------------
 
@@ -345,7 +375,8 @@ CREATE TABLE `fiats` (
 
 INSERT INTO `fiats` (`fiat_id`, `code`, `name`, `full_name`) VALUES
 (1, 983, 'Ггр', 'UAH'),
-(2, 870, 'Руб', 'RUR');
+(2, 870, 'Руб', 'RUR'),
+(3, 311232421, 'IGR', 'IGRVAL');
 
 -- --------------------------------------------------------
 
@@ -361,6 +392,47 @@ CREATE TABLE `income_history` (
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `income_history`
+--
+
+INSERT INTO `income_history` (`income_id`, `sum`, `fiat`, `owner_id`, `date`, `user_id`) VALUES
+(1, '100.00', 3, 3, '2019-09-29 11:44:46', 3),
+(2, '720.00', 3, 29, '2019-09-30 11:06:22', 31);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `last_changes`
+--
+
+CREATE TABLE `last_changes` (
+  `last_change_id` int(11) NOT NULL,
+  `last_change_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_change_user_id` int(11) NOT NULL,
+  `branch_id` int(11) DEFAULT NULL,
+  `client_id` int(11) DEFAULT NULL,
+  `fiat_id` int(11) DEFAULT NULL,
+  `order_id` int(11) DEFAULT NULL,
+  `method_id` int(11) DEFAULT NULL,
+  `outgo_type_id` varchar(200) DEFAULT NULL,
+  `payment_id` int(11) DEFAULT NULL,
+  `project_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `vg_data_id` int(11) DEFAULT NULL,
+  `vg_id` int(11) DEFAULT NULL,
+  `vg_purchase_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `last_changes`
+--
+
+INSERT INTO `last_changes` (`last_change_id`, `last_change_date`, `last_change_user_id`, `branch_id`, `client_id`, `fiat_id`, `order_id`, `method_id`, `outgo_type_id`, `payment_id`, `project_id`, `user_id`, `vg_data_id`, `vg_id`, `vg_purchase_id`) VALUES
+(1, '2019-10-05 18:57:17', 3, NULL, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, '2019-10-05 18:57:37', 3, NULL, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, '2019-10-05 18:57:46', 3, NULL, 55, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -389,6 +461,25 @@ INSERT INTO `methods_of_obtaining` (`method_id`, `method_name`, `participates_in
 (6, 'Карта Игоря', 0, 1, 9),
 (7, 'Карта Малой', 0, 1, 9),
 (8, 'Test', 1, 1, 10);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `methods_processing_reports`
+--
+
+CREATE TABLE `methods_processing_reports` (
+  `methods_processing_report_id` int(11) NOT NULL,
+  `methods_processing_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `method_id` int(11) NOT NULL,
+  `fiat_id` int(11) NOT NULL,
+  `methods_processing_report_fiat_income` decimal(15,2) NOT NULL,
+  `methods_processing_report_fiat_outgo` decimal(15,2) NOT NULL,
+  `methods_processing_report_fiat_diff` decimal(15,2) NOT NULL,
+  `methods_processing_report_debtors_debt` decimal(15,2) NOT NULL COMMENT 'Клиенты(предприятию',
+  `methods_processing_report_rollback_debt` decimal(15,2) NOT NULL COMMENT 'Клиентам',
+  `methods_processing_report_owners_profit_debt` decimal(15,2) NOT NULL COMMENT 'Владельцам'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -836,7 +927,11 @@ INSERT INTO `orders` (`order_id`, `vg_data_id`, `client_id`, `sum_vg`, `real_out
 (451, 19, 76, '1000000', 13.00, '130000.00', 8, '600.00', 1.00, '2019-09-24 19:15:09', 76, 0, '', 1, 'sdf4e6ij5rj5yj'),
 (452, 19, 76, '1000000', 13.00, '130000.00', 8, '600.00', 1.00, '2019-09-24 19:18:42', 76, 0, '', 1, 'sdf4e6ij5rj5yj'),
 (453, 19, 76, '1000000', 12.00, '120000.00', 8, '20000.00', 2.00, '2019-09-24 19:20:23', 76, 0, '', 1, 'sdf4e6ij5rj5yj'),
-(454, 19, 76, '1000000', 17.00, '170000.00', 8, '20000.00', 2.00, '2019-09-24 19:33:22', 78, 0, 'dsfsdasdf', 1, 'sdf4e6ij5rj5yj');
+(454, 19, 76, '1000000', 17.00, '170000.00', 8, '20000.00', 2.00, '2019-09-24 19:33:22', 78, 0, 'dsfsdasdf', 1, 'sdf4e6ij5rj5yj'),
+(455, 18, 95, '100000', 10.00, '10000.00', 8, '0.00', 0.00, '2019-09-28 15:01:33', NULL, 100, 'dsafsdfsd', 1, 'testlogin2.0_-/-23'),
+(456, 19, 76, '10000', 13.00, '1300.00', 8, '0.00', 0.00, '2019-09-28 15:05:10', NULL, 100, 'dsfsdasdf', 1, 'sdf4e6ij5rj5yj'),
+(457, 18, 78, '10000', 10.00, '1000.00', 8, '100.00', 1.00, '2019-10-01 16:21:32', 76, 0, 'sdfsaf', 1, 'testlogin231'),
+(458, 18, 78, '254000', 10.00, '25400.00', 8, '2540.00', 1.00, '2019-10-01 16:22:43', 76, 25400, 'sdfsaf', 1, 'testlogin231');
 
 -- --------------------------------------------------------
 
@@ -854,51 +949,99 @@ CREATE TABLE `outgo` (
   `date` datetime NOT NULL,
   `sum` decimal(11,2) NOT NULL,
   `description` varchar(100) DEFAULT NULL,
-  `project_id` int(11) DEFAULT NULL
+  `project_id` int(11) DEFAULT NULL,
+  `vg_data_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `outgo`
 --
 
-INSERT INTO `outgo` (`outgo_id`, `user_id`, `user_as_owner_id`, `branch_id`, `fiat_id`, `outgo_type_id`, `date`, `sum`, `description`, `project_id`) VALUES
-(1, 26, 28, NULL, 1, '101', '2019-08-02 15:27:50', '1010.00', 'Аванс', 2),
-(2, 26, 28, NULL, 1, NULL, '2019-08-02 15:31:10', '1010.00', '', NULL),
-(3, 26, NULL, 9, 1, NULL, '2019-08-04 18:53:30', '100000.00', 'Яношу', NULL),
-(4, 31, 30, NULL, 1, '1030000', '2019-08-08 13:30:22', '1000.00', '', 4),
-(5, 26, 27, NULL, 1, '101', '2019-08-08 14:50:25', '1500.00', '', NULL),
-(6, 26, NULL, 9, 1, NULL, '2019-08-08 14:51:13', '100000.00', 'Яношу', NULL),
-(7, 26, NULL, 9, 1, '1020000', '2019-08-08 14:58:05', '2000.00', 'Яд', 2),
-(8, 26, 28, NULL, 1, NULL, '2019-08-08 15:29:48', '3000.00', 'Аванс', NULL),
-(9, 26, NULL, 9, 1, '1020000', '2019-08-08 22:46:46', '6000.00', 'Супероматик', NULL),
-(10, 26, NULL, 9, 1, NULL, '2019-08-13 22:14:52', '80000.00', 'Яношу с карты приват банка', NULL),
-(11, 26, NULL, 9, 1, NULL, '2019-08-14 22:14:58', '65000.00', 'Яношу', NULL),
-(12, 26, NULL, 9, 1, NULL, '2019-08-14 22:15:21', '100000.00', 'Яношу', NULL),
-(13, 26, NULL, 9, 1, '1020000', '2019-08-16 16:12:19', '21173.00', 'Гриша', NULL),
-(14, 26, NULL, 9, 1, '10100', '2019-08-17 13:00:37', '4000.00', '', NULL),
-(15, 26, NULL, 9, 1, '10101', '2019-08-17 13:00:56', '6500.00', '', NULL),
-(16, 26, NULL, 9, 1, NULL, '2019-08-17 13:01:23', '29120.00', 'Саше зп', NULL),
-(17, 26, NULL, 9, 1, '1020000', '2019-08-21 15:16:48', '6000.00', 'Супероматик', NULL),
-(18, 26, NULL, 9, 1, NULL, '2019-08-24 09:11:46', '110000.00', 'Яношу', NULL),
-(19, 26, NULL, 9, 1, NULL, '2019-08-28 22:19:54', '100000.00', 'Яношу', NULL),
-(20, 26, NULL, 9, 1, NULL, '2019-08-29 15:52:31', '3000.00', 'Супероматик', NULL),
-(21, 26, NULL, 9, 1, NULL, '2019-09-01 16:52:10', '100000.00', 'Яношу', NULL),
-(22, 26, NULL, 9, 1, NULL, '2019-09-01 16:52:29', '4000.00', 'Аленка зп', NULL),
-(23, 26, NULL, 9, 1, NULL, '2019-09-05 11:42:22', '120000.00', 'Яношу', NULL),
-(24, 26, NULL, 9, 1, NULL, '2019-09-06 19:54:27', '40000.00', 'Симпл', NULL),
-(25, 26, NULL, 9, 1, '10100', '2019-09-09 21:25:20', '4000.00', '', NULL),
-(26, 26, NULL, 9, 1, NULL, '2019-09-09 21:25:55', '130000.00', 'Яношу', NULL),
-(27, 26, NULL, 9, 1, '101', '2019-09-10 12:34:35', '2000.00', 'Аванс Саша', NULL),
-(28, 26, NULL, NULL, 1, NULL, '2019-09-11 12:30:30', '3000.00', 'Супероматик', NULL),
-(29, 26, NULL, 9, 1, '102', '2019-09-19 19:11:55', '7000.00', '', NULL),
-(30, 26, NULL, 9, 1, NULL, '2019-09-20 21:05:12', '3000.00', 'Супероматик', NULL),
-(31, 26, NULL, 9, 1, NULL, '2019-09-21 13:23:08', '6000.00', 'Супероматик', NULL),
-(32, 26, NULL, 9, 1, NULL, '2019-09-21 13:23:31', '20000.00', 'За Саша', NULL),
-(33, 26, NULL, NULL, 1, NULL, '2019-09-21 13:29:03', '6000.00', 'Супероматик', NULL),
-(34, 26, NULL, 9, 1, NULL, '2019-09-23 15:27:58', '200000.00', 'Яношу', NULL),
-(35, 26, NULL, NULL, 1, NULL, '2019-09-23 16:24:20', '3000.00', 'Супероматик', NULL),
-(36, 26, NULL, NULL, 1, NULL, '2019-09-23 18:57:55', '3000.00', 'Супероматик', NULL),
-(37, 26, NULL, 9, 1, NULL, '2019-09-23 19:13:15', '3000.00', 'Супероматик', NULL);
+INSERT INTO `outgo` (`outgo_id`, `user_id`, `user_as_owner_id`, `branch_id`, `fiat_id`, `outgo_type_id`, `date`, `sum`, `description`, `project_id`, `vg_data_id`) VALUES
+(1, 26, 28, NULL, 1, '101', '2019-08-02 15:27:50', '1010.00', 'Аванс', 2, 2),
+(2, 26, 28, NULL, 1, NULL, '2019-08-02 15:31:10', '1010.00', '', NULL, 2),
+(3, 26, NULL, 9, 1, NULL, '2019-08-04 18:53:30', '100000.00', 'Яношу', NULL, 2),
+(4, 31, 30, NULL, 1, '1030000', '2019-08-08 13:30:22', '1000.00', '', 4, 2),
+(5, 26, 27, NULL, 1, '101', '2019-08-08 14:50:25', '1500.00', '', NULL, 2),
+(6, 26, NULL, 9, 1, NULL, '2019-08-08 14:51:13', '100000.00', 'Яношу', NULL, 2),
+(7, 26, NULL, 9, 1, '1020000', '2019-08-08 14:58:05', '2000.00', 'Яд', 2, 2),
+(8, 26, 28, NULL, 1, NULL, '2019-08-08 15:29:48', '3000.00', 'Аванс', NULL, 2),
+(9, 26, NULL, 9, 1, '1020000', '2019-08-08 22:46:46', '6000.00', 'Супероматик', NULL, 2),
+(10, 26, NULL, 9, 1, NULL, '2019-08-13 22:14:52', '80000.00', 'Яношу с карты приват банка', NULL, 2),
+(11, 26, NULL, 9, 1, NULL, '2019-08-14 22:14:58', '65000.00', 'Яношу', NULL, 2),
+(12, 26, NULL, 9, 1, NULL, '2019-08-14 22:15:21', '100000.00', 'Яношу', NULL, 2),
+(13, 26, NULL, 9, 1, '1020000', '2019-08-16 16:12:19', '21173.00', 'Гриша', NULL, 2),
+(14, 26, NULL, 9, 1, '10100', '2019-08-17 13:00:37', '4000.00', '', NULL, 2),
+(15, 26, NULL, 9, 1, '10101', '2019-08-17 13:00:56', '6500.00', '', NULL, 2),
+(16, 26, NULL, 9, 1, NULL, '2019-08-17 13:01:23', '29120.00', 'Саше зп', NULL, 2),
+(17, 26, NULL, 9, 1, '1020000', '2019-08-21 15:16:48', '6000.00', 'Супероматик', NULL, 2),
+(18, 26, NULL, 9, 1, NULL, '2019-08-24 09:11:46', '110000.00', 'Яношу', NULL, 2),
+(19, 26, NULL, 9, 1, NULL, '2019-08-28 22:19:54', '100000.00', 'Яношу', NULL, 2),
+(20, 26, NULL, 9, 1, NULL, '2019-08-29 15:52:31', '3000.00', 'Супероматик', NULL, 2),
+(21, 26, NULL, 9, 1, NULL, '2019-09-01 16:52:10', '100000.00', 'Яношу', NULL, 2),
+(22, 26, NULL, 9, 1, NULL, '2019-09-01 16:52:29', '4000.00', 'Аленка зп', NULL, 2),
+(23, 26, NULL, 9, 1, NULL, '2019-09-05 11:42:22', '120000.00', 'Яношу', NULL, 2),
+(24, 26, NULL, 9, 1, NULL, '2019-09-06 19:54:27', '40000.00', 'Симпл', NULL, 2),
+(25, 26, NULL, 9, 1, '10100', '2019-09-09 21:25:20', '4000.00', '', NULL, 2),
+(26, 26, NULL, 9, 1, NULL, '2019-09-09 21:25:55', '130000.00', 'Яношу', NULL, 2),
+(27, 26, NULL, 9, 1, '101', '2019-09-10 12:34:35', '2000.00', 'Аванс Саша', NULL, 2),
+(28, 26, NULL, NULL, 1, NULL, '2019-09-11 12:30:30', '3000.00', 'Супероматик', NULL, 2),
+(29, 26, NULL, 9, 1, '102', '2019-09-19 19:11:55', '7000.00', '', NULL, 2),
+(30, 26, NULL, 9, 1, NULL, '2019-09-20 21:05:12', '3000.00', 'Супероматик', NULL, 2),
+(31, 26, NULL, 9, 1, NULL, '2019-09-21 13:23:08', '6000.00', 'Супероматик', NULL, 2),
+(32, 26, NULL, 9, 1, NULL, '2019-09-21 13:23:31', '20000.00', 'За Саша', NULL, 2),
+(33, 26, NULL, NULL, 1, NULL, '2019-09-21 13:29:03', '6000.00', 'Супероматик', NULL, 2),
+(34, 26, NULL, 9, 1, NULL, '2019-09-23 15:27:58', '200000.00', 'Яношу', NULL, 2),
+(35, 26, NULL, NULL, 1, NULL, '2019-09-23 16:24:20', '3000.00', 'Супероматик', NULL, 2),
+(36, 26, NULL, NULL, 1, NULL, '2019-09-23 18:57:55', '3000.00', 'Супероматик', NULL, 2),
+(37, 26, NULL, 9, 1, NULL, '2019-09-23 19:13:15', '3000.00', 'Супероматик', NULL, 2),
+(38, 2, NULL, NULL, 1, '0', '2019-09-28 14:10:31', '100.00', NULL, NULL, 2),
+(39, 31, NULL, NULL, 2, '0', '2019-09-28 14:10:42', '500.00', NULL, NULL, 2),
+(40, 31, NULL, NULL, 1, '0', '2019-09-28 14:26:03', '50.00', NULL, NULL, 2),
+(41, 31, NULL, NULL, 1, '0', '2019-09-28 14:27:57', '50.00', NULL, NULL, 2),
+(42, 31, NULL, NULL, 1, '0', '2019-09-28 14:28:01', '50.00', NULL, NULL, 2),
+(43, 31, NULL, NULL, 1, '0', '2019-09-28 14:29:59', '77.77', NULL, NULL, 2),
+(44, 31, NULL, NULL, 2, '0', '2019-09-28 14:30:21', '50.00', NULL, NULL, 2),
+(45, 31, NULL, NULL, 2, '0', '2019-09-28 14:30:58', '50.00', NULL, NULL, 2),
+(46, 31, NULL, 10, 1, NULL, '2019-09-28 15:08:38', '1000.00', 'wefw231231', NULL, 2),
+(47, 3, NULL, NULL, 2, '0', '2019-09-29 14:44:09', '1665.60', NULL, NULL, 2),
+(48, 3, NULL, NULL, 3, '0', '2019-09-29 14:44:26', '5.00', NULL, NULL, 2),
+(49, 3, NULL, NULL, 3, '0', '2019-09-29 14:44:55', '5.00', NULL, NULL, 2),
+(50, 3, NULL, NULL, 3, '0', '2019-09-29 14:45:29', '50.00', NULL, NULL, 2),
+(51, 3, NULL, NULL, 3, '0', '2019-09-29 14:46:00', '25.00', NULL, NULL, 2),
+(52, 3, NULL, NULL, 1, '0', '2019-09-29 15:37:20', '50.00', NULL, NULL, 2),
+(53, 31, NULL, NULL, 2, '0', '2019-09-29 15:45:40', '70.00', NULL, NULL, 2),
+(54, 31, NULL, NULL, 3, '0', '2019-09-29 15:46:02', '21.00', NULL, NULL, 2),
+(55, 31, NULL, NULL, 3, '0', '2019-09-29 15:49:54', '500.00', NULL, NULL, 2),
+(56, 31, NULL, NULL, 3, '0', '2019-09-29 15:50:05', '5.50', NULL, NULL, 2),
+(65, 31, NULL, NULL, 1, '0', '2019-09-30 16:47:03', '50.00', NULL, NULL, 2),
+(66, 31, NULL, NULL, 2, '0', '2019-09-30 18:04:20', '50.00', NULL, NULL, 2),
+(67, 31, NULL, NULL, 3, '0', '2019-09-30 18:20:21', '50.00', NULL, NULL, 2),
+(68, 31, NULL, 10, 1, '0', '2019-09-30 21:30:29', '40.00', NULL, NULL, 2),
+(69, 31, NULL, 10, 2, '0', '2019-09-30 21:31:03', '1615.75', NULL, NULL, 2),
+(72, 31, NULL, 10, 3, '0', '2019-09-30 22:14:44', '5.00', NULL, NULL, 6),
+(73, 31, NULL, 10, 3, '0', '2019-09-30 22:15:44', '500.00', NULL, NULL, 4),
+(86, 31, NULL, 10, 1, '0', '2019-10-01 14:12:47', '70.00', NULL, NULL, 18),
+(87, 31, NULL, 10, 1, '0', '2019-10-01 14:13:19', '500.00', NULL, NULL, 18),
+(88, 31, NULL, 10, 2, '0', '2019-10-01 14:45:50', '50.00', NULL, NULL, 18),
+(89, 31, NULL, 10, 3, '0', '2019-10-01 14:46:09', '303.00', NULL, NULL, 19),
+(90, 31, NULL, 10, 3, '0', '2019-10-01 15:07:14', '100.00', NULL, NULL, 18),
+(91, 31, NULL, 10, 1, '0', '2019-10-01 15:43:54', '50.00', NULL, NULL, 20);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `outgoes_processing_reports`
+--
+
+CREATE TABLE `outgoes_processing_reports` (
+  `outgoes_processing_report_id` int(11) NOT NULL,
+  `outgoes_processing_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `outgo_type_id` varchar(200) NOT NULL,
+  `method_id` int(11) NOT NULL,
+  `fiat_id` int(11) NOT NULL,
+  `outgo_processing_report_sum` decimal(15,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -918,6 +1061,7 @@ CREATE TABLE `outgo_types` (
 --
 
 INSERT INTO `outgo_types` (`outgo_type_id`, `outgo_name`, `branch_id`, `active`) VALUES
+('0', 'Закупка VG', 1, 1),
 ('1', 'root_type', 1, 1),
 ('100', 'test', 1, 0),
 ('101', 'Сотрудники', 9, 1),
@@ -930,7 +1074,8 @@ INSERT INTO `outgo_types` (`outgo_type_id`, `outgo_name`, `branch_id`, `active`)
 ('10201', 'Гриша', 9, 1),
 ('103', 'IT', 10, 1),
 ('10300', 'Computers', 10, 1),
-('1030000', 'PC', 10, 1);
+('1030000', 'PC', 10, 1),
+('104', 'treqweq', 3, 1);
 
 -- --------------------------------------------------------
 
@@ -959,7 +1104,8 @@ INSERT INTO `outgo_types_relative` (`parent_id`, `son_id`) VALUES
 ('102', '10201'),
 ('1', '103'),
 ('103', '10300'),
-('10300', '1030000');
+('10300', '1030000'),
+('1', '104');
 
 -- --------------------------------------------------------
 
@@ -973,58 +1119,69 @@ CREATE TABLE `payments` (
   `sum` decimal(15,2) NOT NULL,
   `client_rollback_id` int(11) DEFAULT NULL,
   `client_debt_id` int(11) DEFAULT NULL,
-  `branch_id` int(11) DEFAULT NULL
+  `branch_id` int(11) DEFAULT NULL,
+  `vg_data_debt_id` int(11) DEFAULT NULL,
+  `method_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `payments`
 --
 
-INSERT INTO `payments` (`payment_id`, `fiat_id`, `sum`, `client_rollback_id`, `client_debt_id`, `branch_id`) VALUES
-(4, 1, '1331667.03', NULL, NULL, 10),
-(5, 1, '12000.00', NULL, 55, NULL),
-(6, 1, '-3500.00', NULL, 77, NULL),
-(7, 1, '1106811.17', NULL, NULL, 9),
-(8, 2, '1011000.00', NULL, 76, NULL),
-(9, 2, '1131563.19', NULL, NULL, 10),
-(10, 1, '0.00', NULL, 75, NULL),
-(11, 1, '0.00', NULL, 66, NULL),
-(12, 1, '0.00', NULL, 68, NULL),
-(13, 1, '1000.00', 68, NULL, NULL),
-(14, 1, '130.00', NULL, 76, NULL),
-(15, 2, '109.00', 76, NULL, NULL),
-(16, 1, '1500.00', NULL, 56, NULL),
-(17, 1, '0.00', 56, NULL, NULL),
-(18, 1, '0.00', NULL, 60, NULL),
-(19, 1, '2500.00', 60, NULL, NULL),
-(20, 1, '0.00', NULL, 59, NULL),
-(21, 1, '0.00', 80, NULL, NULL),
-(22, 1, '0.00', NULL, 81, NULL),
-(23, 1, '7000.00', NULL, 82, NULL),
-(24, 1, '0.00', NULL, 79, NULL),
-(25, 1, '3500.00', NULL, 62, NULL),
-(26, 1, '7500.00', 65, NULL, NULL),
-(27, 1, '0.00', NULL, 57, NULL),
-(28, 1, '0.00', NULL, 69, NULL),
-(29, 1, '0.00', NULL, 64, NULL),
-(30, 1, '0.00', NULL, 73, NULL),
-(31, 1, '0.00', NULL, 70, NULL),
-(32, 1, '0.00', NULL, 83, NULL),
-(33, 1, '0.00', NULL, 74, NULL),
-(34, 1, '0.00', NULL, 63, NULL),
-(35, 1, '0.00', NULL, 61, NULL),
-(36, 1, '0.00', NULL, 71, NULL),
-(37, 1, '0.00', NULL, 67, NULL),
-(38, 1, '0.00', NULL, 84, NULL),
-(39, 1, '0.00', NULL, 78, NULL),
-(40, 1, '0.00', NULL, 87, NULL),
-(41, 2, '800.00', NULL, NULL, 9),
-(42, 1, '0.00', NULL, 90, NULL),
-(43, 1, '0.00', NULL, 88, NULL),
-(44, 1, '0.00', NULL, 92, NULL),
-(45, 2, '100270.00', 78, NULL, NULL),
-(46, 1, '38778.00', 76, NULL, NULL),
-(47, 1, '10000.00', 78, NULL, NULL);
+INSERT INTO `payments` (`payment_id`, `fiat_id`, `sum`, `client_rollback_id`, `client_debt_id`, `branch_id`, `vg_data_debt_id`, `method_id`) VALUES
+(4, 1, '1364416.68', NULL, NULL, 10, NULL, NULL),
+(5, 1, '12000.00', NULL, 55, NULL, NULL, NULL),
+(6, 1, '-3500.00', NULL, 77, NULL, NULL, NULL),
+(7, 1, '1106761.17', NULL, NULL, 9, NULL, NULL),
+(8, 2, '1011000.00', NULL, 76, NULL, NULL, NULL),
+(9, 2, '1128056.14', NULL, NULL, 10, NULL, NULL),
+(10, 1, '0.00', NULL, 75, NULL, NULL, NULL),
+(11, 1, '0.00', NULL, 66, NULL, NULL, NULL),
+(12, 1, '0.00', NULL, 68, NULL, NULL, NULL),
+(13, 1, '1000.00', 68, NULL, NULL, NULL, NULL),
+(14, 1, '230.00', NULL, 76, NULL, NULL, NULL),
+(15, 2, '109.00', 76, NULL, NULL, NULL, NULL),
+(16, 1, '1500.00', NULL, 56, NULL, NULL, NULL),
+(17, 1, '0.00', 56, NULL, NULL, NULL, NULL),
+(18, 1, '0.00', NULL, 60, NULL, NULL, NULL),
+(19, 1, '2500.00', 60, NULL, NULL, NULL, NULL),
+(20, 1, '0.00', NULL, 59, NULL, NULL, NULL),
+(21, 1, '0.00', 80, NULL, NULL, NULL, NULL),
+(22, 1, '0.00', NULL, 81, NULL, NULL, NULL),
+(23, 1, '7000.00', NULL, 82, NULL, NULL, NULL),
+(24, 1, '0.00', NULL, 79, NULL, NULL, NULL),
+(25, 1, '3500.00', NULL, 62, NULL, NULL, NULL),
+(26, 1, '7500.00', 65, NULL, NULL, NULL, NULL),
+(27, 1, '0.00', NULL, 57, NULL, NULL, NULL),
+(28, 1, '0.00', NULL, 69, NULL, NULL, NULL),
+(29, 1, '0.00', NULL, 64, NULL, NULL, NULL),
+(30, 1, '0.00', NULL, 73, NULL, NULL, NULL),
+(31, 1, '0.00', NULL, 70, NULL, NULL, NULL),
+(32, 1, '0.00', NULL, 83, NULL, NULL, NULL),
+(33, 1, '0.00', NULL, 74, NULL, NULL, NULL),
+(34, 1, '0.00', NULL, 63, NULL, NULL, NULL),
+(35, 1, '0.00', NULL, 61, NULL, NULL, NULL),
+(36, 1, '0.00', NULL, 71, NULL, NULL, NULL),
+(37, 1, '0.00', NULL, 67, NULL, NULL, NULL),
+(38, 1, '0.00', NULL, 84, NULL, NULL, NULL),
+(39, 1, '-332700.00', NULL, 78, NULL, NULL, NULL),
+(40, 1, '0.00', NULL, 87, NULL, NULL, NULL),
+(41, 2, '800.00', NULL, NULL, 9, NULL, NULL),
+(42, 1, '0.00', NULL, 90, NULL, NULL, NULL),
+(43, 1, '0.00', NULL, 88, NULL, NULL, NULL),
+(44, 1, '0.00', NULL, 92, NULL, NULL, NULL),
+(45, 2, '100270.00', 78, NULL, NULL, NULL, NULL),
+(46, 1, '41368.00', 76, NULL, NULL, NULL, NULL),
+(47, 1, '10000.00', 78, NULL, NULL, NULL, NULL),
+(48, 1, '100.00', NULL, 95, NULL, NULL, NULL),
+(49, 3, '-1515.00', NULL, NULL, 10, NULL, NULL),
+(50, 3, '1000.70', NULL, NULL, NULL, 19, NULL),
+(51, 1, '2038.00', NULL, NULL, NULL, 19, NULL),
+(52, 1, '500.00', NULL, NULL, NULL, 18, NULL),
+(53, 2, '200.00', NULL, NULL, NULL, 18, NULL),
+(54, 3, '670.00', NULL, NULL, NULL, 18, NULL),
+(55, 2, '0.00', NULL, NULL, NULL, 19, NULL),
+(56, 1, '350.00', NULL, NULL, NULL, 20, NULL);
 
 -- --------------------------------------------------------
 
@@ -1047,6 +1204,18 @@ INSERT INTO `projects` (`project_id`, `project_name`, `branch_id`, `active`) VAL
 (2, 'Юнити суперпроект', 9, 1),
 (3, 'Test', 10, 1),
 (4, 'Test 2', 10, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `report_shares`
+--
+
+CREATE TABLE `report_shares` (
+  `report_share_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `sum_currency` int(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1834,7 +2003,14 @@ INSERT INTO `shares` (`shares_id`, `order_id`, `user_as_owner_id`, `sum`, `share
 (798, 451, 30, '50000.00', '100.00'),
 (799, 452, 30, '50000.00', '100.00'),
 (802, 453, 30, '30000.00', '100.00'),
-(804, 454, 30, '80000.00', '100.00');
+(804, 454, 30, '80000.00', '100.00'),
+(805, 455, 30, '5000.00', '100.00'),
+(806, 456, 30, '360.00', '60.00'),
+(807, 456, 29, '240.00', '40.00'),
+(808, 457, 29, '100.00', '25.00'),
+(809, 457, 30, '300.00', '75.00'),
+(844, 458, 29, '2540.00', '25.00'),
+(845, 458, 30, '7620.00', '75.00');
 
 -- --------------------------------------------------------
 
@@ -1860,12 +2036,12 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `first_name`, `last_name`, `role`, `branch_id`, `pass_hash`, `login`, `active`, `is_owner`, `telegram`) VALUES
-(2, 'Devonic', 'Hammes', 'admin', 3, '$2y$10$2zCpMmzWdYudw5LkeSSq7.ZK26fup.eAU5h3aZk3WyOHZU/J/1EP2', 'admin', 0, 1, NULL),
+(2, 'Devonic', 'Hammes', 'admin', 3, '$2y$10$2zCpMmzWdYudw5LkeSSq7.ZK26fup.eAU5h3aZk3WyOHZU/J/1EP2', 'admin', 1, 1, NULL),
 (3, 'Ivah', 'Braun', 'moder', 10, '$2y$10$2zCpMmzWdYudw5LkeSSq7.ZK26fup.eAU5h3aZk3WyOHZU/J/1EP2', 'moder', 1, 0, NULL),
-(26, 'Диана', 'Диана', 'agent', 9, '$2y$10$7w2HaKnLAgkvkpJaS70JCO00BsCVctIRiTs6hw4n1hcGhjGI1ODzi', 'Diana', 1, 0, '@'),
+(26, 'Диана', 'Диана', 'agent', 9, '$2y$10$7w2HaKnLAgkvkpJaS70JCO00BsCVctIRiTs6hw4n1hcGhjGI1ODzi', 'Diana', 1, 1, '@'),
 (27, 'Саша', 'Саша', 'admin', 9, '$2y$10$sbWsKwGbM2nWj0VgU5u5HO9T9QyBdb6yDlc.C4c3toGlfNAEmu87e', 'Sasha', 1, 1, '@deaxo'),
 (28, 'Игорь', 'Игорь', 'admin', 9, '$2y$10$BHg7EcxqCwK/v.qsfMO9DOeHIR1zinO3S79kJNw9XhELuJRAemzVq', 'Igor1', 1, 1, ''),
-(29, 'Admin', 'New', 'admin', 10, '$2y$10$srg.RSi97f/15X7X7gEuV.5GYAJ64mGGchLpKKggQrlUPECkn0gQO', 'newadm', 1, 0, '@waegwrgew'),
+(29, 'Admin', 'New', 'admin', 10, '$2y$10$srg.RSi97f/15X7X7gEuV.5GYAJ64mGGchLpKKggQrlUPECkn0gQO', 'newadm', 1, 1, '@waegwrgew'),
 (30, 'Agent', 'New', 'agent', 10, '$2y$10$CBZExjdMex5D09XeATju0OEBChBoOcIue2pZIjUB.vj6fCGXq5Awm', 'newagent', 1, 1, '@sdffasdfa'),
 (31, 'Ddffdff', 'Ftgffgg', 'agent', 10, '$2y$10$dDPaS8nO.ztBvGUQniFxcOwjFPakVJWccV0VzldYtqq926EdAz6p2', 'agent', 1, 0, '@jdhdjds'),
 (32, 'Agent', 'Test', 'agent', 9, '$2y$10$soPRetmI0vrNNpQSG6eyE.IlXranG5ZHHk22aDkZgRUGVvo.6R4I6', 'test', 1, 0, '@dsvfsdf');
@@ -1886,33 +2062,57 @@ CREATE TABLE `vg_data` (
   `api_url_regexp` varchar(300) DEFAULT NULL,
   `access_key` varchar(100) DEFAULT NULL,
   `out_percent` decimal(15,2) NOT NULL,
-  `in_percent` decimal(15,2) NOT NULL
+  `in_percent` decimal(15,2) NOT NULL,
+  `vg_data_login` varchar(100) DEFAULT NULL,
+  `vg_data_balance_control` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Дамп данных таблицы `vg_data`
 --
 
-INSERT INTO `vg_data` (`vg_data_id`, `vg_id`, `branch_id`, `vg_amount`, `vg_api_amount`, `name`, `api_url_regexp`, `access_key`, `out_percent`, `in_percent`) VALUES
-(1, 1, 5, 0, 0, 'soma', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=92csra1smk6gnbmlvjcubg2u5eqg3qo&login=%clientlogin%&sum=%sum%', '31231232131', '10.00', '7.00'),
-(2, 2, 5, 0, 0, 'orkwood', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=92csra1smk6gnbmlvjcubg2u5eqg3qo&login=%clientlogin%&sum=%sum%', 'wqewerwerwelkjkj', '12.00', '8.00'),
-(3, 1, 1, 0, 0, 'testvgInye', 'http://xn----7sbbfomhdsismqf5b9o.com.ua/', '3123123', '133.00', '9.00'),
-(4, 1, 1, 0, 0, 'testvgInye2', 'http://xn----7sbbfomhdsismqf5b9o.com.ua/', '3123123', '1.00', '6.00'),
-(5, 2, 3, 0, 0, 'test2vg', '', '', '12.00', '11.00'),
-(6, 4, 9, 0, 0, 'Chcgreen грн 0', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=pdq9uv7b2ujt7tevsgvh079n0me7jqv5&login=%clientlogin%&sum=%sum%', 'joachiqmf21mrrp5ji8aqjns4hbvqg4n00thceqbtl4g26e5g6ieq2vm21ij27nm', '6.00', '5.00'),
-(7, 4, 9, 0, 0, 'chcgreen грн 1', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=cm8jr8ui3bo3aldbme4e4ongeb27478i&login=%clientlogin%&sum=%sum%', 'j2amm63gj6a98bqihmi819o9tdbu9spu15aakchnogv0fd4bmj2jri6boes02ojm', '6.00', '5.00'),
-(8, 5, 9, 0, 0, 'chcblack грн без картинки', '', '', '6.00', '5.00'),
-(9, 5, 9, 0, 0, 'chcblack грн с картинкой', '', '', '6.00', '5.00'),
-(10, 6, 9, 0, 0, 'chcblack + locker', '', '', '8.00', '5.00'),
-(11, 7, 9, 0, 0, 'SimpleGame', '', '', '8.00', '0.00'),
-(12, 8, 9, 0, 0, 'superomatic.biz', '', '', '8.00', '6.00'),
-(13, 9, 9, 0, 0, 'superomatic.win', '', '', '6.00', '0.00'),
-(14, 10, 9, 0, 0, 'global gslots.win', '', '', '7.00', '0.00'),
-(15, 11, 9, 0, 0, 'global globalpay.win', '', '', '7.00', '0.00'),
-(16, 12, 9, 0, 0, 'stargame lotoslots.org', '', '', '7.00', '0.00'),
-(17, 13, 9, 0, 0, 'stargame lotstar', '', '', '7.00', '0.00'),
-(18, 4, 10, 0, 0, 'Champion green', 'http://xn----7sbbfomhdsismqf5b9o.com.ua/', 'ds2fq23412', '10.00', '5.00'),
-(19, 8, 10, 0, 0, 'superomatic.biz2222', 'http://roob.com/', 'sdfaf24qvc', '13.00', '7.00');
+INSERT INTO `vg_data` (`vg_data_id`, `vg_id`, `branch_id`, `vg_amount`, `vg_api_amount`, `name`, `api_url_regexp`, `access_key`, `out_percent`, `in_percent`, `vg_data_login`, `vg_data_balance_control`) VALUES
+(1, 1, 5, 0, 0, 'soma', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=92csra1smk6gnbmlvjcubg2u5eqg3qo&login=%clientlogin%&sum=%sum%', '31231232131', '10.00', '7.00', '', 0),
+(2, 2, 5, 0, 0, 'orkwood', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=92csra1smk6gnbmlvjcubg2u5eqg3qo&login=%clientlogin%&sum=%sum%', 'wqewerwerwelkjkj', '12.00', '8.00', '', 0),
+(3, 1, 1, 0, 0, 'testvgInye', 'http://xn----7sbbfomhdsismqf5b9o.com.ua/', '3123123', '133.00', '9.00', '', 0),
+(4, 1, 1, 0, 0, 'testvgInye2', 'http://xn----7sbbfomhdsismqf5b9o.com.ua/', '3123123', '1.00', '6.00', '', 0),
+(5, 2, 3, 0, 0, 'test2vg', '', '', '12.00', '11.00', '', 0),
+(6, 4, 9, 0, 0, 'Chcgreen грн 0', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=pdq9uv7b2ujt7tevsgvh079n0me7jqv5&login=%clientlogin%&sum=%sum%', 'joachiqmf21mrrp5ji8aqjns4hbvqg4n00thceqbtl4g26e5g6ieq2vm21ij27nm', '6.00', '5.00', '', 0),
+(7, 4, 9, 1000, 0, 'chcgreen грн 1', 'https://chcgreen.net/api/transfer/?tr=%idtransact%&key=cm8jr8ui3bo3aldbme4e4ongeb27478i&login=%clientlogin%&sum=%sum%', 'j2amm63gj6a98bqihmi819o9tdbu9spu15aakchnogv0fd4bmj2jri6boes02ojm', '6.00', '5.00', '', 0),
+(8, 5, 9, 0, 0, 'chcblack грн без картинки', '', '', '6.00', '5.00', '', 0),
+(9, 5, 9, 0, 0, 'chcblack грн с картинкой', '', '', '6.00', '5.00', '', 0),
+(10, 6, 9, 0, 0, 'chcblack + locker', '', '', '8.00', '5.00', '', 0),
+(11, 7, 9, 0, 0, 'SimpleGame', '', '', '8.00', '0.00', '', 0),
+(12, 8, 9, 0, 0, 'superomatic.biz', '', '', '8.00', '6.00', '', 0),
+(13, 9, 9, 0, 0, 'superomatic.win', '', '', '6.00', '0.00', '', 0),
+(14, 10, 9, 0, 0, 'global gslots.win', '', '', '7.00', '0.00', '', 0),
+(15, 11, 9, 0, 0, 'global globalpay.win', '', '', '7.00', '0.00', '', 0),
+(16, 12, 9, 0, 0, 'stargame lotoslots.org', '', '', '7.00', '0.00', '', 0),
+(17, 13, 9, 0, 0, 'stargame lotstar', '', '', '7.00', '0.00', '', 0),
+(18, 4, 10, -229690, 0, 'Champion green', 'http://xn----7sbbfomhdsismqf5b9o.com.ua/', 'ds2fq23412', '10.00', '5.00', '', 0),
+(19, 8, 10, 36080, 0, 'superomatic.biz2222', 'http://roob.com/', 'sdfaf24qvc', '13.00', '7.00', '', 0),
+(20, 13, 10, 10000, 0, 'stargame lotstar2', 'http:/dasdsdasd', '2q3rq32412342', '10.00', '4.00', '', 0),
+(21, 2, 10, 0, 0, 'test2vg', 'http://xn----7sbbfomhdsismqf5b9o.com.ua/', '2123423421', '13.00', '4.00', '', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `vg_processing_reports`
+--
+
+CREATE TABLE `vg_processing_reports` (
+  `vg_processing_report_id` int(11) NOT NULL,
+  `fiat_id` int(11) NOT NULL,
+  `vg_data_id` int(11) NOT NULL,
+  `vg_balance` int(20) NOT NULL,
+  `vg_api_balance` int(20) NOT NULL,
+  `fiat_debt` int(20) NOT NULL,
+  `vg_purchased` int(20) NOT NULL,
+  `vg_sold` int(20) NOT NULL,
+  `vg_sold_in_fiat` int(20) NOT NULL,
+  `vg_callmasters_sum` int(20) NOT NULL,
+  `vg_processing_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1922,12 +2122,63 @@ INSERT INTO `vg_data` (`vg_data_id`, `vg_id`, `branch_id`, `vg_amount`, `vg_api_
 
 CREATE TABLE `vg_purchases` (
   `vg_purchase_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `vg_data_id` int(11) NOT NULL,
   `fiat_id` int(11) NOT NULL,
-  `vg_purchase_sum` int(11) NOT NULL,
-  `vg_purchase_credit` int(11) NOT NULL,
-  `vg_purchase_on_credit` tinyint(1) NOT NULL
+  `vg_purchase_sum` decimal(15,2) NOT NULL,
+  `vg_purchase_sum_currency` decimal(15,2) NOT NULL,
+  `vg_purchase_credit` decimal(15,2) NOT NULL,
+  `vg_purchase_on_credit` tinyint(1) NOT NULL,
+  `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `vg_purchase_unique_key` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `vg_purchases`
+--
+
+INSERT INTO `vg_purchases` (`vg_purchase_id`, `user_id`, `vg_data_id`, `fiat_id`, `vg_purchase_sum`, `vg_purchase_sum_currency`, `vg_purchase_credit`, `vg_purchase_on_credit`, `date`, `vg_purchase_unique_key`) VALUES
+(80, 31, 18, 1, '1000.00', '50.00', '0.00', 0, '2019-09-30 16:47:03', 'f7d9fe85eb6d2044bd242bbffe11619d'),
+(81, 31, 18, 1, '2000.00', '100.00', '2000.00', 1, '2019-09-30 16:47:14', '8df476c1653b0829af5ab4333eefc679'),
+(82, 31, 18, 2, '1000.00', '50.00', '1000.00', 1, '2019-09-30 18:02:01', '17fd91474aac76e2f574dce55993b4d7'),
+(83, 31, 19, 2, '1000.00', '70.00', '1000.00', 1, '2019-09-30 18:02:51', '5e067a50bf537e0014bfb834de8eea73'),
+(84, 31, 18, 2, '1000.00', '50.00', '0.00', 0, '2019-09-30 18:04:20', '7d4797851ab43171cf5c6fec334ee12b'),
+(85, 31, 19, 3, '100.00', '7.00', '100.00', 1, '2019-09-30 18:04:30', '57343b358a5f7de7b6472c94f8c63951'),
+(86, 31, 19, 2, '100.00', '7.00', '100.00', 1, '2019-09-30 18:05:38', '6e50e71c707d8b6b9b4d561a28ad335f'),
+(87, 31, 19, 1, '100.00', '7.00', '100.00', 1, '2019-09-30 18:06:19', '6fcb899bed9c9b27f5246cf022b62e30'),
+(88, 31, 19, 1, '100.00', '7.00', '100.00', 1, '2019-09-30 18:06:38', 'eccfd5cc3847aca6b0bc082c76a57923'),
+(89, 31, 19, 1, '100.00', '7.00', '100.00', 1, '2019-09-30 18:07:01', '9f09e26a6a86501c0ba4ef52b0801a37'),
+(90, 31, 19, 1, '100.00', '7.00', '100.00', 1, '2019-09-30 18:07:24', 'd1a5a1781693063e72187d771c150571'),
+(91, 31, 19, 1, '100.00', '7.00', '100.00', 1, '2019-09-30 18:10:11', '5c2788d83ea0d0f213be42ecd763c128'),
+(92, 31, 19, 1, '100.00', '7.00', '100.00', 1, '2019-09-30 18:10:25', '93f777aad328d4d0635bfc54afe88079'),
+(93, 31, 18, 3, '1000.00', '50.00', '0.00', 0, '2019-09-30 18:20:21', '5d439e4650a3856ce7e7dbb01dd6ca21'),
+(94, 31, 18, 1, '10000.00', '500.00', '10000.00', 1, '2019-09-30 18:21:21', '4cfefd7b27b42f13fd13b8cc826b4cfc'),
+(95, 31, 18, 1, '10000.00', '500.00', '10000.00', 1, '2019-09-30 18:21:44', 'fa6f671332f6c3027236d7c0d2ae5d38'),
+(96, 31, 18, 1, '1000.00', '50.00', '1000.00', 1, '2019-09-30 18:21:54', '0bb5ae7c4d86dee975c2e4b8d89bb5f5'),
+(97, 31, 18, 2, '1000.00', '50.00', '1000.00', 1, '2019-09-30 18:22:07', 'ee470090d8b32276acbb746841c51268'),
+(98, 31, 18, 2, '2000.00', '100.00', '2000.00', 1, '2019-09-30 18:22:24', '838be4bdf0d704b16fdbdeb04ad94001'),
+(99, 31, 18, 2, '32315.00', '1615.75', '0.00', 0, '2019-09-30 21:31:03', 'dc92c8820f76e801ef6eb81fe81e5597'),
+(100, 31, 19, 1, '100.00', '7.00', '100.00', 1, '2019-09-30 22:14:28', 'a3d1ec8459e680a219b9bef0af4c51c6'),
+(101, 31, 18, 3, '100.00', '5.00', '0.00', 0, '2019-09-30 22:14:39', '723f9fb2972d82c2223ee95a7f0c1c78'),
+(102, 31, 18, 3, '100.00', '5.00', '0.00', 0, '2019-09-30 22:14:42', '133f6aacf7f951737ed7709df4b8af0e'),
+(103, 31, 18, 3, '100.00', '5.00', '0.00', 0, '2019-09-30 22:14:44', '6cce5436f910de243ddb1dd0ca8b8ee0'),
+(104, 31, 18, 3, '10000.00', '500.00', '0.00', 0, '2019-09-30 22:15:44', '4fe60e1b67dc195d48948253049cbbcd'),
+(105, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:17:34', '0693180e4417dc688f33843770f85213'),
+(106, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:17:35', '1708b740f96bb9a5456df4c4546f43f3'),
+(107, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:17:37', 'd919f9b6df2ef3f4c611298ba470de24'),
+(108, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:17:38', '32a70eecfe1233d6d57d0bdd8c29dbd6'),
+(109, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:17:45', '74197516251da7ed1449538b0c51d9c0'),
+(110, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:17:51', '0e17f2806b9b22659e727e11097cdb32'),
+(111, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:18:10', '0fb0d9d76d28989e522be4df67bbf906'),
+(112, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:18:25', 'def59708be0e8f29e9042c1f82c400fb'),
+(113, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:18:42', 'ecf360b118a36c353ea194a37cd36094'),
+(114, 31, 19, 3, '1000.00', '70.00', '0.00', 0, '2019-09-30 22:19:47', 'da5ed3985bfbd34c0661055b580ccdac'),
+(115, 31, 18, 3, '300.00', '15.00', '300.00', 1, '2019-09-30 22:21:27', '8090552bad2ff7d7d54b4df943e8fab3'),
+(116, 31, 18, 2, '2000.00', '100.00', '100.00', 1, '2019-10-01 13:37:48', '97dce49c165b1b18c1b88186b144c3e8'),
+(117, 31, 18, 3, '10000.00', '500.00', '500.00', 1, '2019-10-01 13:38:23', 'a5a72480183f3cb1e474c6e2f2e528f5'),
+(118, 31, 19, 1, '30000.00', '2100.00', '2100.00', 1, '2019-10-01 14:09:39', '7535598059ee6e29de24cffcd1a24a57'),
+(119, 31, 18, 2, '1000.00', '50.00', '50.00', 1, '2019-10-01 14:09:58', 'd58c72b5b5710e46060c72e5e9c63135'),
+(120, 31, 20, 1, '10000.00', '400.00', '400.00', 1, '2019-10-01 15:42:44', '05760be256c63fc30622d3583482b7fa');
 
 -- --------------------------------------------------------
 
@@ -2001,11 +2252,38 @@ ALTER TABLE `income_history`
   ADD KEY `owner_id` (`owner_id`) USING BTREE;
 
 --
+-- Индексы таблицы `last_changes`
+--
+ALTER TABLE `last_changes`
+  ADD PRIMARY KEY (`last_change_id`),
+  ADD KEY `last_change_user_id` (`last_change_user_id`),
+  ADD KEY `branch_id` (`branch_id`),
+  ADD KEY `client_id` (`client_id`),
+  ADD KEY `fiat_id` (`fiat_id`),
+  ADD KEY `method_id` (`method_id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `payment_id` (`payment_id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `last_changes_ibfk_9` (`user_id`),
+  ADD KEY `vg_data_id` (`vg_data_id`),
+  ADD KEY `vg_id` (`vg_id`),
+  ADD KEY `vg_purchase_id` (`vg_purchase_id`),
+  ADD KEY `outgo_type_id` (`outgo_type_id`);
+
+--
 -- Индексы таблицы `methods_of_obtaining`
 --
 ALTER TABLE `methods_of_obtaining`
   ADD PRIMARY KEY (`method_id`),
   ADD KEY `branch_id` (`branch_id`);
+
+--
+-- Индексы таблицы `methods_processing_reports`
+--
+ALTER TABLE `methods_processing_reports`
+  ADD PRIMARY KEY (`methods_processing_report_id`),
+  ADD KEY `fiat_id` (`fiat_id`),
+  ADD KEY `method_id` (`method_id`);
 
 --
 -- Индексы таблицы `orders`
@@ -2029,7 +2307,17 @@ ALTER TABLE `outgo`
   ADD KEY `project_id` (`project_id`),
   ADD KEY `outgo_type_id` (`outgo_type_id`),
   ADD KEY `user_id` (`user_id`),
-  ADD KEY `user_as_owner_id` (`user_as_owner_id`);
+  ADD KEY `user_as_owner_id` (`user_as_owner_id`),
+  ADD KEY `vg_data_id` (`vg_data_id`);
+
+--
+-- Индексы таблицы `outgoes_processing_reports`
+--
+ALTER TABLE `outgoes_processing_reports`
+  ADD PRIMARY KEY (`outgoes_processing_report_id`),
+  ADD KEY `fiat_id` (`fiat_id`),
+  ADD KEY `outgo_type_id` (`outgo_type_id`),
+  ADD KEY `method_id` (`method_id`);
 
 --
 -- Индексы таблицы `outgo_types`
@@ -2053,7 +2341,9 @@ ALTER TABLE `payments`
   ADD KEY `client_debt_id` (`client_debt_id`),
   ADD KEY `client_rollback_id` (`client_rollback_id`),
   ADD KEY `branch_id` (`branch_id`),
-  ADD KEY `fiat_id` (`fiat_id`);
+  ADD KEY `fiat_id` (`fiat_id`),
+  ADD KEY `vg_data_id` (`vg_data_debt_id`),
+  ADD KEY `method_id` (`method_id`);
 
 --
 -- Индексы таблицы `projects`
@@ -2061,6 +2351,13 @@ ALTER TABLE `payments`
 ALTER TABLE `projects`
   ADD PRIMARY KEY (`project_id`),
   ADD KEY `branch_id` (`branch_id`);
+
+--
+-- Индексы таблицы `report_shares`
+--
+ALTER TABLE `report_shares`
+  ADD PRIMARY KEY (`report_share_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Индексы таблицы `rollback_paying`
@@ -2098,12 +2395,22 @@ ALTER TABLE `vg_data`
   ADD KEY `branch_id` (`branch_id`);
 
 --
+-- Индексы таблицы `vg_processing_reports`
+--
+ALTER TABLE `vg_processing_reports`
+  ADD PRIMARY KEY (`vg_processing_report_id`),
+  ADD KEY `fiat_id` (`fiat_id`),
+  ADD KEY `vg_data_id` (`vg_data_id`);
+
+--
 -- Индексы таблицы `vg_purchases`
 --
 ALTER TABLE `vg_purchases`
   ADD PRIMARY KEY (`vg_purchase_id`),
+  ADD UNIQUE KEY `vg_purchase_unique_key` (`vg_purchase_unique_key`),
   ADD KEY `vg_purchases_ibfk_1` (`vg_data_id`),
-  ADD KEY `fiat_id` (`fiat_id`);
+  ADD KEY `fiat_id` (`fiat_id`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Индексы таблицы `virtualgood`
@@ -2119,13 +2426,13 @@ ALTER TABLE `virtualgood`
 -- AUTO_INCREMENT для таблицы `branch`
 --
 ALTER TABLE `branch`
-  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT для таблицы `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT для таблицы `debt_history`
@@ -2137,13 +2444,19 @@ ALTER TABLE `debt_history`
 -- AUTO_INCREMENT для таблицы `fiats`
 --
 ALTER TABLE `fiats`
-  MODIFY `fiat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `fiat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `income_history`
 --
 ALTER TABLE `income_history`
-  MODIFY `income_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `income_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT для таблицы `last_changes`
+--
+ALTER TABLE `last_changes`
+  MODIFY `last_change_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `methods_of_obtaining`
@@ -2152,28 +2465,46 @@ ALTER TABLE `methods_of_obtaining`
   MODIFY `method_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT для таблицы `methods_processing_reports`
+--
+ALTER TABLE `methods_processing_reports`
+  MODIFY `methods_processing_report_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT для таблицы `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=455;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=459;
 
 --
 -- AUTO_INCREMENT для таблицы `outgo`
 --
 ALTER TABLE `outgo`
-  MODIFY `outgo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `outgo_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+
+--
+-- AUTO_INCREMENT для таблицы `outgoes_processing_reports`
+--
+ALTER TABLE `outgoes_processing_reports`
+  MODIFY `outgoes_processing_report_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT для таблицы `projects`
 --
 ALTER TABLE `projects`
   MODIFY `project_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT для таблицы `report_shares`
+--
+ALTER TABLE `report_shares`
+  MODIFY `report_share_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `rollback_paying`
@@ -2185,7 +2516,7 @@ ALTER TABLE `rollback_paying`
 -- AUTO_INCREMENT для таблицы `shares`
 --
 ALTER TABLE `shares`
-  MODIFY `shares_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=805;
+  MODIFY `shares_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=846;
 
 --
 -- AUTO_INCREMENT для таблицы `users`
@@ -2197,13 +2528,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `vg_data`
 --
 ALTER TABLE `vg_data`
-  MODIFY `vg_data_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `vg_data_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT для таблицы `vg_processing_reports`
+--
+ALTER TABLE `vg_processing_reports`
+  MODIFY `vg_processing_report_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `vg_purchases`
 --
 ALTER TABLE `vg_purchases`
-  MODIFY `vg_purchase_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `vg_purchase_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=121;
 
 --
 -- AUTO_INCREMENT для таблицы `virtualgood`
@@ -2238,10 +2575,35 @@ ALTER TABLE `income_history`
   ADD CONSTRAINT `income_history_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
+-- Ограничения внешнего ключа таблицы `last_changes`
+--
+ALTER TABLE `last_changes`
+  ADD CONSTRAINT `last_changes_ibfk_1` FOREIGN KEY (`last_change_user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_10` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_11` FOREIGN KEY (`vg_id`) REFERENCES `virtualgood` (`vg_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_12` FOREIGN KEY (`vg_purchase_id`) REFERENCES `vg_purchases` (`vg_purchase_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_13` FOREIGN KEY (`outgo_type_id`) REFERENCES `outgo_types` (`outgo_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_3` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_4` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_5` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_6` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_7` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`payment_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_8` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `last_changes_ibfk_9` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Ограничения внешнего ключа таблицы `methods_of_obtaining`
 --
 ALTER TABLE `methods_of_obtaining`
   ADD CONSTRAINT `methods_of_obtaining_ibfk_1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `methods_processing_reports`
+--
+ALTER TABLE `methods_processing_reports`
+  ADD CONSTRAINT `methods_processing_reports_ibfk_1` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `methods_processing_reports_ibfk_2` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `orders`
@@ -2262,7 +2624,16 @@ ALTER TABLE `outgo`
   ADD CONSTRAINT `outgo_ibfk_3` FOREIGN KEY (`project_id`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `outgo_ibfk_4` FOREIGN KEY (`outgo_type_id`) REFERENCES `outgo_types` (`outgo_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `outgo_ibfk_5` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `outgo_ibfk_6` FOREIGN KEY (`user_as_owner_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `outgo_ibfk_6` FOREIGN KEY (`user_as_owner_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `outgo_ibfk_7` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `outgoes_processing_reports`
+--
+ALTER TABLE `outgoes_processing_reports`
+  ADD CONSTRAINT `outgoes_processing_reports_ibfk_1` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `outgoes_processing_reports_ibfk_2` FOREIGN KEY (`outgo_type_id`) REFERENCES `outgo_types` (`outgo_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `outgoes_processing_reports_ibfk_3` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `outgo_types`
@@ -2284,13 +2655,21 @@ ALTER TABLE `payments`
   ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`client_debt_id`) REFERENCES `clients` (`client_id`),
   ADD CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`client_rollback_id`) REFERENCES `clients` (`client_id`),
   ADD CONSTRAINT `payments_ibfk_3` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`),
-  ADD CONSTRAINT `payments_ibfk_4` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`);
+  ADD CONSTRAINT `payments_ibfk_4` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`),
+  ADD CONSTRAINT `payments_ibfk_5` FOREIGN KEY (`vg_data_debt_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `payments_ibfk_6` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `projects`
 --
 ALTER TABLE `projects`
   ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `report_shares`
+--
+ALTER TABLE `report_shares`
+  ADD CONSTRAINT `report_shares_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Ограничения внешнего ключа таблицы `rollback_paying`
@@ -2321,11 +2700,19 @@ ALTER TABLE `vg_data`
   ADD CONSTRAINT `vg_data_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
 
 --
+-- Ограничения внешнего ключа таблицы `vg_processing_reports`
+--
+ALTER TABLE `vg_processing_reports`
+  ADD CONSTRAINT `vg_processing_reports_ibfk_1` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`),
+  ADD CONSTRAINT `vg_processing_reports_ibfk_2` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`);
+
+--
 -- Ограничения внешнего ключа таблицы `vg_purchases`
 --
 ALTER TABLE `vg_purchases`
   ADD CONSTRAINT `vg_purchases_ibfk_1` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `vg_purchases_ibfk_2` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `vg_purchases_ibfk_2` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `vg_purchases_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

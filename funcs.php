@@ -165,7 +165,7 @@ function chooseAddModal($name, $data, $more_data = NULL)
         case "Fiat":
             return fiatAddModal($data);
         case "VGPaybackDebt":
-            return  vgDebtPaybackEditModal($more_data);
+            return vgDebtPaybackEditModal($more_data);
         case "VGPurchase":
             return vgPurchaseAddModal($more_data);
         case "VGDebt":
@@ -360,6 +360,14 @@ function children_list($node, $types)
     return $next;
 }
 
+function save_change_info($connection, $type, $id)
+{
+    session_start();
+    $user_id = $_SESSION['id'];
+    $field = $type . "_id";
+    $query = "INSERT INTO `last_changes` (`$field`, `last_change_user_id`) VALUES ('$id', '$user_id')";
+    return $connection->query($query);
+}
 
 
 

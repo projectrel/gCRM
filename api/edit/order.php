@@ -101,49 +101,57 @@ if ($user_data && (heCan($user_data['role'], 2))) {
             updateBranchMoney($connection, $branch_id, $order_data['sum_currency'], $fiat);
         }
     }
-
-    if ($order_data['client_id'] != $client_id) {
+    $old_fiat_id = $order_data['fiat_id'];
+    if ($order_data['client_id'] != $client_id || $order_data['order_debt'] != $debt || $old_fiat_id == $fiat) {
+        if (!$connection->
+        query("SELECT * FROM `payments`
+                     WHERE `client_debt_id` = '$client_id' AND `fiat_id` = '$fiat'")) {
+            $connection->
+            query("INSERT INTO `payments` (`client_debt_id`, `fiat_id`,`sum`)
+                          VALUES ('$client_id','$fiat',0)");
+        }
         $old_client = $order_data['client_id'];
         $old_debt = $order_data['order_debt'];
-        if ($order_data['order_debt'] != $debt) {
-            $money = $debt - $old_debt;
-            updateBranchMoney($connection, $branch_id, -$money, $fiat);
+        $update_old_client_debt = $connection->
+        query("UPDATE payments SET `sum` = `sum` - '$old_debt'
+                     WHERE `client_debt_id` = '$old_client' AND `fiat_id` = '$old_fiat_id'");
+        $update_client_debt = $connection->
+        query("UPDATE payments SET `sum` = `sum` + '$debt'
+                     WHERE `client_debt_id` = '$client_id' AND `fiat_id` = '$fiat'");
+        if (!($update_old_client_debt && $update_client_debt)) {
+            error("failed");
+            return false;
         }
-        $update_old_client = $connection->
-        query("UPDATE clients SET `debt` = `debt` - '$old_debt'
-                     WHERE `client_id` = '$old_client'");
-
-        $update_client = $connection->
-        query("UPDATE clients SET `debt` = `debt` + '$debt'
-                     WHERE `client_id` = '$client_id'");
-
-    } else if ($order_data['order_debt'] != $debt) {
-        $new_debt = $debt - $order_data['order_debt'];
-        $update_debt = $connection->
-        query("UPDATE clients SET `debt` = `debt` + '$new_debt'
-                     WHERE `client_id` = $client_id");
-
-        updateBranchMoney($connection, $branch_id, -$new_debt, $fiat);
-
     }
-    if ($order_data['callmaster'] != $callmaster) {
+
+
+    if ($order_data['callmaster'] != $callmaster || $order_data['rollback_sum'] != $callmaster || $old_fiat_id == $fiat) {
+        if (!$connection->
+        query("SELECT * FROM `payments`
+                     WHERE `client_rollback_id` = '$client_id' AND `fiat_id` = '$fiat'")) {
+            $connection->
+            query("INSERT INTO `payments` (`client_rollback_id`, `fiat_id`,`sum`)
+                          VALUES ('$client_id','$fiat',0)");
+        }
         $old_callmaster = $order_data['callmaster'];
         $old_rollback = $order_data['rollback_sum'];
 
         $update_old_callmaster = $connection->
-        query("UPDATE clients SET `rollback_sum` = `rollback_sum` - '$old_rollback'
-                     WHERE `client_id` = '$old_callmaster'");
+        query("UPDATE payments SET `sum` = `sum` - '$old_rollback'
+                     WHERE `client_rollback_id` = '$old_callmaster'  AND `fiat_id` = '$old_fiat_id'");
 
         $update_callmaster = $connection->
-        query("UPDATE clients SET `rollback_sum` = `rollback_sum` + '$rollback_sum'
-                     WHERE `client_id` = '$callmaster'");
+        query("UPDATE payments SET `sum` = `sum` + '$rollback_sum'
+                     WHERE `client_rollback_id` = '$callmaster' AND `fiat_id` = '$fiat'");
 
-    } else if ($order_data['rollback_sum'] != $rollback_sum) {
-        $new_rollback = $order_data['rollback_sum'] > $rollback_sum ? -($order_data['rollback_sum'] - $rollback_sum) : $rollback_sum - $order_data['rollback_sum'];
-        $update_rollback = $connection->
-        query("UPDATE clients SET `rollback_sum` = `rollback_sum` + '$new_rollback'
-                     WHERE `client_id` = $callmaster");
+        if (!($update_old_callmaster && $update_callmaster)) {
+            error("failed");
+            return false;
+        }
+
     }
+
+
     if ($callmaster) {
         $res = $connection->
         query("UPDATE orders SET `vg_data_id` = '$vg_data_id',
