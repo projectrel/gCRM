@@ -13,5 +13,4 @@ if (isset($_POST['fiat']) && isset($_POST['sum']) && isset($_POST['owner'])) {
     echo json_encode(array("status" => "success-replenish"));
     return false;
 }
-error("empty");
-return false;
+return error("empty");

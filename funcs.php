@@ -173,7 +173,7 @@ function chooseAddModal($name, $data, $more_data = NULL)
         case "globalVG":
             return globalVgAddModal();
         case "MethodsOfObtaining":
-            return methodOfObtainingModal();
+            return methodOfObtainingModal($more_data);
         default:
             return null;
     }
@@ -218,17 +218,18 @@ function generateRandomString($length = 40)
     return $randomString;
 }
 
-function updateBranchMoney($connection, $branch_id, $sum, $fiat)
+function updateMethodMoney($connection, $method_id, $sum, $fiat_id)
 {
-    if (count(mysqliToArray($connection->query("SELECT * FROM payments WHERE `fiat_id` = '$fiat' AND `branch_id` = '$branch_id'")))) {
-        $update_branch_money = $connection->
+    if (count(mysqliToArray($connection->query("SELECT * FROM payments WHERE `fiat_id` = '$fiat_id' AND `method_id` = '$method_id'")))) {
+        $update_method_money = $connection->
         query("UPDATE  `payments` 
                                   SET `sum` = `sum` + '$sum'
-                                  WHERE `fiat_id` = '$fiat' AND `branch_id` = '$branch_id' ");
+                                  WHERE `fiat_id` = '$fiat_id' AND `method_id` = '$method_id' ");
     } else {
-        $connection->query("INSERT INTO `payments` 
-                                  (fiat_id, sum, branch_id) VALUES($fiat,  $sum,$branch_id )");
+        $update_method_money = $connection->query("INSERT INTO `payments` 
+                                  (fiat_id, sum, method_id) VALUES($fiat_id,  $sum, $method_id )");
     }
+    return $update_method_money;
 }
 
 function error($errorType, $info = NULL)
@@ -237,6 +238,7 @@ function error($errorType, $info = NULL)
         echo json_encode(array("success" => false, "error" => $errorType, "info" => $info));
     else
         echo json_encode(array("success" => false, "error" => $errorType));
+
     return false;
 }
 

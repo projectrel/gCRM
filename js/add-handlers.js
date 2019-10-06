@@ -766,7 +766,7 @@ $(document).ready(function () {
                     createAlertTable(res.error, "Выплата задолженности по VG");
                     return;
                 }
-               createAlertTable(res.status, "Выплата задолженности по VG");
+                createAlertTable(res.status, "Выплата задолженности по VG");
                 console.log(res);
             },
             error: function () {
@@ -841,12 +841,14 @@ $(document).ready(function () {
     function addMethodOfObtaining() {
         $('.loader').show();
         $(".modal-submit").prop("disabled", true);
-        let method_name = $("#add-method-of-obtaining-form #method-name").val();
+        const method_name = $("#add-method-of-obtaining-form #method-name").val();
+        const fiat_id = $("#add-method-of-obtaining-form #methodFiatField").val();
         $.ajax({
             url: "../api/add/methodOfObtaining.php",
             type: "POST",
             data: {
-                method_name
+                method_name,
+                fiat_id
             },
             dataType: "json",
             cache: false,

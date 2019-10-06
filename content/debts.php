@@ -55,7 +55,8 @@ $options['text'] = 'История погашений долгов';
 $options['btn-text'] = 'Погасить';
 $options['btn'] = 1;
 $options['btn-max'] = 2;
-
+$data['methods'] = $connection->query("
+SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
 $data['fiats'] = $connection -> query('SELECT * FROM fiats');
 $data['clients'] = $connection->query('
 SELECT DISTINCT concat(C.last_name, " ", C.first_name) AS `client_name`, byname AS `login`, P.sum AS `debt`, fiat_id,concat(C.client_id, "-", P.fiat_id) AS `id`

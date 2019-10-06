@@ -13,6 +13,8 @@ session_start();
 //$options['btn-max'] = 2;
 $options['btn-text'] = 'Выплатить';
 
+$branch_id = $_SESSION['branch_id'];
+
 $data['vgs'] = $connection->query("
     SELECT VD.vg_data_id, VD.name FROM vg_data VD 
     INNER JOIN vg_purchases VP ON VD.vg_data_id = VP.vg_data_id 
@@ -21,14 +23,10 @@ $data['vgs'] = $connection->query("
     GROUP BY VD.vg_data_id, VD.name
     HAVING SUM(P.sum) > 0
 ");
-$data['fiats'] = $connection->query("
- SELECT F.fiat_id, F.full_name FROM fiats F 
-    INNER JOIN payments P ON P.fiat_id = F.fiat_id
-    INNER JOIN vg_data VD ON VD.vg_data_id = P.vg_data_debt_id 
-    WHERE  VD.branch_id = " . $_SESSION['branch_id'] . "
-    GROUP BY F.fiat_id, F.full_name
-    HAVING SUM(P.sum) > 0
-");
+
+$data['methods'] = $connection->query("
+SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
+
 echo template(display_data($connection->query('
 SELECT VD.name AS `VG`, P.sum AS `сумма задолженности`, F.full_name AS `валюта`
 FROM vg_data VD 

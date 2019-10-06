@@ -204,6 +204,7 @@ function editMethodOfObtaining() {
     $(".loader").show();
     $(".modal-submit").prop("disabled", true);
     const method_name = $("#method-of-obtaining-edit-form #method-edit-name").val();
+    const fiat_id = $("#method-of-obtaining-edit-form #editMethodFiatField").val();
     const method_id = $('#method-of-obtaining-edit-form .modal-title').attr('method-id')
     $.ajax({
         url: "../api/edit/methodOfObtaining.php",
@@ -212,12 +213,16 @@ function editMethodOfObtaining() {
         data: {
             method_name,
             method_id,
+            fiat_id,
         },
         cache: false,
         success: function (res) {
-            if (res.error) {
-                createAlertTable(res.error, 'Метод оплаты');
-                return;
+            if (res.error && res.info) {
+                createAlertTable(res.error, res.info);
+                return
+            } else if (res.error) {
+                createAlertTable(res.error, "Метод оплаты");
+                return
             }
             createAlertTable(res.status, "Метод оплаты");
         },
@@ -684,6 +689,9 @@ function createAlertTable(alertType, text) {
             break;
         case "connectionError":
             $('.custom-alert .alert-text-box').text('Ошибка сети. Перезагрузите страницу и попробуйте еще раз');
+            break;
+        case "custom":
+            $('.custom-alert .alert-text-box').text(text);
             break;
     }
     setTimeout(function () {

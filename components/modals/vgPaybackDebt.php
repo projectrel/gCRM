@@ -16,17 +16,16 @@ function vgPaybackDebtModal($data)
 
     $output .= '</select>
   </p><p>
-  <select id="fiatDebtField" data-validation="required">
-  <option value="" disabled selected>Выберите валюту</option>';
+  <select id="methodDebtField" data-validation="required">
+  <option value="" disabled selected>Выберите метод оплаты</option>';
 
-    if (isset($data['fiats']))
-        foreach ($data['fiats'] as $key => $var) {
-            $output .= '<option value="' . $var['fiat_id'] . '">' . $var['full_name'] . '</option>';
+    if (isset($data['methods']))
+        foreach ($data['methods'] as $key => $var) {
+            $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
         }
     $output .= '
 </select>
   </p>
-  <p>
   <p>
   <input id="vgSumDebtField" data-validation="required length" data-validation-length="min1" placeholder="Количество" type="number" name="vg">
   </p>
