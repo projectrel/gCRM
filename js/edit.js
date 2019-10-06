@@ -2,7 +2,6 @@ checkUserData();
 $('tr').on('click', (e) => {
     const target = $(e.target);
     const mainParent = target.parent().parent();
-
     switch (target.attr('modal')) {
         case "#Debt-Modal":
             $('[href*="#Debt-Modal"]').first()[0].click();
@@ -55,8 +54,8 @@ $('tr').on('click', (e) => {
         case "Branch-edit":
             fillBranchEditForm(mainParent);
             break;
-            case "Project-edit":
-                fillProjectEditForm(mainParent);
+        case "Project-edit":
+            fillProjectEditForm(mainParent);
             break;
         case "Client-edit":
             fillClientEditForm(mainParent);
@@ -70,8 +69,14 @@ $('tr').on('click', (e) => {
         case "Fiat-edit":
             fillFiatEditForm(mainParent);
             break;
+        case "VGPaybackDebt-edit":
+            fillVGPaybackDebtEditForm(mainParent);
+            break;
         case "globalVG-edit":
             fillGlobalVGlInfo(mainParent);
+            break;
+        case "VGPurchase-edit":
+            fillVGPurchaseEditForm(mainParent);
             break;
         case "info":
             fillAdditionalInfo(mainParent);
@@ -341,6 +346,7 @@ function fillBranchEditForm(target) {
         },
     });
 }
+
 function fillProjectEditForm(target) {
     $('.loader').show();
     let project_id = target.attr('itemid');
@@ -366,6 +372,7 @@ function fillProjectEditForm(target) {
         },
     });
 }
+
 function fillVGEditForm(target) {
     $('.loader').show();
     let vg_id = target.attr('itemid');
@@ -397,37 +404,67 @@ function fillVGEditForm(target) {
     });
 }
 
-function fillOwnerEditForm(target) {
+function fillVGPurchaseEditForm(target) {
     $('.loader').show();
-    let owner_id = target.attr('itemid');
+    let vg_purchase_id = target.attr('itemid');
     $.ajax({
-        url: "../api/select/owner.php",
-        type: "POST",
+        url: "../api/select/vg/getVgPurchase.php",
+        type: "GET",
         dataType: 'JSON',
         data: {
-            owner_id,
+            vg_purchase_id,
         },
         cache: false,
         success: function (res) {
+
             if (res.error) {
-                createAlertTable(res.error, "Данные владельца");
+                createAlertTable(res.error, "Данные закупки");
                 return;
             }
-            $('#edit-vg-form #edit-vg-title').text(`Изменить валюту ${res['name']}`);
-            $('#edit-vg-form #editNameField').attr('owner-id', res['id']);
-            $('#edit-vg-form #editNameField').val(res['name']);
-            $('#edit-vg-form #editOutField').val(res['out']);
-            $('#edit-vg-form #editInField').val(res['in']);
-            $('#edit-vg-form #editUrlField').val(res['url']);
+            $('#edit-vg-purchase-form #edit-vg-purchase-title').text(`Изменить данные закупки № ${res['vg_purchase_id']}`).attr('vg-purchase-id', res['vg_purchase_id']);
+            $('#edit-vg-purchase-form #editVgField').val(res['vg_data_id']);
+            $('#edit-vg-purchase-form #editFiatField').val(res['fiat_id']);
+            $('#edit-vg-purchase-form #editVgSumField').val(res['vg_purchase_sum']);
             $('.loader').fadeOut('fast');
-            $('#Owner-edit-Modal').modal();
-
+            $('#VGPurchase-edit-Modal').modal();
 
         },
         error: function () {
         },
     });
 }
+
+function fillVGPaybackDebtEditForm(target) {
+    $('.loader').show();
+    let outgo_id = target.attr('itemid');
+    $.ajax({
+        url: "../api/select/vg/getVgPaybackDebt.php",
+        type: "GET",
+        dataType: 'JSON',
+        data: {
+            outgo_id,
+        },
+        cache: false,
+        success: function (res) {
+
+            if (res.error) {
+                createAlertTable(res.error, "Данные погашения задолженности");
+                return;
+            }
+            $('#edit-payback-vg-purchase-debt-form #edit-vg-purchase-debt-title').text(`Изменить данные закупки № ${res['outgo_id']}`).attr('vg-payback-debt-id', res['outgo_id']);
+            $('#edit-payback-vg-purchase-debt-form #editVgDebtField').val(res['vg_data_id']);
+            $('#edit-payback-vg-purchase-debt-form #editFiaDebttField').val(res['fiat_id']);
+            $('#edit-payback-vg-purchase-debt-form #editVgSumDebtField').val(res['sum']);
+            $('.loader').fadeOut('fast');
+            $('#VGPaybackDebt-edit-Modal').modal();
+
+        },
+        error: function () {
+            createAlertTable("connectionError", "Данные погашения задолженности");
+        },
+    });
+}
+
 
 function fillGlobalVGlInfo(target) {
     $('.loader').show();
@@ -516,6 +553,7 @@ function fillMethodOfObtainingInfo(target) {
             }
             $('#method-of-obtaining-edit-form .modal-title').text(`Изменить данные метода оплаты ${res['method_name']}`).attr('method-id', res['method_id']);
             $('#method-of-obtaining-edit-form #method-edit-name').val(res['method_name']);
+            $('#method-of-obtaining-edit-form #editMethodFiatField').val(res['fiat_id']);
             $('#MethodsOfObtaining-edit-Modal').modal();
         },
         error: function () {

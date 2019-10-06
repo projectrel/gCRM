@@ -20,7 +20,10 @@ if (isset($_POST['first_name'])) {
     $pay_in_debt = $_POST['pay_in_debt'] === "true" ? 1 : 0;
     session_start();
     $user_id = $_SESSION['id'];
-    if($byname && mysqli_fetch_assoc($connection->query("SELECT * FROM clients WHERE ((login = '$byname' AND login IS NOT NULL) || `password` = '$pass') AND client_id != '$edit_client_id'"))){
+    $check_exists_query = "SELECT * FROM clients 
+                     WHERE ((`login` = '$byname' AND `login` IS NOT NULL) || (`password` = '$pass' AND `password` IS NOT NULL AND `password` != '')) 
+                     AND client_id != '$edit_client_id'";
+    if ($byname && !empty(mysqli_fetch_assoc($connection->query($check_exists_query)))) {
         return error("exists");
     }
     $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));
@@ -42,9 +45,10 @@ if (isset($_POST['first_name'])) {
             `pay_page` = '$pay_page',
             `max_debt` = '$max_debt'
         WHERE `client_id` = '$edit_client_id'");
-        if ($res) {
-            echo json_encode(array("status"=>"edit-success"));
-            return false;
+        if ($res && save_change_info($connection,'client',$edit_client_id)) {
+                echo json_encode(array("status" => "edit-success"));
+                return false;
+
         } else {
             return error("failed");
         }

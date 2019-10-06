@@ -27,7 +27,11 @@ $callmaster = clean($_POST['callmaster']);
 $method_id = clean($_POST['method_id']);
 $fiat = clean($_POST['fiat']);
 $sum_currency = ($sum_vg * $out_percent) / 100;
-$rollback_sum = $sum_vg * $rollback_1 / 100;
+$in_percent = mysqli_fetch_assoc($connection->query("
+            SELECT in_percent
+            FROM vg_data
+            WHERE vg_data_id = '$vg'"))['in_percent'];
+$rollback_sum = (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
 $shares = $_POST['shares'];
 session_start();
 $user_id = $_SESSION['id'];
@@ -45,6 +49,11 @@ if ($user_data && (heCan($user_data['role'], 2))) {
                      WHERE order_id ='$order_id'"));
     $sharesChanged = true;
 
+    if ($order_data['vg_data_id'] != $vg_data_id || $order_data['sum_vg'] != $sum_vg) {
+        if (!updateVgBalance($connection, $order_data, $vg_data_id, $sum_vg)) {
+            error("failed");
+        }
+    }
     if ($sharesChanged) {
         $connection->
         query("DELETE FROM shares
@@ -80,61 +89,69 @@ if ($user_data && (heCan($user_data['role'], 2))) {
     if ((int)$prev_method_participated === (int)$participates_in_balance) {
         if ($order_data['sum_currency'] != $sum_currency) {
             $money = $sum_currency - $order_data['sum_currency'];
-            if((int)$participates_in_balance){
+            if ((int)$participates_in_balance) {
                 updateBranchMoney($connection, $branch_id, $money, $fiat);
             }
 
         }
     } else {
-        if((int)$prev_method_participated === 1){
-            updateBranchMoney($connection, $branch_id, - $order_data['sum_currency'], $fiat);
-        }else{
+        if ((int)$prev_method_participated === 1) {
+            updateBranchMoney($connection, $branch_id, -$order_data['sum_currency'], $fiat);
+        } else {
             updateBranchMoney($connection, $branch_id, $order_data['sum_currency'], $fiat);
         }
     }
-
-    if ($order_data['client_id'] != $client_id) {
+    $old_fiat_id = $order_data['fiat_id'];
+    if ($order_data['client_id'] != $client_id || $order_data['order_debt'] != $debt || $old_fiat_id == $fiat) {
+        if (!$connection->
+        query("SELECT * FROM `payments`
+                     WHERE `client_debt_id` = '$client_id' AND `fiat_id` = '$fiat'")) {
+            $connection->
+            query("INSERT INTO `payments` (`client_debt_id`, `fiat_id`,`sum`)
+                          VALUES ('$client_id','$fiat',0)");
+        }
         $old_client = $order_data['client_id'];
         $old_debt = $order_data['order_debt'];
-        if ($order_data['order_debt'] != $debt) {
-            $money = $debt - $old_debt;
-            updateBranchMoney($connection, $branch_id, -$money, $fiat);
+        $update_old_client_debt = $connection->
+        query("UPDATE payments SET `sum` = `sum` - '$old_debt'
+                     WHERE `client_debt_id` = '$old_client' AND `fiat_id` = '$old_fiat_id'");
+        $update_client_debt = $connection->
+        query("UPDATE payments SET `sum` = `sum` + '$debt'
+                     WHERE `client_debt_id` = '$client_id' AND `fiat_id` = '$fiat'");
+        if (!($update_old_client_debt && $update_client_debt)) {
+            error("failed");
+            return false;
         }
-        $update_old_client = $connection->
-        query("UPDATE clients SET `debt` = `debt` - '$old_debt'
-                     WHERE `client_id` = '$old_client'");
-
-        $update_client = $connection->
-        query("UPDATE clients SET `debt` = `debt` + '$debt'
-                     WHERE `client_id` = '$client_id'");
-
-    } else if ($order_data['order_debt'] != $debt) {
-        $new_debt = $debt - $order_data['order_debt'];
-        $update_debt = $connection->
-        query("UPDATE clients SET `debt` = `debt` + '$new_debt'
-                     WHERE `client_id` = $client_id");
-
-        updateBranchMoney($connection, $branch_id, -$new_debt, $fiat);
-
     }
-    if ($order_data['callmaster'] != $callmaster) {
+
+
+    if ($order_data['callmaster'] != $callmaster || $order_data['rollback_sum'] != $callmaster || $old_fiat_id == $fiat) {
+        if (!$connection->
+        query("SELECT * FROM `payments`
+                     WHERE `client_rollback_id` = '$client_id' AND `fiat_id` = '$fiat'")) {
+            $connection->
+            query("INSERT INTO `payments` (`client_rollback_id`, `fiat_id`,`sum`)
+                          VALUES ('$client_id','$fiat',0)");
+        }
         $old_callmaster = $order_data['callmaster'];
         $old_rollback = $order_data['rollback_sum'];
 
         $update_old_callmaster = $connection->
-        query("UPDATE clients SET `rollback_sum` = `rollback_sum` - '$old_rollback'
-                     WHERE `client_id` = '$old_callmaster'");
+        query("UPDATE payments SET `sum` = `sum` - '$old_rollback'
+                     WHERE `client_rollback_id` = '$old_callmaster'  AND `fiat_id` = '$old_fiat_id'");
 
         $update_callmaster = $connection->
-        query("UPDATE clients SET `rollback_sum` = `rollback_sum` + '$rollback_sum'
-                     WHERE `client_id` = '$callmaster'");
+        query("UPDATE payments SET `sum` = `sum` + '$rollback_sum'
+                     WHERE `client_rollback_id` = '$callmaster' AND `fiat_id` = '$fiat'");
 
-    } else if ($order_data['rollback_sum'] != $rollback_sum) {
-        $new_rollback = $order_data['rollback_sum'] > $rollback_sum ? -($order_data['rollback_sum'] - $rollback_sum) : $rollback_sum - $order_data['rollback_sum'];
-        $update_rollback = $connection->
-        query("UPDATE clients SET `rollback_sum` = `rollback_sum` + '$new_rollback'
-                     WHERE `client_id` = $callmaster");
+        if (!($update_old_callmaster && $update_callmaster)) {
+            error("failed");
+            return false;
+        }
+
     }
+
+
     if ($callmaster) {
         $res = $connection->
         query("UPDATE orders SET `vg_data_id` = '$vg_data_id',
@@ -166,6 +183,16 @@ if ($user_data && (heCan($user_data['role'], 2))) {
     error("denied");
     return false;
 
+}
+
+function updateVgBalance($connection, $old_order_data, $vg_data_id, $sum_vg)
+{
+    $old_vg_sum = $old_order_data['sum_vg'];
+    $old_vg_data_id = $old_order_data['vg_data_id'];
+    return $connection->
+        query("UPDATE vg_data SET `vg_amount` = `vg_amount` + '$old_vg_sum' WHERE `vg_data_id` = $old_vg_data_id") &&
+        $connection->
+        query("UPDATE vg_data SET `vg_amount` = `vg_amount` - '$sum_vg' WHERE `vg_data_id` = $vg_data_id");
 }
 
 

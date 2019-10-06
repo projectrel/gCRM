@@ -1,8 +1,9 @@
 <?php
 include_once("../../funcs.php");
-if (isset($_POST['method_name'])) {
+if (isset($_POST['method_name'], $_POST['fiat_id'])) {
     include_once("../../db.php");
     $method_name = clean($_POST['method_name']);
+    $fiat_id = clean($_POST['fiat_id']);
 
     session_start();
     $user_id = $_SESSION['user_id'];
@@ -15,10 +16,12 @@ if (isset($_POST['method_name'])) {
         return false;
     }
     if (heCan($user_data['role'], 1)) {
-        $res = $connection->
+        $res1 = $connection->
         query("
                 INSERT INTO methods_of_obtaining (`method_name`, `branch_id`) VALUES('$method_name', '$branch_id') ");
-        if ($res) {
+        $method_id = mysqli_fetch_assoc($connection->query("SELECT * FROM methods_of_obtaining WHERE method_name='$method_name' AND branch_id='$branch_id'"))['method_id'];
+        $res2 = $connection->query("INSERT INTO `payments`(`fiat_id`, `method_id`) VALUES ('$fiat_id','$method_id')");
+        if ($res1 && $res2) {
             echo json_encode(array("status" => "success"));
             return false;
         } else {

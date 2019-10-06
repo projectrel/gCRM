@@ -1,4 +1,33 @@
 $(document).ready(function () {
+    const vgFiatDebt = $('#payback-vg-debt-form #vgDebtField, #payback-vg-debt-form #fiatDebtField');
+    vgFiatDebt.change(function () {
+        const vg_id = $('#payback-vg-debt-form #vgDebtField').val();
+        const fiat_id = $('#payback-vg-debt-form #fiatDebtField').val();
+        if (!vg_id || !fiat_id) {
+            return;
+        }
+        $('.loader').show();
+        $.get('../api/select/vg/getVgDebt.php', {vg_id, fiat_id}, () => {
+        }, "json")
+            .error(function () {
+                $('.loader').fadeOut('fast');
+                createAlertTable("connectionError", "Запрос");
+            })
+            .success(function (res) {
+                if (res.error) {
+                    createAlertTable(res.error, 'Запрос на получение данных');
+                    return;
+                }
+                $('#payback-vg-debt-form #vgSumDebtField').val(res['sum']);
+                if (res['sum'] <= 0) {
+                    $('#payback-vg-debt-form .modal-submit').prop('disabled', true);
+                } else {
+                    $('#payback-vg-debt-form .modal-submit').prop('disabled', false);
+                }
+
+                $('.loader').fadeOut('fast');
+            })
+    })
     $('#add-order-form #obtainingField').change((e) => {
         if ($('#add-order-form #obtainingField').children('option:selected').val() == 'add-new-method-of-obtaining') {
             $('#add-order-form #obtainingField').parent().fadeOut(500);
@@ -21,7 +50,7 @@ $(document).ready(function () {
     });
 
     function copyToClipboard(element) {
-        var $temp = $("<input>");
+        let $temp = $("<input>");
         $("body").append($temp);
         $temp.val($(element).text()).select();
         document.execCommand("copy");
@@ -329,8 +358,8 @@ $(document).ready(function () {
                 data: {start: start.format('YYYY-MM-DD'), end: end.format('YYYY-MM-DD')},
                 cache: false,
                 success: function (res) {
-					if(!res || res == null) return;
-					
+                    if (!res || res == null) return;
+
                     res = JSON.parse(res);
                     if (res.error) {
                         createAlertTable(res.error, "Данные владельцев");

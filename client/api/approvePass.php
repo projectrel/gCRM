@@ -17,13 +17,14 @@ $vgs = mysqliToArray($connection->query("
     FROM vg_data D
     INNER JOIN virtualgood V ON V.vg_id = D.vg_id
     WHERE D.vg_id IN (
-        SELECT vg_id FROM orders WHERE client_id = '$client_id'
+        SELECT vg_id FROM vg_data WHERE vg_data_id IN( 
+           SELECT vg_data_id FROM orders WHERE  client_id = '$client_id')
     )
 "));
-
 foreach ($vgs as $vg) {
     $vg_id = $vg['vg_id'];
-    $vg['out_percent'] = mysqli_fetch_assoc($connection->query("SELECT * FROM orders WHERE client_id = '$client_id' AND vg_id = '$vg_id'"))['real_out_percent'];
+    $vg['out_percent'] = mysqli_fetch_assoc($connection->query("SELECT * FROM orders WHERE client_id = '$client_id' AND vg_data_id IN(
+                                                                             SELECT vg_data_id FROM vg_data WHERE vg_id = '$vg_id')"))['real_out_percent'];
     array_push($nvgs, $vg);
 }
 

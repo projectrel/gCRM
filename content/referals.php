@@ -61,6 +61,10 @@ WHERE  P.sum > 0 AND user_id IN(SELECT user_id FROM users WHERE branch_id="'.$br
         exit();
         break;
 }
+
+$data['methods'] = $connection->query("
+SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
+
 $options['type'] = 'Rollback';
 $options['text'] = "История выплат рефералов";
 $options['btn'] = 1;

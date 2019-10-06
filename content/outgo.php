@@ -76,6 +76,9 @@ $data['projects'] = $connection->query('
 WHERE branch_id = "'.$branch_id.'" AND `active`=1
 ');
 
+$data['methods'] = $connection->query("
+SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
+
 
 $options['type'] = 'Outgo';
 $options['text'] = 'История расходов';

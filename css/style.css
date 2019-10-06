@@ -203,9 +203,11 @@ h2 {
     overflow-y: auto;
     margin-bottom: 15px;
 }
-#wrapper > h3{
+
+#wrapper > h3 {
     margin-bottom: 30px;
 }
+
 #menu-burger {
     width: 50px;
     height: 100%;
@@ -293,7 +295,6 @@ ol, ul {
 }
 
 
-
 img {
     border: 0;
     max-width: 100%;
@@ -317,10 +318,12 @@ h1 {
     max-width: 100vw;
     margin: 0 auto;
 }
+
 .table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+
 .table-menu {
     display: flex;
     justify-content: space-between;
@@ -394,19 +397,23 @@ h1 {
 .table-container tbody tr td.lalign {
     text-align: left;
 }
-.genid, .genpass{
+
+.genid, .genpass {
     position: absolute;
     background: transparent;
     font-weight: bold;
     right: 8px;
     top: 22px;
 }
-.modal-inputs p{
+
+.modal-inputs p {
     position: relative;
 }
-.modal-inputs span{
+
+.modal-inputs span {
     display: inline;
 }
+
 #menu {
     position: fixed;
     z-index: 3;
@@ -418,9 +425,11 @@ h1 {
     -moz-transition: width 1s;
     height: calc(100vh - 50px);
 }
-#menu ul a{
+
+#menu ul a {
     padding: 8px 20px !important;
 }
+
 .table-container tbody .clicked {
     background-color: #888 !important;
     color: #fff;
@@ -430,7 +439,7 @@ h1 {
     white-space: normal !important;
 }
 
-#menu ul {
+#menu .outer-list {
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -443,7 +452,7 @@ h1 {
 }
 
 @media (min-width: 512px) {
-    #menu ul li:last-child {
+    #menu ul #exit {
         position: absolute;
         bottom: 0;
     }
@@ -481,13 +490,18 @@ h1 {
     background: #555;
 }
 
-#menu li:hover {
+#menu li a:hover {
     font-weight: bold;
 }
 
 a[disabled] {
     pointer-events: none;
     cursor: default;
+}
+
+input[disabled] {
+    cursor: not-allowed;
+    background-color: red;
 }
 
 .account-name-menu-btn-box {
@@ -532,13 +546,15 @@ a[disabled] {
     border-radius: 50%;
     z-index: 1000;
 }
-#copy-btn{
+
+#copy-btn {
     background: black;
     color: white;
     padding: 5px 15px;
     border-radius: 5px;
     margin-top: 10px;
 }
+
 .reportrange {
     background: #fff;
     cursor: pointer;
@@ -967,4 +983,21 @@ a[disabled] {
     cursor: pointer;
     font-weight: 600;
     color: #5491F5;
+}
+
+nav.vertical a {
+    display: block;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: 0.2s;
+}
+
+.submenu .info-submenu {
+    margin-top: -30px;
+    position: static;
+}
+
+.submenu {
+    display: block;
+    background-color: #272a2d;
 }

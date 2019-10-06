@@ -164,10 +164,16 @@ function chooseAddModal($name, $data, $more_data = NULL)
             return branchAddModal($data);
         case "Fiat":
             return fiatAddModal($data);
+        case "VGPaybackDebt":
+            return vgDebtPaybackEditModal($more_data);
+        case "VGPurchase":
+            return vgPurchaseAddModal($more_data);
+        case "VGDebt":
+            return vgPaybackDebtModal($more_data);
         case "globalVG":
             return globalVgAddModal();
         case "MethodsOfObtaining":
-            return methodOfObtainingModal();
+            return methodOfObtainingModal($more_data);
         default:
             return null;
     }
@@ -212,22 +218,27 @@ function generateRandomString($length = 40)
     return $randomString;
 }
 
-function updateBranchMoney($connection, $branch_id, $sum, $fiat)
+function updateMethodMoney($connection, $method_id, $sum, $fiat_id)
 {
-    if (count(mysqliToArray($connection->query("SELECT * FROM payments WHERE `fiat_id` = '$fiat' AND `branch_id` = '$branch_id'")))) {
-        $update_branch_money = $connection->
+    if (count(mysqliToArray($connection->query("SELECT * FROM payments WHERE `fiat_id` = '$fiat_id' AND `method_id` = '$method_id'")))) {
+        $update_method_money = $connection->
         query("UPDATE  `payments` 
                                   SET `sum` = `sum` + '$sum'
-                                  WHERE `fiat_id` = '$fiat' AND `branch_id` = '$branch_id' ");
+                                  WHERE `fiat_id` = '$fiat_id' AND `method_id` = '$method_id' ");
     } else {
-        $connection->query("INSERT INTO `payments` 
-                                  (fiat_id, sum, branch_id) VALUES($fiat,  $sum,$branch_id )");
+        $update_method_money = $connection->query("INSERT INTO `payments` 
+                                  (fiat_id, sum, method_id) VALUES($fiat_id,  $sum, $method_id )");
     }
+    return $update_method_money;
 }
 
-function error($errorType)
+function error($errorType, $info = NULL)
 {
-    echo json_encode(array("success" => false, "error" => $errorType));
+    if ($info)
+        echo json_encode(array("success" => false, "error" => $errorType, "info" => $info));
+    else
+        echo json_encode(array("success" => false, "error" => $errorType));
+
     return false;
 }
 
@@ -261,7 +272,9 @@ function display_tree_table()
 
 function getOutGoTypes($connection)
 {
-    //  OR outgo_type_id = 1  |this we need coz we should take root type every time
+    include_once $_SERVER['DOCUMENT_ROOT'] . "/config.php";
+    $root_type = ROOT_TYPE;
+    $vg_purchase_type = VG_PURCHASE_TYPE;
     session_start();
     $branch_id = $_SESSION['branch_id'];
     switch (accessLevel()) {
@@ -273,10 +286,10 @@ function getOutGoTypes($connection)
             break;
         case 1:
         case 2:
-        $res = mysqliToArray($connection->query("SELECT outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`
+            $res = mysqliToArray($connection->query("SELECT outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`
                 FROM `outgo_types` OT
                 LEFT OUTER JOIN `outgo_types_relative` OTR ON OT.outgo_type_id = OTR.parent_id
-                WHERE branch_id =$branch_id OR outgo_type_id = '1'
+                WHERE branch_id =$branch_id OR outgo_type_id = '$root_type' OR outgo_type_id = '$vg_purchase_type'
                 GROUP BY outgo_type_id, outgo_name"));
             break;
     }
@@ -349,6 +362,14 @@ function children_list($node, $types)
     return $next;
 }
 
+function save_change_info($connection, $type, $id)
+{
+    session_start();
+    $user_id = $_SESSION['id'];
+    $field = $type . "_id";
+    $query = "INSERT INTO `last_changes` (`$field`, `last_change_user_id`) VALUES ('$id', '$user_id')";
+    return $connection->query($query);
+}
 
 
 

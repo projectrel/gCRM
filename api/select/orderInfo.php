@@ -16,7 +16,6 @@ if (isset($_POST['order_id'])) {
         echo json_encode($order_data);
         return false;
     } else {
-        error("failed");
-        return false;
+        return error("failed");
     }
 }

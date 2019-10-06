@@ -204,6 +204,7 @@ function editMethodOfObtaining() {
     $(".loader").show();
     $(".modal-submit").prop("disabled", true);
     const method_name = $("#method-of-obtaining-edit-form #method-edit-name").val();
+    const fiat_id = $("#method-of-obtaining-edit-form #editMethodFiatField").val();
     const method_id = $('#method-of-obtaining-edit-form .modal-title').attr('method-id')
     $.ajax({
         url: "../api/edit/methodOfObtaining.php",
@@ -212,12 +213,16 @@ function editMethodOfObtaining() {
         data: {
             method_name,
             method_id,
+            fiat_id,
         },
         cache: false,
         success: function (res) {
-            if (res.error) {
-                createAlertTable(res.error, 'Метод оплаты');
-                return;
+            if (res.error && res.info) {
+                createAlertTable(res.error, res.info);
+                return
+            } else if (res.error) {
+                createAlertTable(res.error, "Метод оплаты");
+                return
             }
             createAlertTable(res.status, "Метод оплаты");
         },
@@ -346,6 +351,104 @@ function editVG() {
         },
         error: function () {
             createAlertTable("connectionError", "VG");
+        },
+        complete: function () {
+            setTimeout(function () {
+                $(".modal-submit").prop("disabled", false);
+                $(".loader").fadeOut("slow");
+            }, 100);
+        }
+    });
+}
+
+
+//VG Purchase
+$.validate({
+    form: '#edit-vg-purchase-form',
+    modules: '',
+    lang: 'ru',
+    onSuccess: function () {
+        editVGPurchase();
+        return false;
+    }
+});
+
+function editVGPurchase() {
+    $(".loader").show();
+    $(".modal-submit").prop("disabled", true);
+    let vg_id = $("#edit-vg-purchase-form #editVgField").val();
+    let fiat_id = $("#edit-vg-purchase-form #editFiatField").val();
+    let vg_sum = $("#edit-vg-purchase-form #editVgSumField").val();
+    let vg_purchase_id = $("#edit-vg-purchase-form #edit-vg-purchase-title").attr('vg-purchase-id');
+    $.ajax({
+        url: "../api/edit/vgPurchase.php",
+        type: "POST",
+        data: {
+            vg_id,
+            fiat_id,
+            vg_sum,
+            vg_purchase_id,
+        },
+        dataType: "JSON",
+        cache: false,
+        success: function (res) {
+            if (res.error) {
+                createAlertTable(res.error, 'Закупка VG');
+                return;
+            }
+            createAlertTable(res.status, "Закупка VG");
+        },
+        error: function () {
+            createAlertTable("connectionError", "Закупка VG");
+        },
+        complete: function () {
+            setTimeout(function () {
+                $(".modal-submit").prop("disabled", false);
+                $(".loader").fadeOut("slow");
+            }, 100);
+        }
+    });
+}
+
+
+//VG Purchase debt payback
+$.validate({
+    form: '#edit-payback-vg-purchase-debt-form',
+    modules: '',
+    lang: 'ru',
+    onSuccess: function () {
+        editVGDebtPayback();
+        return false;
+    }
+});
+
+function editVGDebtPayback() {
+    $(".loader").show();
+    $(".modal-submit").prop("disabled", true);
+    const vg_id = $("#edit-payback-vg-purchase-debt-form #editVgDebtField").val();
+    const fiat_id = $("#edit-payback-vg-purchase-debt-form #editFiaDebttField").val();
+    const debt_sum = $("#edit-payback-vg-purchase-debt-form #editVgSumDebtField").val()
+    const outgo_id = $("#edit-payback-vg-purchase-debt-form #edit-vg-purchase-debt-title").attr('vg-payback-debt-id');
+    $.ajax({
+        url: "../api/edit/vgPaybackDebt.php",
+        type: "POST",
+        data: {
+            vg_id,
+            fiat_id,
+            debt_sum,
+            outgo_id,
+        },
+        dataType: "JSON",
+        cache: false,
+        success: function (res) {
+            if (res.error) {
+                createAlertTable(res.error, 'Оплата VG');
+                return;
+            }
+            createAlertTable(res.status, "Оплата VG");
+        },
+        error: function () {
+            createAlertTable("connectionError", "Закупка VG");
         },
         complete: function () {
             setTimeout(function () {
@@ -586,6 +689,9 @@ function createAlertTable(alertType, text) {
             break;
         case "connectionError":
             $('.custom-alert .alert-text-box').text('Ошибка сети. Перезагрузите страницу и попробуйте еще раз');
+            break;
+        case "custom":
+            $('.custom-alert .alert-text-box').text(text);
             break;
     }
     setTimeout(function () {

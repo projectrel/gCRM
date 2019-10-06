@@ -17,9 +17,12 @@ $callmaster = $_POST['callmaster'];
 $description = $_POST['descr'];
 $out_percent = clean($_POST['out']);
 $method_id = $_POST['method_id'];
-
 $sum_currency = ($sum_vg * $out_percent) / 100;
-$rollback_sum = $sum_vg * $rollback_1 / 100;
+$in_percent = mysqli_fetch_assoc($connection->query("
+            SELECT in_percent
+            FROM vg_data
+            WHERE vg_data_id = '$vg'"))['in_percent'];
+$rollback_sum = (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
 
 $shares = is_array($_POST['shares']) ? $_POST['shares'] : json_decode($_POST['shares'], true);
 
@@ -42,25 +45,27 @@ $user_data = mysqli_fetch_assoc($connection->query("
 if (!heCan($user_data['role'], 1)) {
     return error("denied");
 }
-$vg_id = mysqli_fetch_assoc($connection->query("
-            SELECT vg_id
-            FROM vg_data
-            WHERE vg_data_id = '$vg'"))['vg_id'];
 if ($callmaster) {
     $query="INSERT INTO `orders`
-        (`vg_id`, `vg_data_id`, `client_id`, `sum_vg`, `real_out_percent`, `sum_currency`, `method_id`, `rollback_sum`, `rollback_1`, `date`, `callmaster`, `order_debt`, `description`, `fiat_id`, `loginByVg`)
+        (`vg_data_id`, `client_id`, `sum_vg`, `real_out_percent`, `sum_currency`, `method_id`, `rollback_sum`, `rollback_1`, `date`, `callmaster`, `order_debt`, `description`, `fiat_id`, `loginByVg`)
         VALUES
-        ('$vg_id ','$vg', '$client', '$sum_vg', '$out_percent', '$sum_currency','$method_id', '$rollback_sum', '$rollback_1', '$date', '$callmaster', '$debt', '$description', '$fiat', '$login_by_vg') ";
+        ('$vg', '$client', '$sum_vg', '$out_percent', '$sum_currency','$method_id', '$rollback_sum', '$rollback_1', '$date', '$callmaster', '$debt', '$description', '$fiat', '$login_by_vg') ";
 } else {
     $query="INSERT INTO `orders`
-        (`vg_id`, `vg_data_id`, `client_id`, `sum_vg`, `real_out_percent`, `sum_currency`, `method_id`, `rollback_sum`, `rollback_1`, `date`, `order_debt`, `description`, `fiat_id`, `loginByVg`)
+        (`vg_data_id`, `client_id`, `sum_vg`, `real_out_percent`, `sum_currency`, `method_id`, `rollback_sum`, `rollback_1`, `date`, `order_debt`, `description`, `fiat_id`, `loginByVg`)
         VALUES
-        ('$vg_id ', '$vg', '$client', '$sum_vg', '$out_percent', '$sum_currency','$method_id', '$rollback_sum', '$rollback_1', '$date', '$debt', '$description', '$fiat', '$login_by_vg') ";
+        ('$vg', '$client', '$sum_vg', '$out_percent', '$sum_currency','$method_id', '$rollback_sum', '$rollback_1', '$date', '$debt', '$description', '$fiat', '$login_by_vg') ";
 		}
 
+$update_vg_balance = ($connection->query("
+        UPDATE vg_data SET `vg_amount` = `vg_amount` - '$sum_vg' WHERE `vg_data_id` = '$vg'"));
+if(!$update_vg_balance){
+    error("failed");
+}
 
 $add_order = $connection->
 query($query);
+
 if ($add_order) {
     $in_percent = mysqli_fetch_assoc($connection->query("
             SELECT in_percent

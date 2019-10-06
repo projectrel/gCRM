@@ -35,5 +35,5 @@ if (isset($_POST['number']) && isset($_POST['id'])) {
         return error("denied");
     }
 } else {
-    return error("failed");
+    return error("empty");
 }

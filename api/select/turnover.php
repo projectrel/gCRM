@@ -4,7 +4,8 @@ if (!isAuthorized()) header("Location: ./login.php");
 include_once '../../db.php';
 session_start();
 $branch_id = $_SESSION['branch_id'];
-
+include_once $_SERVER['DOCUMENT_ROOT'] . "/config.php";
+$vg_purchase_type = VG_PURCHASE_TYPE;
 
 // ---------------------TYPE 4-------------------
 
@@ -16,7 +17,13 @@ $options['prepared'] = true;
 FROM outgo O
 INNER JOIN fiats F ON F.fiat_id = O.fiat_id
 LEFT JOIN users UU ON O.user_as_owner_id = UU.user_id   
-WHERE O.user_id IN (SELECT user_id FROM users WHERE branch_id=$branch_id)
+WHERE O.user_id IN (SELECT user_id FROM users WHERE branch_id=$branch_id) AND outgo_type_id != '$vg_purchase_type'
+UNION
+SELECT 'закупка VG' AS `тип`, O.sum, O.date, F.full_name AS `валюта`, IFNULL(concat(UU.first_name, ' ', UU.last_name), '-') AS 'владелец', '-' AS 'клиент'
+FROM outgo O
+INNER JOIN fiats F ON F.fiat_id = O.fiat_id
+LEFT JOIN users UU ON O.user_as_owner_id = UU.user_id   
+WHERE O.user_id IN (SELECT user_id FROM users WHERE branch_id=$branch_id) AND outgo_type_id ='$vg_purchase_type'
 UNION
 SELECT 'выплата отката', R.rollback_sum, R.date, F.full_name, '-' AS 'владелец', concat(CC.first_name, ' ', CC.last_name) AS 'клиент'
 FROM rollback_paying R
@@ -36,6 +43,7 @@ INNER JOIN fiats F ON F.fiat_id = ORD.fiat_id
 INNER JOIN clients CCC ON CCC.client_id = ORD.client_id
 WHERE ORD.client_id IN (SELECT client_id FROM clients WHERE user_id IN(SELECT user_id FROM users WHERE branch_id=$branch_id))
 UNION
+
 SELECT 'погашение долга', D.debt_sum, D.date, F.full_name, '-' AS 'владелец', concat(CCCC.last_name, ' ', CCCC.first_name) AS 'клиент'
 FROM debt_history D
 INNER JOIN fiats F ON F.fiat_id = D.fiat_id
