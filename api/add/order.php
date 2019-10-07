@@ -92,7 +92,7 @@ if ($add_order) {
 
     if ($debt > 0) addDebt($connection, $client, $fiat, $debt);
     if ($rollback_sum > 0) addRollback($connection, $fiat, $callmaster, $rollback_sum);
-    if ($money_to_add > 0 && $participating_in_balance) updateBranchMoney($connection, $branch_id, $money_to_add, $fiat);
+    if ($money_to_add > 0 && $participating_in_balance) updateMethodMoney($connection, $method_id, $money_to_add, $fiat);
 
     $vg_data = mysqli_fetch_assoc($connection->query("
                 SELECT `api_url_regexp` AS `url`, access_key AS `key`

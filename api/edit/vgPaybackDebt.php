@@ -21,6 +21,10 @@ if (!updateOutgo($connection, $outgo_id, $vg_id, $fiat_id, $debt_sum)) {
     return error("failed");
 }
 
+if (!save_change_info($connection,'outgo',$outgo_id)) {
+    return error("failed");
+}
+
 
 echo json_encode(array("status" => "success"));
 

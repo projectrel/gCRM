@@ -11,7 +11,7 @@ if (isset($_POST['name']) && isset($_POST['project_id'])) {
         $res = $connection->
         query("UPDATE projects SET `project_name`='$name'
                      WHERE project_id='$project_id'");
-        if ($res) {
+        if ($res && save_change_info($connection,'project',$project_id)) {
             echo json_encode(array("status"=>"edit-success"));
             return false;
         } else {

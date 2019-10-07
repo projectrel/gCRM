@@ -16,8 +16,9 @@ $options['btn-text'] = 'Добавить';
 $branch_id = $_SESSION['branch_id'];
 
 echo template(display_data($connection->query('
-    SELECT project_id AS `id`, `project_name` AS "название", `active` AS "статус"
-    FROM projects
-WHERE branch_id = "'.$branch_id.'"
+    SELECT P.project_id AS `id`, `project_name` AS "название", `active` AS "статус", IFNULL(MAX(LC.change_date),"-") AS "пос. редакт."
+    FROM projects P LEFT OUTER JOIN changes LC ON P.project_id = LC.project_id
+WHERE P.branch_id = "'.$branch_id.'"
+GROUP BY P.project_id
 '), $options));
 

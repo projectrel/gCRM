@@ -21,8 +21,9 @@ session_start();
 
 
 echo template(display_data($connection->query('
-SELECT VG.vg_id AS `id`, VG.vg_id AS `Уникальный id`, VG.name AS `название`, VG.active as `статус`
-FROM `virtualgood` VG WHERE active = 1
+SELECT VG.vg_id AS `id`, VG.vg_id AS `Уникальный id`, VG.name AS `название`, VG.active as `статус`, IFNULL(MAX(LC.change_date),"-") AS "пос. редакт."
+FROM `virtualgood` VG LEFT OUTER JOIN changes LC ON VG.vg_id = LC.vg_id 
+GROUP BY VG.vg_id
 '), $options, '') . display_data($connection->query('
 SELECT VG.vg_id AS `id`, VG.name AS `название`, B.branch_name AS `предприятие`, COUNT(`vg_data_id`) AS `количество`,
 ROUND((SUM(`in_percent`) / COUNT(`in_percent`)),2) AS `средний in %`, ROUND((SUM(`out_percent`) / COUNT(`out_percent`)),2) AS `средний out %`

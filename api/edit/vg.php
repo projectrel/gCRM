@@ -28,7 +28,7 @@ if (isset($_POST['name']) && isset($_POST['in_percent']) && isset($_POST['out_pe
         AND
               `branch_id`='$branch_id'
         ");
-        if ($res) {
+        if ($res && save_change_info($connection,'vg_data',$vg_id)) {
             echo json_encode(array("status"=>"edit-success"));
             return false;
         } else {

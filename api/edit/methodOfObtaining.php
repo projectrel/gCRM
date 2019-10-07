@@ -31,7 +31,7 @@ if (isset($_POST['method_name'], $_POST['method_id'], $_POST['fiat_id'])) {
             `method_id`='$method_id' 
         ");
 
-        if ($res1 && $res2) {
+        if ($res1 && $res2 && save_change_info($connection,'method',$method_id)) {
             echo json_encode(array("status" => "edit-success"));
             return false;
         } else {

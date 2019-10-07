@@ -13,7 +13,7 @@ if (isset($_POST['name']) && isset($_POST['fiat'])&& isset($_POST['full_name']) 
         $res = $connection->
         query("UPDATE fiats SET `name`='$name', full_name='$full_name', code='$code'
                      WHERE fiat_id='$fiat_id'");
-        if ($res) {
+        if ($res && save_change_info($connection,'fiat',$fiat_id)) {
             echo json_encode(array("status"=>"edit-success"));
             return false;
         } else {

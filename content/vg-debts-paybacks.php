@@ -23,11 +23,13 @@ $data['fiats'] = $connection->query("
     SELECT fiat_id, full_name FROM fiats
 ");
 echo template(display_data($connection->query("
-SELECT O.outgo_id AS id, VD.name AS `vg`, O.sum AS `сумма`, F.full_name AS 'валюта', O.date AS `дата`
+SELECT O.outgo_id AS id, VD.name AS `vg`, O.sum AS `сумма`, F.full_name AS 'валюта', O.date AS `дата`, IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
 FROM outgo O
 INNER JOIN vg_data VD ON VD.vg_data_id = O.vg_data_id
 INNER JOIN fiats F ON F.fiat_id = O.fiat_id
+LEFT OUTER JOIN changes LC ON O.outgo_id = LC.outgo_id
 WHERE O.outgo_type_id = '$outgo_vg_purchase_type' AND O.branch_id = " . $_SESSION['branch_id'] . "
+GROUP BY O.outgo_id
 ORDER BY O.date DESC
 "), $options, $data));
 

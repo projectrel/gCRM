@@ -48,7 +48,8 @@ if ($user_data && (heCan($user_data['role'], 2))) {
                      FROM shares
                      WHERE order_id ='$order_id'"));
     $sharesChanged = true;
-
+    if (!save_change_info($connection, "order", $order_id))
+        error("failed");
     if ($order_data['vg_data_id'] != $vg_data_id || $order_data['sum_vg'] != $sum_vg) {
         if (!updateVgBalance($connection, $order_data, $vg_data_id, $sum_vg)) {
             error("failed");

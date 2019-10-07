@@ -14,14 +14,15 @@ session_start();
 switch(accessLevel()){
     case 3:
         $clients = $connection->query('
-                    SELECT C.client_id AS `id`, concat(first_name, " ", last_name) AS "Полное имя",
+            SELECT C.client_id AS `id`, concat(first_name, " ", last_name) AS "Полное имя",
                            concat(C.login, " ")  AS `Логин`, IFNULL(phone_number, "-") AS `телефон`,
                            email AS `почта`, IFNULL(telegram, "-") AS `телеграм`, `password` AS пароль, max_debt AS "макс. долг",  
                            CASE WHEN pay_page = 0 THEN "отключена" ELSE "подключена" END AS "Стр. оплаты",  
                            CASE WHEN pay_in_debt = 0 THEN "отключена" ELSE "подключена" END AS "Оплата в долг", 
                            CASE WHEN payment_system = 0 THEN "отключена" ELSE "подключена" END AS "Платежка",
-                           IFNULL(LC.last_change_date,"-") AS "пос. ред"
-                    FROM clients C LEFT OUTER JOIN last_changes LC ON C.client_id = LC.client_id
+                           IFNULL(MAX(LC.change_date),"-") AS "пос. редакт."
+                    FROM clients C LEFT OUTER JOIN changes LC ON C.client_id = LC.client_id
+                    GROUP BY C.client_id
                     ');
         break;
     case 2:
@@ -32,11 +33,12 @@ switch(accessLevel()){
                                     CASE WHEN pay_page = 0 THEN "отключена" ELSE "подключена" END AS "Стр. оплаты",  
                                     CASE WHEN pay_in_debt = 0 THEN "отключена" ELSE "подключена" END AS "Оплата в долг", 
                                     CASE WHEN payment_system = 0 THEN "отключена" ELSE "подключена" END AS "Платежка",
-                                    IFNULL(LC.last_change_date,"-") AS "пос. ред"
-                    FROM clients C LEFT OUTER JOIN last_changes LC ON C.client_id = LC.client_id
+                                   IFNULL(MAX(LC.change_date),"-") AS "пос. редакт."
+                    FROM clients C LEFT OUTER JOIN changes LC ON C.client_id = LC.client_id
                     WHERE user_id IN (
                         SELECT user_id FROM users WHERE branch_id = '.$_SESSION['branch_id'].'
                     )
+                     GROUP BY C.client_id
                     ');
     case 1:
         $clients = $connection->query('

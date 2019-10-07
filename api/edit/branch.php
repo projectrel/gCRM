@@ -11,7 +11,7 @@ if (isset($_POST['name'])) {
     if ($user_data && (heCan($user_data['role'], 2))) {
         $res = $connection->
         query("UPDATE branch SET branch_name='$name', ik_id='$ik_id'WHERE branch_id='$branch_id'");
-        if ($res) {
+        if ($res && save_change_info($connection,'branch',$branch_id)) {
             echo json_encode(array("status"=>"edit-success"));
             return false;
         } else {

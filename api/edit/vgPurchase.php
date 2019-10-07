@@ -28,6 +28,10 @@ if (!editVGBalance($connection, $vg_purchase_id, $vg_id, $sum_vg)) {
 if (!editPurchase($connection, $vg_purchase_id, $vg_id, $sum_vg, $sum_currency, $fiat_id)) {
     return error("failed");
 }
+
+if (!save_change_info($connection,'vg_purchase',$vg_purchase_id)) {
+    return error("failed");
+}
 echo json_encode(array("status" => "success"));
 
 

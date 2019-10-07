@@ -17,7 +17,7 @@ if (isset($_POST['name'])) {
         WHERE 
             `vg_id`='$vg_id' 
         ");
-        if ($res) {
+        if ($res && save_change_info($connection,'vg',$vg_id)) {
             echo json_encode(array("status"=>"edit-success"));
             return false;
         } else {

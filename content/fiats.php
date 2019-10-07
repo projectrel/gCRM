@@ -16,8 +16,8 @@ $options['btn-text'] = 'Добавить';
 
 if(iCan(3)){ // currently
     echo template(display_data($connection -> query('
-    SELECT fiat_id AS `id`, code AS "код", full_name AS "название", name AS "сокращение"
-    FROM fiats
+    SELECT F.fiat_id AS `id`, code AS "код", full_name AS "название", name AS "сокращение", IFNULL(MAX(LC.change_date),"-") AS "пос. редакт."
+    FROM fiats F LEFT OUTER JOIN changes LC ON F.fiat_id = LC.fiat_id
 '), $options));
 }
 

@@ -279,12 +279,21 @@ function getOutGoTypes($connection)
     $branch_id = $_SESSION['branch_id'];
     switch (accessLevel()) {
         case 3:
-            $res = mysqliToArray($connection->query("SELECT outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`
+            $res = mysqliToArray($connection->query("SELECT OT.outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`, IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
                 FROM `outgo_types` OT
                 LEFT OUTER JOIN `outgo_types_relative` OTR ON OT.outgo_type_id = OTR.parent_id
-                GROUP BY outgo_type_id, outgo_name"));
+                LEFT OUTER JOIN changes LC ON OT.outgo_type_id = LC.outgo_type_id
+                GROUP BY OT.outgo_type_id, outgo_name"));
             break;
         case 1:
+            $res = mysqliToArray($connection->query("SELECT OT.outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`,
+                IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
+                FROM `outgo_types` OT
+                LEFT OUTER JOIN `outgo_types_relative` OTR ON OT.outgo_type_id = OTR.parent_id
+                LEFT OUTER JOIN changes LC ON OT.outgo_type_id = LC.outgo_type_id
+                WHERE OT.branch_id =$branch_id OR OT.outgo_type_id = '$root_type' OR OT.outgo_type_id = '$vg_purchase_type'
+                GROUP BY OT.outgo_type_id, outgo_name"));
+            break;
         case 2:
             $res = mysqliToArray($connection->query("SELECT outgo_type_id, outgo_name, group_concat(DISTINCT son_id) AS sons, `active`
                 FROM `outgo_types` OT
@@ -292,6 +301,8 @@ function getOutGoTypes($connection)
                 WHERE branch_id =$branch_id OR outgo_type_id = '$root_type' OR outgo_type_id = '$vg_purchase_type'
                 GROUP BY outgo_type_id, outgo_name"));
             break;
+        default:
+            $res = NULL;
     }
 
 
@@ -367,7 +378,7 @@ function save_change_info($connection, $type, $id)
     session_start();
     $user_id = $_SESSION['id'];
     $field = $type . "_id";
-    $query = "INSERT INTO `last_changes` (`$field`, `last_change_user_id`) VALUES ('$id', '$user_id')";
+    $query = "INSERT INTO `changes` (`$field`, `change_user_id`) VALUES ('$id', '$user_id')";
     return $connection->query($query);
 }
 

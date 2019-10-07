@@ -41,7 +41,7 @@ if (isset($_POST['login']) && isset($_POST['role'])
 
 
 
-        if ($res) {
+        if ($res && save_change_info($connection,'user',$edit_user_id)) {
             echo json_encode(array("status"=>"edit-success"));
             return false;
         } else {
