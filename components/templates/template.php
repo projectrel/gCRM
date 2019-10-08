@@ -36,8 +36,8 @@ function template($body)
         <h2 class="modal-title" id="replenish-fiat">Внести фиат</h2>
         <div class="modal-inputs">
             <p>
-            Валюта
-                <select id="replenishFiatSelect" data-validation="required" >
+            Метод оплаты
+                <select id="replenishMethodSelect" data-validation="required" >
                
                 </select>
             </p>

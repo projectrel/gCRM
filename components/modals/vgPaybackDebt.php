@@ -53,12 +53,12 @@ function vgDebtPaybackEditModal($data)
 
     $output .= '</select>
   </p><p>
-  <select id="editFiaDebttField" data-validation="required">
-  <option value="" disabled selected>Выберите валюту</option>';
+  <select id="editMethodDebtField" data-validation="required">
+  <option value="" disabled selected>Выберите метод оплаты</option>';
 
-    if (isset($data['fiats']))
-        foreach ($data['fiats'] as $key => $var) {
-            $output .= '<option value="' . $var['fiat_id'] . '">' . $var['full_name'] . '</option>';
+    if (isset($data['methods']))
+        foreach ($data['methods'] as $key => $var) {
+            $output .= '<option value="' . $var['method_id'] . '">' . $var['method_id'] . '</option>';
         }
     $output .='
 </select>

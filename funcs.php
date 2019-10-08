@@ -218,18 +218,19 @@ function generateRandomString($length = 40)
     return $randomString;
 }
 
-function updateMethodMoney($connection, $method_id, $sum, $fiat_id)
+function updateMethodMoney($connection, $method_id, $sum)
 {
-    if (count(mysqliToArray($connection->query("SELECT * FROM payments WHERE `fiat_id` = '$fiat_id' AND `method_id` = '$method_id'")))) {
-        $update_method_money = $connection->
-        query("UPDATE  `payments` 
-                                  SET `sum` = `sum` + '$sum'
-                                  WHERE `fiat_id` = '$fiat_id' AND `method_id` = '$method_id' ");
-    } else {
-        $update_method_money = $connection->query("INSERT INTO `payments` 
-                                  (fiat_id, sum, method_id) VALUES($fiat_id,  $sum, $method_id )");
-    }
+    $update_method_money = $connection->
+    query("UPDATE  `payments` SET `sum` = `sum` + '$sum'
+           WHERE `method_id` = '$method_id' ");
     return $update_method_money;
+}
+
+function getFiatIdByMethod($connection, $method_id)
+{
+    $method_payments_info = mysqli_fetch_assoc($connection->
+    query("SELECT * FROM `payments` WHERE `method_id` = '$method_id' "));
+    return $method_payments_info['fiat_id'];
 }
 
 function error($errorType, $info = NULL)

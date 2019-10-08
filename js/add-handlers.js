@@ -751,13 +751,13 @@ $(document).ready(function () {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
         const vg_id = $("#payback-vg-debt-form #vgDebtField").val();
-        const fiat_id = $("#payback-vg-debt-form #fiatDebtField").val();
+        const method_id = $("#payback-vg-debt-form #methodDebtField").val();
         const currency_sum = $("#payback-vg-debt-form #vgSumDebtField").val();
         $.ajax({
             url: "../api/operate/vgDebt.php",
             type: "POST",
             data: {
-                vg_id, fiat_id, currency_sum
+                vg_id, method_id, currency_sum
             },
             dataType: "json",
             cache: false,

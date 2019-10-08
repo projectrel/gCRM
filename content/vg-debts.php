@@ -25,7 +25,10 @@ $data['vgs'] = $connection->query("
 ");
 
 $data['methods'] = $connection->query("
-SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
+SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `method_name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE `branch_id` = '$branch_id'");
 
 echo template(display_data($connection->query('
 SELECT VD.name AS `VG`, P.sum AS `сумма задолженности`, F.full_name AS `валюта`

@@ -8,13 +8,13 @@ $(document).ready(function () {
             cache: false,
             dataType: 'JSON',
             success: function (res) {
-                if ($('#replenish-fiat-Modal #replenishFiatSelect').empty()) {
+                if ($('#replenish-fiat-Modal #replenishMethodSelect').empty()) {
                     if(res.error){
                         createAlertTable(res.error, "Данные фиата");
                         return;
                     }
                         res.forEach((el) => {
-                            $('#replenish-fiat-Modal #replenishFiatSelect').append(`<option value = ${el["fiat_id"]}>${el["full_name"]}</option>`)
+                            $('#replenish-fiat-Modal #replenishMethodSelect').append(`<option value = ${el["fiat_id"]}>${el["full_name"]}</option>`)
                         });
                 }
                 $('.loader').fadeOut('fast');
@@ -62,7 +62,7 @@ $(document).ready(function () {
 
     function replenishFiat() {
         $('.loader').show();
-        const fiat = $('#replenish-fiat-Modal #replenishFiatSelect').val();
+        const method = $('#replenish-fiat-Modal #replenishMethodSelect').val();
         const sum = $('#replenish-fiat-Modal #replenishFiatSum').val();
         const ownerfield = $('#replenish-fiat-Modal #replenishOwnerSelect');
         const owner = ownerfield.val() ? ownerfield.val() : 0;
@@ -72,7 +72,7 @@ $(document).ready(function () {
             type: "POST",
             method: "POST",
             data: {
-                fiat,
+                method,
                 sum,
                 owner,
             },
