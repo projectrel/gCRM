@@ -23,19 +23,21 @@ $.validate({
 function editOrder() {
     $(".loader").show();
     $(".modal-submit").prop("disabled", true);
-    let order_id = $('#edit-order-form #edit-order-title').attr('order-id');
-    let sum_vg = $("#edit-order-form #editSumVGField").val();
-    let debt = $("#edit-order-form #editDebtClField").val() || 0;
-    let referral = $("#edit-order-form #editLastNameField").val();
-    let rollback_1 = $("#edit-order-form #editRollback1Field").val();
-    let out = $("#edit-order-form #editOutField").val();
-    let descr = $("#edit-order-form #editCommentField").val();
-    let vg_id = $("#edit-order-form #editVgField").val();
-    let callmaster = $('#edit-order-form #editCallmasterField').val();
-    let method_id = $('#edit-order-form #editObtainingField').val();
-    let client_id = $("#edit-order-form #editClientField").val();
-    let fiat = $('#edit-order-form #editFiatField').val();
-    let sharesEls = $('#edit-order-form .edit-owner-percent-input');
+    const order_id = $('#edit-order-form #edit-order-title').attr('order-id');
+    const sum_vg = $("#edit-order-form #editSumVGField").val();
+    const debt = $("#edit-order-form #editDebtClField").val() || 0;
+    const referral = $("#edit-order-form #editLastNameField").val();
+    const rollback_1 = $("#edit-order-form #editRollback1Field").val();
+    const out = $("#edit-order-form #editOutField").val();
+    const descr = $("#edit-order-form #editCommentField").val();
+    const vg_id = $("#edit-order-form #editVgField").val();
+    const callmaster = $('#edit-order-form #editCallmasterField').val();
+    const method_id = $('#edit-order-form #editObtainingField').val();
+    const client_id = $("#edit-order-form #editClientField").val();
+    const fiat = $('#edit-order-form #editFiatField').val();
+    const sharesEls = $('#edit-order-form .edit-owner-percent-input');
+    const sum_manually = $("#edit-order-form #editSumField").val();
+    const enter_manually = $("#edit-order-form .btn_sum-manually").hasClass('btn_sum-manually__opened');
     const allShares = [];
     sharesEls.each(function () {
         allShares.push({value: $(this).val(), owner_id: $(this).attr('owner-id')});
@@ -59,6 +61,8 @@ function editOrder() {
             method_id,
             descr,
             fiat,
+            sum_manually,
+            enter_manually
         },
         cache: false,
         success: function (res) {

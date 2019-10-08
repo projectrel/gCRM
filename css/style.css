@@ -1001,3 +1001,21 @@ nav.vertical a {
     display: block;
     background-color: #272a2d;
 }
+
+.modal .btn_sum-manually {
+    font-size: 18px;
+    margin: 0 0 20px 0;
+    border-radius: .25rem;
+    transition: all .5s;
+    background-color: #5491F5;
+    outline: none;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+}
+
+_.btn_sum-manually_opened {
+
+}

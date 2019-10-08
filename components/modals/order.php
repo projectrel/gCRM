@@ -55,6 +55,10 @@ function orderAddModal($data, $more_data)
   Сумма вг
   <input id="sumVGField" min=0 data-validation="required length" data-validation-length="min1" placeholder="Кол-во виртуальной валюты" type="number" step="0.01" name="sum-vg">
   </p>
+   <p class="sum-manually__box display-none">
+  Сумма(включая долг)
+  <input id="sumField"  class="sum-manually" placeholder="Cумма" type="number" step="0.01" name="sum">
+  </p>
   <p>
   Логин клиента
   <input id="loginByVgField" min=0 data-validation="required length" data-validation-length="min1" placeholder="Логин по вг" name="login-vg">
@@ -94,7 +98,10 @@ function orderAddModal($data, $more_data)
     $output .= '
   </select>
   </p>
-   </div><div id="owners-lists-container"></div>
+  
+   </div>
+   <input class="btn_sum-manually " type="button" value="Ввести сумму вручную" >
+   <div id="owners-lists-container"></div>
    <div id="rollbacks-lists-container" class="modal-inputs" style="display: none">
 <p>
    Откат
@@ -161,6 +168,10 @@ function orderEditModal($more_data)
   Сумма вг
   <input id="editSumVGField" min="0" data-validation="required length" data-validation-length="min1" placeholder="Кол-во виртуальной валюты" type="number" step="0.01" name="sum-vg">
   </p>
+  <p class="sum-manually__box display-none">
+  Сумма(включая долг)
+  <input id="editSumField"  class="sum-manually" placeholder="Cумма" type="number" step="0.01" name="sum">
+  </p>
    <p>
    Не оплаченая часть
   <input id="editDebtClField" min="0" type="number" step="0.01" name="debt-sum" value = 0>
@@ -198,8 +209,8 @@ function orderEditModal($more_data)
     $output .= '
   </select>
   </p>
-  
   </div>
+  <input class="btn_sum-manually" type="button" value="Ввести сумму вручную" >
   <h2>Владельцы</h2>
   <div id="edit-owners-list-visible" class="orders-modal-owners-list"></div>
   <div id="open-invisible-owner-edit-list">Показать всех</div>

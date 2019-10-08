@@ -1,4 +1,17 @@
 $(document).ready(function () {
+
+
+    //Sum manually button
+    $('.modal .btn_sum-manually').click(function () {
+        $(this).toggleClass('btn_sum-manually__opened');
+        $(this).parent().find('.sum-manually__box').toggleClass('display-none');
+        if($(this).hasClass('btn_sum-manually__opened'))
+            $(this).attr('value','Атоматически')
+        else
+            $(this).attr('value','Ввести сумму вручную')
+    })
+
+
     const vgFiatDebt = $('#payback-vg-debt-form #vgDebtField, #payback-vg-debt-form #fiatDebtField');
     vgFiatDebt.change(function () {
         const vg_id = $('#payback-vg-debt-form #vgDebtField').val();

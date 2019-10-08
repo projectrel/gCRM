@@ -1,18 +1,12 @@
 <?php
-if (!(isset($_POST['order_id']) &&
-    isset($_POST['client_id']) &&
-    isset($_POST['sum_vg']) &&
-    isset($_POST['out']) &&
-    isset($_POST['method_id']) &&
-    isset($_POST['vg_id']) &&
-    isset($_POST['shares']) &&
-    isset($_POST['fiat']) &&
-    isset($_POST['client_id']))) {
+include_once("../../funcs.php");
+if (!(isset($_POST['order_id'], $_POST['client_id'], $_POST['sum_vg'], $_POST['out'], $_POST['method_id'], $_POST['vg_id'], $_POST['shares'],
+    $_POST['fiat'], $_POST['client_id'], $_POST['sum_manually'], $_POST['enter_manually']))) {
     error("empty");
     return false;
 }
 include_once("../../db.php");
-include_once("../../funcs.php");
+
 
 $rollback_1 = isset($_POST['rollback_1']) ? clean($_POST['rollback_1']) : 0;
 
@@ -23,10 +17,11 @@ $sum_vg = clean($_POST['sum_vg']);
 $description = $_POST['descr'];
 $out_percent = clean($_POST['out']);
 $debt = isset($_POST['debt']) ? clean($_POST['debt']) : 0;
-$callmaster = clean($_POST['callmaster']);
+$callmaster = $_POST['callmaster'] == -1 ? false : $_POST['callmaster'];
 $method_id = clean($_POST['method_id']);
 $fiat = clean($_POST['fiat']);
-$sum_currency = ($sum_vg * $out_percent) / 100;
+$sum_manually = $_POST['sum_manually'];
+$sum_currency = $_POST['enter_manually'] ? $sum_manually : ($sum_vg * $out_percent) / 100;
 $in_percent = mysqli_fetch_assoc($connection->query("
             SELECT in_percent
             FROM vg_data
@@ -52,7 +47,7 @@ if ($user_data && (heCan($user_data['role'], 2))) {
         error("failed");
     if ($order_data['vg_data_id'] != $vg_data_id || $order_data['sum_vg'] != $sum_vg) {
         if (!updateVgBalance($connection, $order_data, $vg_data_id, $sum_vg)) {
-            error("failed");
+            return error("failed");
         }
     }
     if ($sharesChanged) {
@@ -91,15 +86,18 @@ if ($user_data && (heCan($user_data['role'], 2))) {
         if ($order_data['sum_currency'] != $sum_currency) {
             $money = $sum_currency - $order_data['sum_currency'];
             if ((int)$participates_in_balance) {
-                updateBranchMoney($connection, $branch_id, $money, $fiat);
+                if(!updateMethodMoney($connection, $method_id, $money))
+                    return error("custom","Не удалось обновить деньги на счету");
             }
 
         }
     } else {
         if ((int)$prev_method_participated === 1) {
-            updateBranchMoney($connection, $branch_id, -$order_data['sum_currency'], $fiat);
+            if(! updateMethodMoney($connection, $method_id, -$order_data['sum_currency']))
+            return error("custom","Не удалось обновить деньги на счету");
         } else {
-            updateBranchMoney($connection, $branch_id, $order_data['sum_currency'], $fiat);
+            if(!updateMethodMoney($connection, $method_id, $order_data['sum_currency']))
+            return error("custom","Не удалось обновить деньги на счету");
         }
     }
     $old_fiat_id = $order_data['fiat_id'];
@@ -120,8 +118,7 @@ if ($user_data && (heCan($user_data['role'], 2))) {
         query("UPDATE payments SET `sum` = `sum` + '$debt'
                      WHERE `client_debt_id` = '$client_id' AND `fiat_id` = '$fiat'");
         if (!($update_old_client_debt && $update_client_debt)) {
-            error("failed");
-            return false;
+            return error("failed");
         }
     }
 
@@ -146,8 +143,8 @@ if ($user_data && (heCan($user_data['role'], 2))) {
                      WHERE `client_rollback_id` = '$callmaster' AND `fiat_id` = '$fiat'");
 
         if (!($update_old_callmaster && $update_callmaster)) {
-            error("failed");
-            return false;
+            return error("failed");
+
         }
 
     }

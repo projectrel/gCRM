@@ -246,6 +246,8 @@ $(document).ready(function () {
         const debtCl = $("#add-order-form #debtCLField").val() || 0;
         const fiat = $("#add-order-form #fiatField").val();
         const method_id = $("#add-order-form #obtainingField").val();
+        const sum_manually = $("#add-order-form #sumField").val();
+        const enter_manually = $("#add-order-form .btn_sum-manually").hasClass('btn_sum-manually__opened');
         const allShares = [];
         sharesEls.each(function () {
             allShares.push({value: $(this).val(), owner_id: $(this).attr('owner-id')});
@@ -267,11 +269,12 @@ $(document).ready(function () {
                 descr,
                 fiat,
                 loginByVg,
+                enter_manually,
+                sum_manually
             },
-            dataType: "html",
+            dataType: "JSON",
             cache: false,
             success: function (res) {
-                console.log(res);
                 try {
                     if (res.error) {
                         createAlertTable(res.error, "Заказ и транзакция")

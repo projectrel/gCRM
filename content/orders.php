@@ -31,10 +31,6 @@ SELECT concat(C.last_name, " ", C.first_name) AS "name", C.client_id AS `id` FRO
         $vgs = $connection->query("
 SELECT vg_data_id, VD.name, out_percent, vg_id FROM vg_data VD
 ");
-        $methods_of_obtaining =
-            mysqliToArray($connection->
-            query("SELECT  * FROM methods_of_obtaining
-WHERE is_active = 1"));
         break;
     case 2:
         $info = $connection->query("
@@ -61,10 +57,6 @@ WHERE user_id IN (SELECT user_id FROM users WHERE branch_id = ' . $_SESSION["bra
 SELECT vg_data_id, VD.name, out_percent, vg_id FROM vg_data VD
 WHERE branch_id = '$branch_id'
 ");
-        $methods_of_obtaining =
-            mysqliToArray($connection->
-            query("SELECT  * FROM methods_of_obtaining
-WHERE `branch_id` = '$branch_id' AND is_active = 1"));
         break;
     case 1:
         $info = $connection->query("
@@ -89,10 +81,6 @@ WHERE user_id IN (SELECT user_id FROM users WHERE branch_id = ' . $_SESSION["bra
 SELECT vg_data_id, VD.name, out_percent, vg_id FROM vg_data VD
 WHERE branch_id = '$branch_id'
 ");
-        $methods_of_obtaining =
-            mysqliToArray($connection->
-            query("SELECT  * FROM methods_of_obtaining
-WHERE `branch_id` = '$branch_id' AND is_active = 1"));
         break;
     default:
         exit();
@@ -110,7 +98,11 @@ SELECT `user_id` FROM `users` WHERE is_owner = 1 AND `branch_id` = '$branch_id'
 $more_data['clients'] = $clients;
 $more_data['owners'] = $owners;
 $more_data['vgs'] = $vgs;
-$more_data['methods'] = $methods_of_obtaining;
+$more_data['methods'] = $connection->query("
+SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `method_name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE MOO.branch_id = '$branch_id' AND MOO.is_active = 1");
 $more_data['fiat'] = $fiat;
 
 $options['type'] = 'Order';
