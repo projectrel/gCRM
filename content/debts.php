@@ -15,7 +15,9 @@ FROM debt_history O
 INNER JOIN clients C ON C.client_id = O.client_id 
 INNER JOIN users U ON U.user_id = O.user_id
 INNER JOIN branch B ON B.branch_id = U.branch_id
-INNER JOIN fiats F ON F.fiat_id = O.fiat_id
+INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
+INNER JOIN payments PA ON PA.method_id = MOO.method_id
+INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
 ORDER BY `date` DESC
 ");
         break;
@@ -28,7 +30,9 @@ O.date AS `дата`
 FROM debt_history O
 INNER JOIN clients C ON C.client_id = O.client_id 
 INNER JOIN users U ON U.user_id = O.user_id
-INNER JOIN fiats F ON F.fiat_id = O.fiat_id
+INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
+INNER JOIN payments PA ON PA.method_id = MOO.method_id
+INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
 WHERE U.branch_id = '$branch_id'
 ORDER BY `date` DESC
 ");
@@ -50,13 +54,23 @@ ORDER BY `date` DESC
         exit();
         break;
 }
+
+
+$data['methods'] = $connection->query("
+SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `method_name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE `branch_id` = '$branch_id'");
+
+
+
 $options['type'] = 'Debt';
 $options['text'] = 'История погашений долгов';
 $options['btn-text'] = 'Погасить';
 $options['btn'] = 1;
 $options['btn-max'] = 2;
-$data['methods'] = $connection->query("
-SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
+
+
 $data['fiats'] = $connection -> query('SELECT * FROM fiats');
 $data['clients'] = $connection->query('
 SELECT DISTINCT concat(C.last_name, " ", C.first_name) AS `client_name`, byname AS `login`, P.sum AS `debt`, fiat_id,concat(C.client_id, "-", P.fiat_id) AS `id`

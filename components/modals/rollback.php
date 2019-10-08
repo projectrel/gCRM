@@ -1,6 +1,8 @@
 <?php
 function rollbackModal($data)
 {
+    $methods = NULL;
+    $clients = NULL;
     if ($data) {
         $i = 0;
         if ($data['clients']) while ($new = $data['clients']->fetch_array()) {
@@ -8,8 +10,8 @@ function rollbackModal($data)
             $i++;
         }
         $i = 0;
-        if ($data['fiats']) while ($new = $data['fiats']->fetch_array()) {
-            $fiats[$i] = $new;
+        if ($data['methods']) while ($new = $data['methods']->fetch_array()) {
+            $methods[$i] = $new;
             $i++;
         }
     }
@@ -32,10 +34,10 @@ function rollbackModal($data)
   <input id="payField" data-validation="required length" data-validation-length="min1" placeholder="Выплата" type="number" name="in" step="0.01">
   </p>
    <p>
-<select id="fiatField" data-validation="required">
-  <option value="" selected disabled>Выберите валюту</option>';
-    foreach ($fiats as $key => $var) {
-        $output .= '<option value="' . $var['fiat_id'] . '">' . $var['full_name'] . '</option>';
+<select id="methodField" data-validation="required">
+  <option value="" selected disabled>Выберите метод оплаты</option>';
+    foreach ($methods as $key => $var) {
+        $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }
     $output .= '
 </select>

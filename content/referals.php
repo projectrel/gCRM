@@ -9,12 +9,14 @@ switch (accessLevel()) {
     case 3:
         $info = $connection -> query("
 SELECT B.branch_name AS `отдел`, concat(U.last_name, ' ', U.first_name) AS `агент`,  U.login AS 'логин агента', concat(C.last_name, ' ', C.first_name) AS `клиент`, 
-concat(O.rollback_sum, ' ', F.name) AS `сумма`, O.date AS `дата`
+concat(O.rollback_sum, ' ', F.name) AS `сумма`,MOO.method_name AS 'кошелек',  O.date AS `дата`
 FROM rollback_paying O
 INNER JOIN clients C ON C.client_id = O.client_id 
 INNER JOIN users U ON U.user_id = O.user_id
 INNER JOIN branch B ON B.branch_id = U.branch_id
-INNER JOIN fiats F ON O.fiat_id = F.fiat_id
+INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
+INNER JOIN payments PA ON PA.method_id = MOO.method_id
+INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
 ORDER BY `date` DESC
 ");
         $data['clients'] = $connection -> query('
@@ -29,11 +31,13 @@ WHERE  P.sum > 0
     case 1:
         $info = $connection -> query("
 SELECT concat(U.last_name, ' ', U.first_name) AS `агент`,  U.login AS 'логин агента', concat(C.last_name, ' ', C.first_name) AS `клиент`, 
-concat(O.rollback_sum, ' ', F.name) AS `сумма`, O.date AS `дата`
+concat(O.rollback_sum, ' ', F.name) AS `сумма`, MOO.method_name AS 'кошелек', O.date AS `дата`
 FROM rollback_paying O
 INNER JOIN clients C ON C.client_id = O.client_id 
 INNER JOIN users U ON U.user_id = O.user_id
-INNER JOIN fiats F ON O.fiat_id = F.fiat_id
+INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
+INNER JOIN payments PA ON PA.method_id = MOO.method_id
+INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
 WHERE U.branch_id = '$branch_id'
 ORDER BY `date` DESC
 ");
@@ -63,14 +67,16 @@ WHERE  P.sum > 0 AND user_id IN(SELECT user_id FROM users WHERE branch_id="'.$br
 }
 
 $data['methods'] = $connection->query("
-SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
+SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `method_name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE `branch_id` = '$branch_id'");
 
 $options['type'] = 'Rollback';
 $options['text'] = "История выплат рефералов";
 $options['btn'] = 1;
 $options['btn-max'] = 2;
 $options['btn-text'] = 'Выплатить';
-$data['fiats'] = $connection -> query('SELECT * FROM fiats');
 
 echo template(display_data($info, $options, $data));
 ?>

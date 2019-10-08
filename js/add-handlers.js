@@ -872,7 +872,7 @@ $(document).ready(function () {
 
     }
 
-    //Payback
+    //PRollback
     $.validate({
         form: '#pay-rollback-form',
         modules: '',
@@ -898,17 +898,17 @@ $(document).ready(function () {
     function payRollback() {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
-        let id = $("#pay-rollback-form #clientField").val();
-        let number = $("#pay-rollback-form #payField").val();
-        let fiat = $("#pay-rollback-form #fiatField").val();
+        const client_id = $("#pay-rollback-form #clientField").val();
+        const sum = $("#pay-rollback-form #payField").val();
+        const method_id = $("#pay-rollback-form #methodField").val();
         $.ajax({
             url: "../api/operate/rollback.php",
             type: "POST",
             data: {
-                id, fiat, number,
+                client_id, sum, method_id,
             },
             cache: false,
-            dataType: "json",
+            dataType: "JSON",
             success: function (res) {
                 createAlertTable(res.status || res.error, "Откат");
             },
@@ -952,17 +952,17 @@ $(document).ready(function () {
     function paybackDebt() {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
-        let id = $("#payback-debt-form #debtorField").val();
-        let number = $("#payback-debt-form #paybackField").val();
-        let fiat = $("#payback-debt-form #fiatField").val();
+        const client_id = $("#payback-debt-form #debtorField").val();
+        const sum = $("#payback-debt-form #paybackField").val();
+        const method_id = $("#payback-debt-form #methodField").val();
         $.ajax({
             url: "../api/operate/debt.php",
             type: "POST",
             dataType: "json",
             data: {
-                id,
-                number,
-                fiat,
+                client_id,
+                sum,
+                method_id,
             },
             cache: false,
             success: function (res) {
