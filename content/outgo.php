@@ -1,11 +1,14 @@
 <?php
 include_once '../funcs.php';
+include_once $_SERVER['DOCUMENT_ROOT'] . "/config.php";
 if (!isAuthorized()) header("Location: ../login.php");
 include_once '../components/templates/template.php';
 include_once '../db.php';
 session_start();
 $branch_name = $_SESSION['branch'];
 $branch_id = $_SESSION['branch_id'];
+
+$vg_purchase_type = VG_PURCHASE_TYPE;
 switch (accessLevel()) {
     case 3:
         $info = $connection->query("
@@ -21,6 +24,7 @@ INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
 LEFT JOIN (SELECT user_id AS `owner_id`, first_name, last_name FROM users WHERE is_owner = 1) OW ON OW.owner_id = O.user_as_owner_id
 LEFT JOIN outgo_types OT ON OT.outgo_type_id = O.outgo_type_id
 LEFT JOIN projects P ON P.project_id = O.project_id
+WHERE O.outgo_type_id != '$vg_purchase_type' OR O.outgo_type_id IS NULL
 ORDER BY `date` DESC
 ");
         break;
@@ -39,7 +43,7 @@ LEFT JOIN  branch ON branch.branch_id = O.branch_id
 LEFT JOIN (SELECT user_id AS `owner_id`, first_name, last_name FROM users WHERE is_owner = 1) OW ON OW.owner_id = O.user_as_owner_id
 LEFT JOIN outgo_types OT ON OT.outgo_type_id = O.outgo_type_id
 LEFT JOIN projects P ON P.project_id = O.project_id
-WHERE U.branch_id = '$branch_id'
+WHERE U.branch_id = '$branch_id' AND (O.outgo_type_id != '$vg_purchase_type' OR O.outgo_type_id IS NULL)
 ORDER BY `date` DESC
 ");
         break;
@@ -77,11 +81,14 @@ $data['types'] = $connection->query("
 $data['projects'] = $connection->query('
     SELECT *
     FROM projects
-WHERE branch_id = "'.$branch_id.'" AND `active`=1
+WHERE branch_id = "' . $branch_id . '" AND `active`=1
 ');
 
 $data['methods'] = $connection->query("
-SELECT * FROM `methods_of_obtaining` WHERE `branch_id` = '$branch_id'");
+SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `method_name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE `branch_id` = '$branch_id'");
 
 
 $options['type'] = 'Outgo';

@@ -38,6 +38,7 @@ function debtModal($data)
   <p>
 <select id="methodField" data-validation="required">
   <option value="" selected disabled>Выберите метод оплаты</option>';
+    if($methods)
     foreach ($methods as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] .'</option>';
     }

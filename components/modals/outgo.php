@@ -47,10 +47,10 @@ function outgoModal($data, $more_data)
   <textarea id="commentField" rows="3"  placeholder="Комментарий" name="description"></textarea>
   </p>
   <p>
-  <select id="fiatField">
-  <option data-validation="required" value="" selected disabled>Выберите валюту</option>';
-    foreach ($more_data['fiats'] as $key => $var) {
-        $output .= '<option value="' . $var['fiat_id'] . '">' . $var['name'] . '</option>';
+  <select id="methodField">
+  <option data-validation="required" value="" selected disabled>Выберите метод оплаты</option>';
+    foreach ($more_data['methods'] as $key => $var) {
+        $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }
     $output .= '
 </select>

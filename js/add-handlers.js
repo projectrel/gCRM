@@ -507,16 +507,16 @@ $(document).ready(function () {
     function addOutgo() {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
-        let sum = $("#add-outgo-form #sumField").val();
-        let owner = $("#add-outgo-form #ownerField").val();
-        let project = $("#add-outgo-form #projectField").val();
-        let fiat = $("#add-outgo-form #fiatField").val();
-        let type = $("#add-outgo-form #typeField").val();
-        let descr = $("#add-outgo-form #commentField").val();
+        const sum = $("#add-outgo-form #sumField").val();
+        const owner_id = $("#add-outgo-form #ownerField").val();
+        const project_id = $("#add-outgo-form #projectField").val();
+        const method_id = $("#add-outgo-form #methodField").val();
+        const type = $("#add-outgo-form #typeField").val();
+        const description = $("#add-outgo-form #commentField").val();
         $.ajax({
             url: "../api/add/outgo.php",
             type: "POST",
-            data: {owner, sum, description: descr, fiat, type, project},
+            data: {owner_id, sum, description, method_id, type, project_id},
             dataType: "JSON",
             cache: false,
             success: function (res) {
