@@ -12,24 +12,26 @@ $ownerSumsRaw = $connection->query('
 SELECT concat(U.user_id,"-", F.fiat_id) AS `id`, concat(U.last_name, " ", U.first_name) AS "имя", IFNULL(SUM(RR.sum), 0) AS `прибыль`, IFNULL(SUM(RR.sum), 0) + IFNULL(SUM(IH.sum), 0) - IFNULL(UT.sum, 0) AS `остаток`, F.full_name AS `валюта`
 FROM users U
 JOIN fiats F
+LEFT JOIN (SELECT S.sum, S.user_as_owner_id, O.fiat_id FROM shares S INNER JOIN orders O ON O.order_id = S.order_id) RR 
+ON RR.user_as_owner_id = U.user_id AND RR.fiat_id = F.fiat_id
 LEFT JOIN (
-    SELECT S.sum, S.user_as_owner_id, O.fiat_id FROM shares S INNER JOIN orders O ON O.order_id = S.order_id
-    ) RR ON RR.user_as_owner_id = U.user_id AND RR.fiat_id = F.fiat_id
-LEFT JOIN (
-	SELECT U.user_id, IFNULL(SUM(O.sum), 0) + IFNULL(outcome,0) AS `sum`, IFNULL(O.fiat_id, T.fiat_id) AS `fiat_id`
+	SELECT U.user_id, IFNULL(SUM(O.sum), 0) + IFNULL(outcome,0) AS `sum`, IFNULL(PPP.fiat_id, T.fiat_id) AS `fiat_id`
 	FROM users U
 	LEFT JOIN outgo O ON O.user_as_owner_id = U.user_id
+	LEFT JOIN payments PPP ON PPP.method_id = O.method_id
 	LEFT JOIN (
-		SELECT SUM(sum)/(SELECT COUNT(DISTINCT user_id) FROM users WHERE branch_id = ' . $branch_id . ' AND is_owner = 1) AS `outcome`, fiat_id
-		FROM outgo
-		INNER JOIN users U ON U.user_id = outgo.user_id
-		WHERE user_as_owner_id IS NULL AND outgo.branch_id IS NULL AND U.branch_id = ' . $branch_id . '
-		GROUP BY fiat_id
-	) T ON T.fiat_id = O.fiat_id OR O.fiat_id IS NULL
+		SELECT SUM(OU.sum)/(SELECT COUNT(DISTINCT user_id) FROM users WHERE branch_id = ' . $branch_id . ' AND is_owner = 1) AS `outcome`, fiat_id
+		FROM outgo OU
+	    INNER JOIN methods_of_obtaining MOO ON MOO.method_id = OU.method_id
+		INNER JOIN payments P ON P.method_id = MOO.method_id
+		INNER JOIN users U ON U.user_id = OU.user_id
+		WHERE user_as_owner_id IS NULL AND OU.branch_id IS NULL AND U.branch_id = ' . $branch_id . '
+		GROUP BY P.fiat_id
+	) T ON T.fiat_id = PPP.fiat_id OR PPP.fiat_id IS NULL
 	WHERE U.is_owner = 1 AND U.branch_id = ' . $branch_id . '
-	GROUP BY U.user_id, O.fiat_id
+	GROUP BY U.user_id, PPP.fiat_id
 ) UT ON UT.user_id = U.user_id AND UT.fiat_id = F.fiat_id
-LEFT JOIN income_history IH ON IH.owner_id = U.user_id AND IH.fiat = F.fiat_id
+LEFT JOIN (SELECT IHH.sum, income_id, fiat_id, IHH.owner_id, IHH.user_id FROM income_history IHH INNER JOIN payments P ON P.method_id = IHH.method_id) IH ON IH.owner_id = U.user_id AND IH.fiat_id = F.fiat_id
 WHERE U.is_owner = 1 AND U.branch_id = ' . $branch_id . '
 GROUP BY U.user_id, F.fiat_id
 ');
@@ -53,6 +55,11 @@ FROM users
 WHERE is_owner = 1 AND branch_id = ' . $branch_id . '
 ');
 $data['users'] = $users;
+$data['methods'] = $connection->query("
+SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `method_name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE `branch_id` = '$branch_id'");
 $options['type'] = 'Owner-Stats';
 $options['text'] = 'Владельцы';
 $options['range'] = 1;
@@ -262,6 +269,11 @@ if ($sumDebts) {
 $fiats = $connection->query("SELECT * FROM fiats");
 $data['clients'] = $rollbackList;
 $data['fiats'] = $fiats;
+$data['methods'] = $connection->query("
+SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `method_name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE `branch_id` = '$branch_id'");
 $options['type'] = 'Rollback';
 $options['text'] = 'Ожидают откаты';
 if (accessLevel() < 3){}
