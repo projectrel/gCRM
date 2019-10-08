@@ -426,7 +426,7 @@ function editVGDebtPayback() {
     $(".loader").show();
     $(".modal-submit").prop("disabled", true);
     const vg_id = $("#edit-payback-vg-purchase-debt-form #editVgDebtField").val();
-    const fiat_id = $("#edit-payback-vg-purchase-debt-form #editFiaDebttField").val();
+    const method_id = $("#edit-payback-vg-purchase-debt-form #editMethodDebtField").val();
     const debt_sum = $("#edit-payback-vg-purchase-debt-form #editVgSumDebtField").val()
     const outgo_id = $("#edit-payback-vg-purchase-debt-form #edit-vg-purchase-debt-title").attr('vg-payback-debt-id');
     $.ajax({
@@ -434,7 +434,7 @@ function editVGDebtPayback() {
         type: "POST",
         data: {
             vg_id,
-            fiat_id,
+            method_id,
             debt_sum,
             outgo_id,
         },

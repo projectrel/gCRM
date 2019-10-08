@@ -11,8 +11,6 @@ if (isset($_POST['method_id'], $_POST['vg_id'], $_POST['currency_sum'])) {
     $user_id = $_SESSION['id'];
     $branch_id = $_SESSION['branch_id'];
 
-    $fiat_id = getFiatIdByMethod($connection, $method_id);
-
 
     $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));
     if ($user_data && heCan($user_data['role'], 1)) {
@@ -26,9 +24,9 @@ if (isset($_POST['method_id'], $_POST['vg_id'], $_POST['currency_sum'])) {
 
         $addOutgo = ($connection->query("
            INSERT INTO `outgo`
-           (`user_id`, `fiat_id`, `outgo_type_id`, `date`, `sum`,  branch_id, vg_data_id) 
+           (`user_id`, `method_id`, `outgo_type_id`, `date`, `sum`,  branch_id, vg_data_id) 
            VALUES 
-           ('$user_id','$fiat_id','$vg_purchase_type',now(),'$currency_sum', '$branch_id', '$vg_id' )"));
+           ('$user_id','$method_id','$vg_purchase_type',now(),'$currency_sum', '$branch_id', '$vg_id' )"));
 
 
         if ($update_vg_debt && $addOutgo && updateMethodMoney($connection, $method_id, -$currency_sum)) {

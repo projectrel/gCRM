@@ -5,7 +5,7 @@ if (isset($_GET['outgo_id'])) {
     $outgo_id = clean($_GET['outgo_id']);
     session_start();
     $vg_data = mysqli_fetch_assoc($connection->query("
-    SELECT `outgo_id`, `vg_data_id`, `fiat_id`, `sum`
+    SELECT `outgo_id`, `vg_data_id`, `method_id`, `sum`
     FROM  `outgo`
     WHERE outgo_id = '$outgo_id'"));
 

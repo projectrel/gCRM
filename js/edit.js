@@ -453,7 +453,7 @@ function fillVGPaybackDebtEditForm(target) {
             }
             $('#edit-payback-vg-purchase-debt-form #edit-vg-purchase-debt-title').text(`Изменить данные закупки № ${res['outgo_id']}`).attr('vg-payback-debt-id', res['outgo_id']);
             $('#edit-payback-vg-purchase-debt-form #editVgDebtField').val(res['vg_data_id']);
-            $('#edit-payback-vg-purchase-debt-form #editFiaDebttField').val(res['fiat_id']);
+            $('#edit-payback-vg-purchase-debt-form #editMethodDebtField').val(res['method_id']);
             $('#edit-payback-vg-purchase-debt-form #editVgSumDebtField').val(res['sum']);
             $('.loader').fadeOut('fast');
             $('#VGPaybackDebt-edit-Modal').modal();

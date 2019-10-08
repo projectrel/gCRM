@@ -58,7 +58,7 @@ function vgDebtPaybackEditModal($data)
 
     if (isset($data['methods']))
         foreach ($data['methods'] as $key => $var) {
-            $output .= '<option value="' . $var['method_id'] . '">' . $var['method_id'] . '</option>';
+            $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
         }
     $output .='
 </select>
