@@ -2,19 +2,20 @@ $(document).ready(function () {
     $('#replenish-fiat-btn').click(function () {
         $('.loader').show();
         $.ajax({
-            url: "../api/select/fiat.php",
-            type: "POST",
+            url: "../api/select/methods.php",
+            type: "GET",
             data: "req=ok",
             cache: false,
             dataType: 'JSON',
             success: function (res) {
+                console.log(res);
                 if ($('#replenish-fiat-Modal #replenishMethodSelect').empty()) {
                     if(res.error){
                         createAlertTable(res.error, "Данные фиата");
                         return;
                     }
                         res.forEach((el) => {
-                            $('#replenish-fiat-Modal #replenishMethodSelect').append(`<option value = ${el["fiat_id"]}>${el["full_name"]}</option>`)
+                            $('#replenish-fiat-Modal #replenishMethodSelect').append(`<option value = ${el["method_id"]}>${el["full_name"]}</option>`)
                         });
                 }
                 $('.loader').fadeOut('fast');
@@ -62,17 +63,17 @@ $(document).ready(function () {
 
     function replenishFiat() {
         $('.loader').show();
-        const method = $('#replenish-fiat-Modal #replenishMethodSelect').val();
+        const method_id = $('#replenish-fiat-Modal #replenishMethodSelect').val();
         const sum = $('#replenish-fiat-Modal #replenishFiatSum').val();
         const ownerfield = $('#replenish-fiat-Modal #replenishOwnerSelect');
         const owner = ownerfield.val() ? ownerfield.val() : 0;
 
         $.ajax({
-            url: "../api/operate/fiat.php",
+            url: "../api/operate/replenishFiat.php",
             type: "POST",
             method: "POST",
             data: {
-                method,
+                method_id,
                 sum,
                 owner,
             },
