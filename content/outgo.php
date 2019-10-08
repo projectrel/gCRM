@@ -15,7 +15,9 @@ O.date AS `дата`
 FROM outgo O
 INNER JOIN users U ON U.user_id = O.user_id
 INNER JOIN branch B ON B.branch_id = U.branch_id
-    INNER JOIN fiats F ON F.fiat_id = O.fiat_id
+INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
+INNER JOIN payments PA ON PA.method_id = MOO.method_id
+INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
 LEFT JOIN (SELECT user_id AS `owner_id`, first_name, last_name FROM users WHERE is_owner = 1) OW ON OW.owner_id = O.user_as_owner_id
 LEFT JOIN outgo_types OT ON OT.outgo_type_id = O.outgo_type_id
 LEFT JOIN projects P ON P.project_id = O.project_id
@@ -30,8 +32,10 @@ SELECT  concat(U.last_name, ' ', U.first_name) AS `агент`, F.full_name AS `
 O.date AS `дата`
 FROM outgo O
 INNER JOIN users U ON U.user_id = O.user_id
-    INNER JOIN fiats F ON F.fiat_id = O.fiat_id
-    left join  branch ON branch.branch_id = O.branch_id
+INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
+INNER JOIN payments PA ON PA.method_id = MOO.method_id
+INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
+LEFT JOIN  branch ON branch.branch_id = O.branch_id
 LEFT JOIN (SELECT user_id AS `owner_id`, first_name, last_name FROM users WHERE is_owner = 1) OW ON OW.owner_id = O.user_as_owner_id
 LEFT JOIN outgo_types OT ON OT.outgo_type_id = O.outgo_type_id
 LEFT JOIN projects P ON P.project_id = O.project_id
