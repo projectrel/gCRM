@@ -5,10 +5,10 @@ $(document).ready(function () {
     $('.modal .btn_sum-manually').click(function () {
         $(this).toggleClass('btn_sum-manually__opened');
         $(this).parent().find('.sum-manually__box').toggleClass('display-none');
-        if($(this).hasClass('btn_sum-manually__opened'))
-            $(this).attr('value','Атоматически')
+        if ($(this).hasClass('btn_sum-manually__opened'))
+            $(this).attr('value', 'Атоматически')
         else
-            $(this).attr('value','Ввести сумму вручную')
+            $(this).attr('value', 'Ввести сумму вручную')
     })
 
 
@@ -370,10 +370,10 @@ $(document).ready(function () {
                 type: "POST",
                 data: {start: start.format('YYYY-MM-DD'), end: end.format('YYYY-MM-DD')},
                 cache: false,
+                dataType: "JSON",
                 success: function (res) {
                     if (!res || res == null) return;
 
-                    res = JSON.parse(res);
                     if (res.error) {
                         createAlertTable(res.error, "Данные владельцев");
                         return;
