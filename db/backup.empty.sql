@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Окт 09 2019 г., 10:02
+-- Время создания: Окт 09 2019 г., 10:07
 -- Версия сервера: 5.6.41
 -- Версия PHP: 5.6.38
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `crm5.2`
+-- База данных: `crm6.empty`
 --
 
 -- --------------------------------------------------------
@@ -34,6 +34,13 @@ CREATE TABLE `branch` (
   `active` tinyint(1) NOT NULL DEFAULT '1',
   `ik_id` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Дамп данных таблицы `branch`
+--
+
+INSERT INTO `branch` (`branch_id`, `branch_name`, `active`, `ik_id`) VALUES
+(1, 'MAIN', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -246,6 +253,14 @@ CREATE TABLE `outgo_types` (
   `active` tinyint(1) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Дамп данных таблицы `outgo_types`
+--
+
+INSERT INTO `outgo_types` (`outgo_type_id`, `outgo_name`, `branch_id`, `active`) VALUES
+('0', 'Закупка VG', 1, 1),
+('1', 'root_type', 1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -345,6 +360,13 @@ CREATE TABLE `users` (
   `is_owner` tinyint(1) NOT NULL DEFAULT '0',
   `telegram` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
+
+--
+-- Дамп данных таблицы `users`
+--
+
+INSERT INTO `users` (`user_id`, `first_name`, `last_name`, `role`, `branch_id`, `pass_hash`, `login`, `active`, `is_owner`, `telegram`) VALUES
+(2, 'Test', 'Moder', 'moder', 1, '$2y$10$2zCpMmzWdYudw5LkeSSq7.ZK26fup.eAU5h3aZk3WyOHZU/J/1EP2', 'moder', 1, 0, 'asdffs');
 
 -- --------------------------------------------------------
 
@@ -642,7 +664,7 @@ ALTER TABLE `virtualgood`
 -- AUTO_INCREMENT для таблицы `branch`
 --
 ALTER TABLE `branch`
-  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `branch_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `changes`
@@ -744,7 +766,7 @@ ALTER TABLE `shares`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `vg_data`

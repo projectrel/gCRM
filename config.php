@@ -4,4 +4,4 @@ define("ROOT_TYPE", 1);
 define("DB_HOST", "localhost");
 define("DB_USER", "root");
 define("DB_PASS", "");
-define("DB_NAME", "crm5.2");
+define("DB_NAME", "crm6.empty");
