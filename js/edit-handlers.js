@@ -299,6 +299,59 @@ function editDebtPayback() {
 
 
 
+//rollback payback
+$.validate({
+    form: '#edit-pay-rollback-form',
+    modules: '',
+    lang: 'ru',
+    onSuccess: function () {
+        editRollbackPayment();
+        return false;
+    }
+});
+function editRollbackPayment() {
+
+    $(".loader").show();
+    $(".modal-submit").prop("disabled", true);
+    const method_id = $("#edit-pay-rollback-form #editMethodField").val();
+    const rollback_sum = $("#edit-pay-rollback-form #editPayField").val();
+    const client_id = $("#edit-pay-rollback-form #editClientField").val();
+    const rollback_paying_id = $('#edit-pay-rollback-form .modal-title').attr('rollback-paying-id');
+    $.ajax({
+        url: "../api/edit/rollbackPayment.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            method_id,
+            rollback_sum,
+            client_id,
+            rollback_paying_id
+        },
+        cache: false,
+        success: function (res) {
+            if (res.error && res.info) {
+                createAlertTable(res.error, res.info);
+                return
+            } else if (res.error) {
+                createAlertTable(res.error, "Выплата отката");
+                return
+            }
+            createAlertTable(res.status, "Выплата отката");
+        },
+        error: function () {
+            createAlertTable("connectionError", "Выплата отката");
+        },
+        complete: function () {
+            setTimeout(function () {
+                $(".modal-submit").prop("disabled", false);
+                $(".loader").fadeOut("slow");
+            }, 100);
+        }
+    });
+}
+
+
+
 //Client
 $.validate({
     form: '#edit-client-form',

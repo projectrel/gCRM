@@ -1,21 +1,10 @@
 <?php
 function rollbackModal($data)
 {
-    $methods = NULL;
-    $clients = NULL;
-    if ($data) {
-        $i = 0;
-        if ($data['clients']) while ($new = $data['clients']->fetch_array()) {
-            $copy_of_data[$i] = $new;
-            $i++;
-        }
-        $i = 0;
-        if ($data['methods']) while ($new = $data['methods']->fetch_array()) {
-            $methods[$i] = $new;
-            $i++;
-        }
+    foreach ($data as $key => $var) {
+        $data[$key] = mysqliToArray($var);
     }
-    if (!$copy_of_data) return noRollbacksModal();
+    if (!$data) return noRollbacksModal();
     $output = '
 <div id="Rollback-Modal" class="modal" action="" role="form">
 <form id="pay-rollback-form">
@@ -24,7 +13,7 @@ function rollbackModal($data)
   <p>
 <select id="clientField" data-validation="required">
   <option value="" selected disabled>Выберите клиента</option>';
-    foreach ($copy_of_data as $key => $var) {
+    foreach ($data['clients'] as $key => $var) {
         $output .= '<option sum="' . $var['rollback_sum'] . '" fiat="' . $var['fiat_id'] . '" value="' . $var['id'] . '">' . $var['client_name'] . ' (' . $var['login'] . ')</option>';
     }
     $output .= '
@@ -36,7 +25,45 @@ function rollbackModal($data)
    <p>
 <select id="methodField" data-validation="required">
   <option value="" selected disabled>Выберите метод оплаты</option>';
-    foreach ($methods as $key => $var) {
+    foreach ($data['methods'] as $key => $var) {
+        $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
+    }
+    $output .= '
+</select>
+</p>
+  </div>
+  <input class="modal-submit" type="submit" value="Выплатить">
+  </form>
+</div>';
+    session_start();
+    if (iCan(2)) {
+        $output .= rollbackEditModal($data);
+    }
+    return $output;
+}
+function rollbackEditModal($data)
+{
+    $output = '
+<div id="Rollback-edit-Modal" class="modal" action="" role="form">
+<form id="edit-pay-rollback-form">
+  <h2 class="modal-title">Выплатить откат</h2>
+  <div class="modal-inputs">
+  <p>
+<select id="editClientField" data-validation="required">
+  <option value="" selected disabled>Выберите клиента</option>';
+    foreach ($data['clients'] as $key => $var) {
+        $output .= '<option sum="' . $var['rollback_sum'] . '" fiat="' . $var['fiat_id'] . '" value="' . $var['id'] . '">' . $var['client_name'] . ' (' . $var['login'] . ')</option>';
+    }
+    $output .= '
+</select>
+</p>
+  <p>
+  <input id="editPayField" data-validation="required length" data-validation-length="min1" placeholder="Выплата" type="number" name="in" step="0.01">
+  </p>
+   <p>
+<select id="editMethodField" data-validation="required">
+  <option value="" selected disabled>Выберите метод оплаты</option>';
+    foreach ($data['methods'] as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }
     $output .= '
@@ -49,7 +76,6 @@ function rollbackModal($data)
 
     return $output;
 }
-
 function noRollbacksModal()
 {
     return '<div id="Rollback-Modal" class="modal" action="">

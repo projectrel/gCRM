@@ -81,6 +81,9 @@ $('tr').on('click', (e) => {
         case "Debt-edit":
             fillDebtPaybackEditForm(mainParent);
             break;
+        case "Rollback-edit":
+            fillRollbackEditForm(mainParent);
+            break;
         case "info":
             fillAdditionalInfo(mainParent);
             break;
@@ -468,10 +471,40 @@ function fillDebtPaybackEditForm(target) {
         },
     });
 }
+function fillRollbackEditForm(target) {
+    $('.loader').show();
+    const rollback_paying_id = target.attr('itemid');
+    $.ajax({
+        url: "../api/select/rollbackPayment.php",
+        type: "GET",
+        dataType: 'JSON',
+        data: {
+            rollback_paying_id,
+        },
+        cache: false,
+        success: function (res) {
+
+            if (res.error) {
+                createAlertTable(res.error, "Данные погашения задолженности");
+                return;
+            }
+            $('#edit-pay-rollback-form .modal-title').text(`Изменить данные закупки № ${res['rollback_paying_id']}`).attr('rollback-paying-id', res['rollback_paying_id']);
+            $('#edit-pay-rollback-form #editClientField').val(res['client_id']);
+            $('#edit-pay-rollback-form #editPayField').val(res['rollback_sum']);
+            $('#edit-pay-rollback-form #editMethodField').val(res['method_id']);
+            $('.loader').fadeOut('fast');
+            $('#Rollback-edit-Modal').modal();
+
+        },
+        error: function () {
+            createAlertTable("connectionError", "Данные погашения задолженности");
+        },
+    });
+}
 
 function fillVGPaybackDebtEditForm(target) {
     $('.loader').show();
-    let outgo_id = target.attr('itemid');
+    const outgo_id = target.attr('itemid');
     $.ajax({
         url: "../api/select/vg/getVgPaybackDebt.php",
         type: "GET",

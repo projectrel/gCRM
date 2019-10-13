@@ -21,7 +21,7 @@ query("SELECT * FROM `debt_history` WHERE  `debt_history_id`='$debt_id' "));
 $update_old_method = updateMethodMoney($connection, $old_debt_data['method_id'], -$old_debt_data['debt_sum'] );
 $update_method = updateMethodMoney($connection, $method_id, $debt_sum);
 if(!($update_old_method && $update_method))
-    return error("custom", "Не удалось обновить данные считов");
+    return error("custom", "Не удалось обновить данные счетов");
 $update = $connection->
 query("
         UPDATE `debt_history`
