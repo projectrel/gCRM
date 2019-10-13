@@ -77,6 +77,7 @@ $options['text'] = "История выплат рефералов";
 $options['btn'] = 1;
 $options['btn-max'] = 2;
 $options['btn-text'] = 'Выплатить';
+$options['edit'] = 2;
 
 echo template(display_data($info, $options, $data));
 ?>

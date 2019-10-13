@@ -12,15 +12,15 @@ $(document).ready(function () {
     })
 
 
-    const vgFiatDebt = $('#payback-vg-debt-form #vgDebtField, #payback-vg-debt-form #fiatDebtField');
+    const vgFiatDebt = $('#payback-vg-debt-form #vgDebtField, #payback-vg-debt-form #methodDebtField');
     vgFiatDebt.change(function () {
         const vg_id = $('#payback-vg-debt-form #vgDebtField').val();
-        const fiat_id = $('#payback-vg-debt-form #fiatDebtField').val();
-        if (!vg_id || !fiat_id) {
+        const method_id = $('#payback-vg-debt-form #methodDebtField').val();
+        if (!vg_id || !method_id) {
             return;
         }
         $('.loader').show();
-        $.get('../api/select/vg/getVgDebt.php', {vg_id, fiat_id}, () => {
+        $.get('../api/select/vg/getVgDebt.php', {vg_id, method_id}, () => {
         }, "json")
             .error(function () {
                 $('.loader').fadeOut('fast');

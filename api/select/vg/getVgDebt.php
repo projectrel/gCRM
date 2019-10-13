@@ -1,9 +1,11 @@
 <?php
-include_once("../../../db.php");
+
 include_once("../../../funcs.php");
-if (!isset($_GET['fiat_id'], $_GET['vg_id']))
+if (!isset($_GET['method_id'], $_GET['vg_id']))
     error("empty");
-$fiat_id = clean($_GET['fiat_id']);
+
+include_once("../../../db.php");
+$fiat_id = getFiatIdByMethod($connection, $_GET['method_id']);
 $vg_id = clean($_GET['vg_id']);
 $res = mysqli_fetch_assoc($connection->
 query("SELECT IFNULL(`sum`,0) AS `sum` FROM `payments` 

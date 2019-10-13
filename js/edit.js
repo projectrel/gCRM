@@ -78,6 +78,9 @@ $('tr').on('click', (e) => {
         case "VGPurchase-edit":
             fillVGPurchaseEditForm(mainParent);
             break;
+        case "Debt-edit":
+            fillDebtPaybackEditForm(mainParent);
+            break;
         case "info":
             fillAdditionalInfo(mainParent);
             break;
@@ -406,7 +409,7 @@ function fillVGEditForm(target) {
 
 function fillVGPurchaseEditForm(target) {
     $('.loader').show();
-    let vg_purchase_id = target.attr('itemid');
+    const vg_purchase_id = target.attr('itemid');
     $.ajax({
         url: "../api/select/vg/getVgPurchase.php",
         type: "GET",
@@ -433,7 +436,37 @@ function fillVGPurchaseEditForm(target) {
         },
     });
 }
+function fillDebtPaybackEditForm(target) {
+    $('.loader').show();
+    const debt_id = target.attr('itemid');
+    $.ajax({
+        url: "../api/select/vg/getVgPaybackDebt.php",
+        type: "GET",
+        dataType: 'JSON',
+        data: {
+            debt_id,
+        },
+        cache: false,
+        success: function (res) {
 
+            if (res.error) {
+                createAlertTable(res.error, "Данные погашения задолженности");
+                return;
+            }
+            $('#edit-payback-vg-purchase-debt-form #edit-vg-purchase-debt-title').text(`Изменить данные закупки № ${res['outgo_id']}`).attr('vg-payback-debt-id', res['outgo_id']);
+            $('#edit-payback-vg-purchase-debt-form #editVgDebtField').val(res['vg_data_id']);
+            $('#edit-payback-vg-purchase-debt-form #editMethodDebtField').val(res['method_id']);
+            $('#edit-payback-vg-purchase-debt-form #editVgSumDebtField').val(res['sum']);
+            $('.loader').fadeOut('fast');
+            $('#Debt-edit-Modal').modal();
+
+        },
+        error: function () {
+            $('#Debt-edit-Modal').modal()
+            createAlertTable("connectionError", "Данные погашения задолженности");
+        },
+    });
+}
 function fillVGPaybackDebtEditForm(target) {
     $('.loader').show();
     let outgo_id = target.attr('itemid');
