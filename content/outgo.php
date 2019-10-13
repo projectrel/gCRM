@@ -13,8 +13,7 @@ switch (accessLevel()) {
     case 3:
         $info = $connection->query("
 SELECT  concat(U.last_name, ' ', U.first_name) AS `агент`, F.full_name AS `валюта`, U.login AS 'логин агента', OT.outgo_name AS `тип`, P.project_name AS `проект`, B.branch_name AS `отдел`, concat(O.sum, ' ', F.name) AS `сумма`, IFNULL(concat(OW.last_name, ' ', OW.first_name),'-') AS `владельцы`, 
-       IFNULL(description,'-') AS `комментарий`,
-O.date AS `дата`
+       IFNULL(description,'-') AS `комментарий`, O.date AS `дата`,  O.outgo_id AS 'id', IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
 FROM outgo O
 INNER JOIN users U ON U.user_id = O.user_id
 INNER JOIN branch B ON B.branch_id = U.branch_id
@@ -24,11 +23,32 @@ INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
 LEFT JOIN (SELECT user_id AS `owner_id`, first_name, last_name FROM users WHERE is_owner = 1) OW ON OW.owner_id = O.user_as_owner_id
 LEFT JOIN outgo_types OT ON OT.outgo_type_id = O.outgo_type_id
 LEFT JOIN projects P ON P.project_id = O.project_id
+LEFT OUTER JOIN changes LC ON O.outgo_id = LC.outgo_id
 WHERE O.outgo_type_id != '$vg_purchase_type' OR O.outgo_type_id IS NULL
+GROUP BY O.outgo_id
 ORDER BY `date` DESC
 ");
         break;
     case 2:
+        $info = $connection->query("
+SELECT  concat(U.last_name, ' ', U.first_name) AS `агент`, F.full_name AS `валюта`, U.login AS 'логин агента',  OT.outgo_name AS `тип`, P.project_name AS `проект`,
+       concat(O.sum, ' ', F.name) AS `сумма`, IFNULL(concat(OW.last_name, ' ', OW.first_name),'-') AS `владельцы`, IFNULL(branch.branch_name,'-') AS `pасход предпр.`, 
+       IFNULL(description,'-') AS `комментарий`, O.date AS `дата`,  O.outgo_id AS 'id', IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
+FROM outgo O
+INNER JOIN users U ON U.user_id = O.user_id
+INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
+INNER JOIN payments PA ON PA.method_id = MOO.method_id
+INNER JOIN fiats F ON F.fiat_id = PA.fiat_id
+LEFT JOIN  branch ON branch.branch_id = O.branch_id
+LEFT JOIN (SELECT user_id AS `owner_id`, first_name, last_name FROM users WHERE is_owner = 1) OW ON OW.owner_id = O.user_as_owner_id
+LEFT JOIN outgo_types OT ON OT.outgo_type_id = O.outgo_type_id
+LEFT JOIN projects P ON P.project_id = O.project_id
+LEFT OUTER JOIN changes LC ON O.outgo_id = LC.outgo_id
+WHERE U.branch_id = '$branch_id' AND (O.outgo_type_id != '$vg_purchase_type' OR O.outgo_type_id IS NULL)
+GROUP BY O.outgo_id
+ORDER BY `date` DESC
+");
+        break;
     case 1:
         $info = $connection->query("
 SELECT  concat(U.last_name, ' ', U.first_name) AS `агент`, F.full_name AS `валюта`, U.login AS 'логин агента',  OT.outgo_name AS `тип`, P.project_name AS `проект`,
@@ -96,6 +116,7 @@ $options['text'] = 'История расходов';
 $options['btn'] = 1;
 $options['btn-max'] = 2;
 $options['btn-text'] = 'Добавить';
+$options['edit'] = 2;
 echo template(display_data($info, $options, $data));
 ?>
 

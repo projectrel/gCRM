@@ -70,7 +70,7 @@ function rollbackEditModal($data)
 </select>
 </p>
   </div>
-  <input class="modal-submit" type="submit" value="Выплатить">
+  <input class="modal-submit" type="submit" value="Сохранить">
   </form>
 </div>';
 

@@ -84,6 +84,9 @@ $('tr').on('click', (e) => {
         case "Rollback-edit":
             fillRollbackEditForm(mainParent);
             break;
+        case "Outgo-edit":
+            fillOutgoEditForm(mainParent);
+            break;
         case "info":
             fillAdditionalInfo(mainParent);
             break;
@@ -234,7 +237,7 @@ function fillOrderEditForm(target) {
 
 function fillOwnerEditForm(target) {
     $('.loader').show();
-    let owner_id = target.attr('itemid');
+    const owner_id = target.attr('itemid');
     $.ajax({
         url: "../api/select/user.php",
         type: "POST",
@@ -260,6 +263,40 @@ function fillOwnerEditForm(target) {
 
         },
         error: function () {
+            createAlertTable("connectionError", "Данные менеджера");
+        },
+    });
+}
+
+function fillOutgoEditForm(target) {
+    $('.loader').show();
+    const outgo_id = target.attr('itemid');
+    $.ajax({
+        url: "../api/select/outgo.php",
+        type: "GET",
+        dataType: 'JSON',
+        data: {
+            outgo_id,
+        },
+        cache: false,
+        success: function (res) {
+            if (res.error) {
+                createAlertTable(res.error, "Данные расхода");
+                return;
+            }
+            $('#edit-outgo-form .modal-title').text(`Изменить данные расхода ${res['outgo_id']}`).attr('outgo-id', res['outgo_id']);
+            $('#edit-outgo-form #editSumField').val(res['sum']);
+            $('#edit-outgo-form #editOwnerField').val(res['user_as_owner_id']);
+            $('#edit-outgo-form #editTypeField').val(res['outgo_type_id']);
+            $('#edit-outgo-form #editProjectField').val(res['project_id']);
+            $('#edit-outgo-form #editCommentField').val(res['description']);
+            $('#edit-outgo-form #editMethodField').val(res['method_id']);
+            $('.loader').fadeOut('fast');
+            $('#Outgo-edit-Modal').modal();
+
+        },
+        error: function () {
+            createAlertTable('connectionError', 'Данные расхода');
         },
     });
 }
@@ -289,6 +326,7 @@ function fillFiatEditForm(target) {
 
         },
         error: function () {
+            createAlertTable('connectionError', 'Фиат');
         },
     });
 }
@@ -471,6 +509,7 @@ function fillDebtPaybackEditForm(target) {
         },
     });
 }
+
 function fillRollbackEditForm(target) {
     $('.loader').show();
     const rollback_paying_id = target.attr('itemid');
@@ -488,7 +527,7 @@ function fillRollbackEditForm(target) {
                 createAlertTable(res.error, "Данные погашения задолженности");
                 return;
             }
-            $('#edit-pay-rollback-form .modal-title').text(`Изменить данные закупки № ${res['rollback_paying_id']}`).attr('rollback-paying-id', res['rollback_paying_id']);
+            $('#edit-pay-rollback-form .modal-title').text(`Изменить данные отката № ${res['rollback_paying_id']}`).attr('rollback-paying-id', res['rollback_paying_id']);
             $('#edit-pay-rollback-form #editClientField').val(res['client_id']);
             $('#edit-pay-rollback-form #editPayField').val(res['rollback_sum']);
             $('#edit-pay-rollback-form #editMethodField').val(res['method_id']);

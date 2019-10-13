@@ -352,6 +352,69 @@ function editRollbackPayment() {
 
 
 
+
+
+
+//Outgo
+$.validate({
+    form: '#edit-outgo-form',
+    modules: '',
+    lang: 'ru',
+    onSuccess: function () {
+        editOutgo();
+        return false;
+    }
+});
+function editOutgo() {
+
+    $(".loader").show();
+    $(".modal-submit").prop("disabled", true);
+    const method_id = $("#edit-outgo-form #editMethodField").val();
+    const outgo_sum = $("#edit-outgo-form #editSumField").val();
+    const client_id = $("#edit-outgo-form #editOwnerField").val();
+    const project_id = $("#edit-outgo-form #editProjectField").val();
+    const outgo_type = $("#edit-outgo-form #editTypeField").val();
+    const description = $("#edit-outgo-form #editCommentField").val();
+    const outgo_id = $('#edit-outgo-form .modal-title').attr('outgo-id');
+    $.ajax({
+        url: "../api/edit/outgo.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            method_id,
+            outgo_sum,
+            client_id,
+            outgo_id,
+            project_id,
+            outgo_type,
+            description
+        },
+        cache: false,
+        success: function (res) {
+            if (res.error && res.info) {
+                createAlertTable(res.error, res.info);
+                return
+            } else if (res.error) {
+                createAlertTable(res.error, "Расход");
+                return
+            }
+            createAlertTable(res.status, "Расход");
+        },
+        error: function () {
+            createAlertTable("connectionError", "Расход");
+        },
+        complete: function () {
+            setTimeout(function () {
+                $(".modal-submit").prop("disabled", false);
+                $(".loader").fadeOut("slow");
+            }, 100);
+        }
+    });
+}
+
+
+
+
 //Client
 $.validate({
     form: '#edit-client-form',
