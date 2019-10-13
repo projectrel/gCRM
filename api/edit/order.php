@@ -20,8 +20,7 @@ $debt = isset($_POST['debt']) ? clean($_POST['debt']) : 0;
 $callmaster = $_POST['callmaster'] == -1 ? false : $_POST['callmaster'];
 $method_id = clean($_POST['method_id']);
 $fiat = clean($_POST['fiat']);
-$sum_manually = $_POST['sum_manually'];
-$sum_currency = $_POST['enter_manually'] ? $sum_manually : ($sum_vg * $out_percent) / 100;
+$sum_currency = $_POST['enter_manually'] === true || $_POST['enter_manually'] === "true" ? $_POST['sum_manually'] : ($sum_vg * $out_percent) / 100;
 $in_percent = mysqli_fetch_assoc($connection->query("
             SELECT in_percent
             FROM vg_data

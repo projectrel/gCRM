@@ -78,7 +78,7 @@ $options['edit'] = 2;
 
 $data['fiats'] = $connection -> query('SELECT * FROM fiats');
 $data['clients'] = $connection->query('
-SELECT DISTINCT concat(C.last_name, " ", C.first_name) AS `client_name`, byname AS `login`, P.sum AS `debt`, fiat_id,concat(C.client_id, "-", P.fiat_id) AS `id`
+SELECT DISTINCT concat(C.last_name, " ", C.first_name) AS `client_name`, byname AS `login`, P.sum AS `debt`, fiat_id, C.client_id AS `id`
 FROM clients C
 INNER JOIN payments P ON P.client_debt_id = C.client_id 
 WHERE P.sum > 0

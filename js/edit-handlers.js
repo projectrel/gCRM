@@ -110,15 +110,15 @@ $.validate({
 function editUser() {
     $(".loader").show();
     $(".modal-submit").prop("disabled", true);
-    let password = $("#edit-user-form #editPassField").val();
-    let login = $("#edit-user-form #editLoginField").val();
-    let first_name = $("#edit-user-form #editFirstNameField").val();
-    let last_name = $("#edit-user-form #editLastNameField").val();
-    let branch = $("#edit-user-form #editBranchField").val();
-    let money = $("#edit-user-form #editMoneyField").val();
-    let role = $("#edit-user-form #editRoleField").val();
-    let id = $("#edit-user-form #edit-user-title").attr('user-id');
-    let telegram = $("#edit-user-form #telegram").val();
+    const password = $("#edit-user-form #editPassField").val();
+    const login = $("#edit-user-form #editLoginField").val();
+    const first_name = $("#edit-user-form #editFirstNameField").val();
+    const last_name = $("#edit-user-form #editLastNameField").val();
+    const branch = $("#edit-user-form #editBranchField").val();
+    const money = $("#edit-user-form #editMoneyField").val();
+    const role = $("#edit-user-form #editRoleField").val();
+    const user_id = $("#edit-user-form #edit-user-title").attr('user-id');
+    const telegram = $("#edit-user-form #telegram").val();
     $.ajax({
         url: "../api/edit/user.php",
         type: "POST",
@@ -131,7 +131,7 @@ function editUser() {
             branch,
             money,
             role,
-            user_id: id,
+            user_id,
             telegram,
         },
         cache: false,
@@ -164,16 +164,7 @@ $.validate({
     }
 });
 
-//Method of obtaining
-$.validate({
-    form: '#method-of-obtaining-edit-form',
-    modules: '',
-    lang: 'ru',
-    onSuccess: function () {
-        editMethodOfObtaining();
-        return false;
-    }
-});
+
 
 
 function editOutgoType() {
@@ -203,7 +194,16 @@ function editOutgoType() {
         }
     });
 }
-
+//Method of obtaining
+$.validate({
+    form: '#method-of-obtaining-edit-form',
+    modules: '',
+    lang: 'ru',
+    onSuccess: function () {
+        editMethodOfObtaining();
+        return false;
+    }
+});
 function editMethodOfObtaining() {
     $(".loader").show();
     $(".modal-submit").prop("disabled", true);
@@ -241,6 +241,62 @@ function editMethodOfObtaining() {
         }
     });
 }
+
+
+
+//debt payback
+$.validate({
+    form: '#edit-payback-debt-form',
+    modules: '',
+    lang: 'ru',
+    onSuccess: function () {
+        editDebtPayback();
+        return false;
+    }
+});
+function editDebtPayback() {
+
+    $(".loader").show();
+    $(".modal-submit").prop("disabled", true);
+    const method_id = $("#edit-payback-debt-form #editMethodField").val();
+    const debt_sum = $("#edit-payback-debt-form #editPaybackField").val();
+    const client_id = $("#edit-payback-debt-form #editDebtorField").val();
+    const debt_id = $('#edit-payback-debt-form .modal-title').attr('payback-debt-id');
+    console.log(debt_id)
+    $.ajax({
+        url: "../api/edit/debtPayback.php",
+        type: "POST",
+        dataType: "json",
+        data: {
+            method_id,
+            debt_sum,
+            client_id,
+            debt_id
+        },
+        cache: false,
+        success: function (res) {
+            if (res.error && res.info) {
+                createAlertTable(res.error, res.info);
+                return
+            } else if (res.error) {
+                createAlertTable(res.error, "Оплата долга");
+                return
+            }
+            createAlertTable(res.status, "Оплата долга");
+        },
+        error: function () {
+            createAlertTable("connectionError", "Оплата долга");
+        },
+        complete: function () {
+            setTimeout(function () {
+                $(".modal-submit").prop("disabled", false);
+                $(".loader").fadeOut("slow");
+            }, 100);
+        }
+    });
+}
+
+
 
 
 //Client

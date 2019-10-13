@@ -40,9 +40,9 @@ WHERE branch_id = '$branch_id'
 SELECT MOO.method_id AS `id`, method_name AS `название`, F.full_name AS `валюта`, is_active AS `статус`, method_name AS `название`, participates_in_balance AS `участие в балансе`,
 IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
 FROM `methods_of_obtaining` MOO INNER JOIN `payments` P ON  MOO.method_id = P.method_id
-INNER JOIN `fiats` F ON F.fiat_id = P.fiat_id  LEFT OUTER JOIN changes LC ON MOO.method_id = LC.method_id
-
-WHERE branch_id = '$branch_id'
+INNER JOIN `fiats` F ON F.fiat_id = P.fiat_id 
+LEFT OUTER JOIN changes LC ON MOO.method_id = LC.method_id
+WHERE MOO.branch_id = '$branch_id'
 GROUP BY MOO.method_id
 ";
         break;

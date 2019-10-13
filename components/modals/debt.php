@@ -60,14 +60,14 @@ function debtEditModal($data)
   <p>
 <select id="editDebtorField" data-validation="required length" data-validation-length="min1">
   <option value="" selected disabled>Выберите должника</option>';
-    foreach ($data as $key => $var) {
+    foreach ($data['clients'] as $key => $var) {
         $output .= '<option sum="' . $var['debt'] . '" fiat="' . $var['fiat_id'] . '" value="' . $var['id'] . '">' . $var['client_name'] . ' (' . $var['login'] . ')</option>';
     }
     $output .= '
 </select>
 </p>
   <p>
-  <input id="editPaybackField" data-validation="required length" data-validation-length="min1" placeholder="Выплата" type="number" name="in" step="0.01">
+  <input id="editPaybackField" data-validation="required length" data-validation-length="min1" placeholder="Выплата" type="number" name="sum" step="0.01">
   </p>
   <p>
 <select id="editMethodField" data-validation="required">

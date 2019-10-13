@@ -436,11 +436,12 @@ function fillVGPurchaseEditForm(target) {
         },
     });
 }
+
 function fillDebtPaybackEditForm(target) {
     $('.loader').show();
     const debt_id = target.attr('itemid');
     $.ajax({
-        url: "../api/select/vg/getVgPaybackDebt.php",
+        url: "../api/select/debtPayback.php",
         type: "GET",
         dataType: 'JSON',
         data: {
@@ -448,15 +449,15 @@ function fillDebtPaybackEditForm(target) {
         },
         cache: false,
         success: function (res) {
-
+            console.log(res);
             if (res.error) {
                 createAlertTable(res.error, "Данные погашения задолженности");
                 return;
             }
-            $('#edit-payback-vg-purchase-debt-form #edit-vg-purchase-debt-title').text(`Изменить данные закупки № ${res['outgo_id']}`).attr('vg-payback-debt-id', res['outgo_id']);
-            $('#edit-payback-vg-purchase-debt-form #editVgDebtField').val(res['vg_data_id']);
-            $('#edit-payback-vg-purchase-debt-form #editMethodDebtField').val(res['method_id']);
-            $('#edit-payback-vg-purchase-debt-form #editVgSumDebtField').val(res['sum']);
+            $('#edit-payback-debt-form .modal-title').text(`Изменить данные закупки № ${res['debt_history_id']}`).attr('payback-debt-id', res['debt_history_id']);
+            $('#edit-payback-debt-form #editPaybackField').val(res['debt_sum']);
+            $('#edit-payback-debt-form #editMethodField').val(res['method_id']);
+            $('#edit-payback-debt-form #editDebtorField').val(res['client_id']);
             $('.loader').fadeOut('fast');
             $('#Debt-edit-Modal').modal();
 
@@ -467,6 +468,7 @@ function fillDebtPaybackEditForm(target) {
         },
     });
 }
+
 function fillVGPaybackDebtEditForm(target) {
     $('.loader').show();
     let outgo_id = target.attr('itemid');

@@ -291,11 +291,11 @@ $(document).ready(function () {
                         });
                     } else {
                         createAlertTable("success", "Заказ и транзакция");
-                        setTimeout(() => location.reload(), 300)
+                        setTimeout(() => location.reload(), 600)
                     }
                 } catch {
                     createAlertTable("success", "Заказ и транзакция");
-                    setTimeout(() => location.reload(), 300);
+                    setTimeout(() => location.reload(), 600);
                 }
 
             },
