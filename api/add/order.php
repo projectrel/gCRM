@@ -17,17 +17,17 @@ $description = $_POST['descr'];
 $out_percent = clean($_POST['out']);
 $method_id = $_POST['method_id'];
 $sum_manually = $_POST['sum_manually'];
-$sum_currency = $_POST['enter_manually'] ? $sum_manually : ($sum_vg * $out_percent) / 100;
+$sum_currency = $_POST['enter_manually'] === true || $_POST['enter_manually'] === "true" ? $sum_manually : ($sum_vg * $out_percent) / 100;
 $in_percent = mysqli_fetch_assoc($connection->query("
             SELECT in_percent
             FROM vg_data
             WHERE vg_data_id = '$vg'"))['in_percent'];
-$rollback_sum = (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
+$rollback_sum = $_POST['enter_manually'] === true || $_POST['enter_manually'] === "true" ? $sum_manually * ($rollback_1 / 100) :
+    (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
 
 $shares = is_array($_POST['shares']) ? $_POST['shares'] : json_decode($_POST['shares'], true);
 
 $debt = $_POST['debtCl'] ? clean($_POST['debtCl']) : 0;
-
 $money_to_add = $sum_currency - $debt;
 $date = date('Y-m-d H:i:s');
 $fiat = clean($_POST['fiat']);
@@ -36,7 +36,6 @@ $fiat = clean($_POST['fiat']);
 session_start();
 $user_id = $_POST['user_id'] ? $_POST['user_id'] : $_SESSION['id'];
 $branch_id = $_SESSION['branch_id'];
-
 $user_data = mysqli_fetch_assoc($connection->query("
         SELECT *
         FROM users

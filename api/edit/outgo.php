@@ -34,7 +34,7 @@ $update_query = "UPDATE `outgo` SET
 `outgo_type_id`= $outgo_type,`sum`=$outgo_sum,`description`=$description,
 `project_id`=$project_id WHERE `outgo_id` = '$outgo_id'";
 $res = $connection->query($update_query);
-if (!($res && updatemethodMoney($connection, $method_id, -$outgo_sum)))
+if (!($res && updatemethodMoney($connection, $method_id, -$outgo_sum) && save_change_info($connection,'outgo',$outgo_id)))
     return error("failed");
 
 

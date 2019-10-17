@@ -25,7 +25,8 @@ $in_percent = mysqli_fetch_assoc($connection->query("
             SELECT in_percent
             FROM vg_data
             WHERE vg_data_id = '$vg'"))['in_percent'];
-$rollback_sum = (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
+$rollback_sum = $_POST['enter_manually'] === true || $_POST['enter_manually'] === "true" ? $sum_manually * ($rollback_1 / 100) :
+    (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
 $shares = $_POST['shares'];
 session_start();
 $user_id = $_SESSION['id'];
@@ -85,18 +86,18 @@ if ($user_data && (heCan($user_data['role'], 2))) {
         if ($order_data['sum_currency'] != $sum_currency) {
             $money = $sum_currency - $order_data['sum_currency'];
             if ((int)$participates_in_balance) {
-                if(!updateMethodMoney($connection, $method_id, $money))
-                    return error("custom","Не удалось обновить деньги на счету");
+                if (!updateMethodMoney($connection, $method_id, $money))
+                    return error("custom", "Не удалось обновить деньги на счету");
             }
 
         }
     } else {
         if ((int)$prev_method_participated === 1) {
-            if(! updateMethodMoney($connection, $method_id, -$order_data['sum_currency']))
-            return error("custom","Не удалось обновить деньги на счету");
+            if (!updateMethodMoney($connection, $method_id, -$order_data['sum_currency']))
+                return error("custom", "Не удалось обновить деньги на счету");
         } else {
-            if(!updateMethodMoney($connection, $method_id, $order_data['sum_currency']))
-            return error("custom","Не удалось обновить деньги на счету");
+            if (!updateMethodMoney($connection, $method_id, $order_data['sum_currency']))
+                return error("custom", "Не удалось обновить деньги на счету");
         }
     }
     $old_fiat_id = $order_data['fiat_id'];
