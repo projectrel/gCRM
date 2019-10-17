@@ -251,7 +251,7 @@ tr .fas:hover {
 }
 
 
-#add-btn, .modal-submit, .login-form-submit, .daterangepicker .drp-buttons .btn {
+#add-btn, .modal-submit, .login-form-submit, .daterangepicker .drp-buttons .btn, .btn-main {
     background-color: #5491F5;
     outline: none;
     border: none;

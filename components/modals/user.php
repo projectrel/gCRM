@@ -21,7 +21,7 @@ function userAddModal($data, $more_data)
         }
         if ($i > 1) {
             $output .= '<p>
-                            Отдел
+                        
                   <select id="branchField" data-validation="required">
   <option value="" disabled selected>Выберите отделение</option>';
     foreach ($more_data as $key => $var) {
@@ -52,6 +52,10 @@ function userAddModal($data, $more_data)
    <p>
    Телеграм
   <input id="telegram" name="telegram" type="text"  placeholder="Телеграм" value="@">
+  </p>
+   <p>
+   Email
+  <input id="userEmail" name="email" type="email"  placeholder="Email" >
   </p>
   </div>
   <input class="modal-submit" type="submit" value="Добавить">
@@ -92,7 +96,6 @@ function userEditModal($more_data)
     }
     if ($i > 1) {
         $output .= '<p>
-  Отдел
                   <select id="editBranchField" data-validation="required">
   <option value="" disabled selected>Выберите отдел</option>';
         foreach ($more_data as $key => $var) {
@@ -131,6 +134,10 @@ function userEditModal($more_data)
     <p>
     Телеграм
   <input id="telegram" name="telegram" type="text"  placeholder="Телеграм">
+  </p>
+  <p>
+   Email
+  <input id="editUserEmail" name="email" type="email"  placeholder="Email" >
   </p>
   </div>
   <input class="modal-submit" type="submit" value="Сохранить">

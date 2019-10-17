@@ -354,6 +354,7 @@ function fillUserEditForm(target) {
             $('#edit-user-form #telegram').val(res['telegram']);
             $('#edit-user-form #editBranchField').val(res['branch_id']);
             $('#edit-user-form #editRoleField').val(res['role']);
+            $('#edit-user-form #editUserEmail').val(res['email']);
             $('#edit-user-form #editMoneyField').val(res['money']);
             $('.loader').fadeOut('fast');
             $('#User-edit-Modal').modal();

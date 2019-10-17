@@ -119,6 +119,7 @@ function editUser() {
     const role = $("#edit-user-form #editRoleField").val();
     const user_id = $("#edit-user-form #edit-user-title").attr('user-id');
     const telegram = $("#edit-user-form #telegram").val();
+    const email = $("#edit-user-form #editUserEmail").val();
     $.ajax({
         url: "../api/edit/user.php",
         type: "POST",
@@ -133,6 +134,7 @@ function editUser() {
             role,
             user_id,
             telegram,
+            email,
         },
         cache: false,
         success: function (res) {

@@ -1,5 +1,5 @@
 <?php
-define("TARGET_DIR", $_SERVER['DOCUMENT_ROOT'] . "/api/report/space/");
+define("TARGET_DIR", $_SERVER['DOCUMENT_ROOT'] . "/report-space/");
 define("DATE_FORMAT", "Y_m_d___H-i-s");
 define("ROW_HEIGHT", 100);
 define("COLUMN_WIDTH", 15);
@@ -12,19 +12,18 @@ define("FIRST_SECTION_TITLE", "Оборотка по VG");
 define("SECOND_SECTION_TITLE", "Оборотка по расходам денег");
 define("THIRD_SECTION_TITLE", "Оборотка по методам оплаты");
 define("FOURTH_SECTION_TITLE", "Оборотка по долгам");
-
-
+define("FIFTH_SECTION_TITLE", "Оборотка по валюте");
 
 define("FIRST_SECTION_COLOR", "DAF7A6");
-define("SECOND_SECTION_COLOR", "О");
-define("THIRD_SECTION_COLOR", "О");
-define("FOURTH_SECTION_COLOR", "О");
+define("SECOND_SECTION_COLOR", "E48989 ");
+define("THIRD_SECTION_COLOR", "8E8A8A");
+define("FOURTH_SECTION_COLOR", "EEEE12");
+define("FIFTH_SECTION_COLOR", "EEEE12");
 
-
-
-define("FIRST_SECTION_HEADERS", ["Остаток VG на момент предыдущего отчета расчетный", "Остаток VG на момент предыдущего отчета по АПИ", "Долг в валюте по VG расчетный на момент предыдущего отчета",
-    "Остаток VG на сейчас расчетный", "Остаток VG на сейчас по АПИ(тот, что считает система)", "Закуплено VG, за неделю, кол-во", "Долг в валюте по VG расчетный на сейчас",
-    "Продано VG всего, кол-во ВГ", "Сумма продажи в валюте", "Рефералы"]);
-define("SECOND_SECTION_HEADERS", []);
-define("THIRD_SECTION_HEADERS", []);
-define("FOURTH_SECTION_HEADERS", []);
+define("FIRST_SECTION_HEADERS", ["", "Остаток VG на момент предыдущего отчета расчетный", "Остаток VG на момент предыдущего отчета по АПИ", "Долг в валюте по VG расчетный на момент предыдущего отчета",
+    "Остаток VG на сейчас расчетный", "Остаток VG на сейчас по АПИ", "Закуплено VG, за неделю, кол - во", "Долг в валюте по VG расчетный на сейчас",
+    "Продано VG всего, кол - во ВГ", "Сумма продажи в валюте", "Рефералы"]);
+define("SECOND_SECTION_HEADERS", ["Тип расхода", "Метод оплаты", "Валюта", "Сумма"]);
+define("THIRD_SECTION_HEADERS", ["", "Остаток на настоящий момент", "остаток на момент предыдущего отчета", "Расходы фиата", "Продажи(+фиата)", "Разница"]);
+define("FOURTH_SECTION_HEADERS", ["VG/валюта", "Сумма"]);
+define("FIFTH_SECTION_HEADERS",["Валюта", "Долги нам на настоящий момент", "Невыплаченные откаты", "Невыплаченная прибыль владельцев"]);

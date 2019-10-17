@@ -12,7 +12,7 @@ $vg_purchase_type = VG_PURCHASE_TYPE;
 $options['text'] = 'Оборотная ведомость';
 $options['type'] = 'Stat3';
 $options['prepared'] = true;
-
+//TODO add projects
     $querry = "SELECT 'расход' AS `тип`, O.sum, O.date, F.full_name AS `валюта`, IFNULL(concat(UU.first_name, ' ', UU.last_name), '-') AS 'владелец', '-' AS 'клиент'
 FROM outgo O
 INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id

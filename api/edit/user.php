@@ -13,6 +13,7 @@ if (isset($_POST['login']) && isset($_POST['role'])
     $last_name = clean($_POST['last_name']);
     $telegram = clean($_POST['telegram']);
     $edit_user_id = clean($_POST['user_id']);
+    $email = clean($_POST['email']);
     session_start();
     $branch = $_POST['branch'] ? clean($_POST['branch']) : $_SESSION['branch_id'];
     $user_id = $_SESSION['id'];
@@ -36,7 +37,8 @@ if (isset($_POST['login']) && isset($_POST['role'])
             `last_name` = '$last_name',
             `telegram` = '$telegram',
             `role` = '$role',
-            `branch_id` = '$branch'
+            `branch_id` = '$branch',
+            `email` = '$email'
         WHERE `user_id` = '$edit_user_id'");
 
 

@@ -5,7 +5,7 @@ if (isset($_POST['user_id'])) {
     $user_id = clean($_POST['user_id']);
     $user_data = mysqli_fetch_assoc($connection->query("
             SELECT user_id AS `id`,  concat(last_name, ' ', first_name,' (', login,')') AS `full_name`,
-            `first_name`, `last_name`, `login`, `branch_id`, `role`, `telegram`
+            `first_name`, `last_name`, `login`, `branch_id`, `role`, `telegram`, `email`
             FROM users 
             WHERE user_id = '$user_id'
             "));

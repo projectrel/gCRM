@@ -1,6 +1,33 @@
 $(document).ready(function () {
 
-
+    $('#create-report-btn').click(function (event) {
+        event.preventDefault();
+        $.ajax({
+            url: "../api/select/branch.php",
+            type: "GET",
+            data: "req=ok",
+            cache: false,
+            dataType: 'JSON',
+            success: function (res1) {
+                $.ajax({
+                    url: "../api/report/createReport.php",
+                    type: "GET",
+                    data: {branch: res1['id'], weekly: 1},
+                    cache: false,
+                    dataType: 'JSON',
+                    success: function (res2) {
+                      alert("Отчет создан")
+                    },
+                    error: function (res) {
+                        alert("Не удалось создать отчет")
+                    }
+                });
+            },
+            error: function (res) {
+                alert("Не удалось создать отчет")
+            }
+        });
+    });
     //Sum manually button
     $('.modal .btn_sum-manually').click(function () {
         $(this).toggleClass('btn_sum-manually__opened');

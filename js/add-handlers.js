@@ -331,24 +331,26 @@ $(document).ready(function () {
     function addUser() {
         $(".loader").show();
         $(".modal-submit").prop("disabled", true);
-        let password = $("#add-user-form #passField").val();
-        let login = $("#add-user-form #loginField").val();
-        let first_name = $("#add-user-form #firstNameField").val();
-        let last_name = $("#add-user-form #lastNameField").val();
-        let branch = $("#add-user-form #branchField").val();
-        let role = $("#add-user-form #roleField").val();
-        let telegram = $("#add-user-form #telegram").val();
+        const password = $("#add-user-form #passField").val();
+        const login = $("#add-user-form #loginField").val();
+        const first_name = $("#add-user-form #firstNameField").val();
+        const last_name = $("#add-user-form #lastNameField").val();
+        const branch = $("#add-user-form #branchField").val();
+        const role = $("#add-user-form #roleField").val();
+        const telegram = $("#add-user-form #telegram").val();
+        const email = $("#add-user-form #userEmail").val();
         $.ajax({
             url: "../api/add/user.php",
             type: "POST",
             data: {
-                password: password,
-                login: login,
-                first_name: first_name,
-                last_name: last_name,
-                branch: branch,
-                role: role,
+                password,
+                login,
+                first_name,
+                last_name,
+                branch,
+                role,
                 telegram,
+                email,
             },
             dataType: "JSON",
             cache: false,
