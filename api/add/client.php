@@ -18,6 +18,7 @@ if (isset($_POST['first_name'])) {
     $payment_system = $_POST['payment_system'] === "true" ? 1 : 0;
     $pay_in_debt = $_POST['pay_in_debt'] === "true" ? 1 : 0;
     $email = isset($_POST['email']) ? clean($_POST['email']) : " ";
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));

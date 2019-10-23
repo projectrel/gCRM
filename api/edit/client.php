@@ -18,6 +18,7 @@ if (isset($_POST['first_name'])) {
     $pay_page = $_POST['pay_page'] === "true" ? 1 : 0;
     $payment_system = $_POST['payment_system'] === "true" ? 1 : 0;
     $pay_in_debt = $_POST['pay_in_debt'] === "true" ? 1 : 0;
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $check_exists_query = "SELECT * FROM clients 

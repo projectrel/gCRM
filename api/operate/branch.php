@@ -3,6 +3,7 @@ if (isset($_POST['branch_id'])) {
     include_once("../../db.php");
     include_once("../../funcs.php");
     $branch_id = clean($_POST['branch_id']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));

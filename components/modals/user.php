@@ -32,7 +32,8 @@ function userAddModal($data, $more_data)
 </p>';
         }
 
-        session_start();
+        if(!isset($_SESSION))
+    session_start();
     $output .= '
 <p>
 
@@ -61,6 +62,7 @@ function userAddModal($data, $more_data)
   <input class="modal-submit" type="submit" value="Добавить">
   </form>
 </div>';
+    if(!isset($_SESSION))
     session_start();
     if (iCan(2)) {
         $output .= userEditModal($more_data);
@@ -106,6 +108,7 @@ function userEditModal($more_data)
 </p>';
     }
 
+    if(!isset($_SESSION))
     session_start();
     $output .= '
   <p>

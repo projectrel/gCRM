@@ -6,14 +6,15 @@ function display_data($data, $options, $addition_data = NULL)
     //BTN-BTN-MAX show add button if allowed
     //SWITCH_VG_STAT - switch types of statistics
     //TYPE - type of tables
-    session_start();
-    if (!$options['prepared']) $data = mysqliToArray($data);
+    if (!isset($_SESSION))
+        session_start();
+    if (!array_key_exists("prepared", $options)) $data = mysqliToArray($data);
     return
         ("
-        <div class='table-menu " . $options['type'] . "' " . ($options['range'] ? 'style = "justify-content: left;"' : '') . ">
+        <div class='table-menu " . $options['type'] . "' " . (array_key_exists("range", $options) ? 'style = "justify-content: left;"' : '') . ">
             <h2 type=" . $options['type'] . ">" . $options['text'] . "</h2>"
 
-            . (iCan($options['btn']) && iCanMax($options['btn-max']) ?
+            . (iCan(array_key_exists("btn", $options) ? $options['btn'] : NULL) && iCanMax(array_key_exists("btn-max", $options) ? $options['btn-max'] : NULL) ?
                 "<p><a 
                     id='add-btn' 
                     href=\"#" . $options['type'] . "-Modal\" 
@@ -21,14 +22,14 @@ function display_data($data, $options, $addition_data = NULL)
                     </a>
                 </p>" : '') .
 
-            ($options['range'] ? "
+            (array_key_exists("range", $options) ? "
             <div id='reportrange" . $options['range'] . "' class='reportrange'>
                 <i class='fa fa-calendar'></i>&nbsp;
                 <span></span> 
                 <i class='fa fa-caret-down'></i>
             </div>" : '') .
 
-            ($options['switch-vg-stat'] ?
+            (array_key_exists("switch-vg-stat", $options) ?
                 "<button class='switch-vg-stat' id='add-btn'>
                  </button>" : '') . "
         </div>
@@ -63,15 +64,15 @@ function makeTable($data, $options)
             $output .= '</tr></thead><tbody id="tbody">';
         }
         $index = 0;
-        $output .= '<tr  defaultVal = "' . $var['Имя'] . '" itemId = "' . $var['id'] . '">';
+        $output .= '<tr  defaultVal = "' . (isset($var['Имя']) ? $var['Имя'] : "") . '" itemId = "' . $var['id'] . '">';
         foreach ($var as $col => $val) {
             if ($col == 'id') continue;
             $actions = '';
             if ($index == 0) {
-                $actions .= $options['coins'] ? '<i class="fas fa-coins" modal="#' . $options['modal'] . '"></i>' : '';
-                $actions .= $options['info'] ? '<i class="fas fa-info-circle" modal="info"></i>' : '';
-                $actions .= $options['minus'] ? '<i class="fas fa-minus fa-trash" modal="delete"></i>' : '';
-                $actions .= ($options['edit'] && iCan($options['edit'])) ? '<i class="fas fa-edit"  modal="' . $options['type'] . '-edit"></i>' : '';
+                $actions .= isset($options['coins']) ? '<i class="fas fa-coins" modal="#' . $options['modal'] . '"></i>' : '';
+                $actions .= isset($options['info']) ? '<i class="fas fa-info-circle" modal="info"></i>' : '';
+                $actions .= isset($options['minus']) ? '<i class="fas fa-minus fa-trash" modal="delete"></i>' : '';
+                $actions .= (isset($options['edit']) && iCan(isset($options['edit']))) ? '<i class="fas fa-edit"  modal="' . $options['type'] . '-edit"></i>' : '';
             }
             if ($col == 'статус') {
                 $output .= '<td class=' . $index . '-f title="' . $val . '"><p style="display: none">' . $val . '</p>
@@ -114,13 +115,15 @@ function clean($value = "")
 
 function isAuthorized()
 {
-    session_start();
+    if (!isset($_SESSION))
+        session_start();
     return isset($_SESSION['id']) && isset($_SESSION['login']) && isset($_SESSION['password']);
 }
 
 function isClientAuthorized()
 {
-    session_start();
+    if (!isset($_SESSION))
+        session_start();
     return isset($_SESSION['client_id']) && isset($_SESSION['client_login']) && isset($_SESSION['client_password']);
 }
 
@@ -277,7 +280,8 @@ function getOutGoTypes($connection)
     include_once $_SERVER['DOCUMENT_ROOT'] . "/config.php";
     $root_type = ROOT_TYPE;
     $vg_purchase_type = VG_PURCHASE_TYPE;
-    session_start();
+    if (!isset($_SESSION))
+        session_start();
     $branch_id = $_SESSION['branch_id'];
     switch (accessLevel()) {
         case 3:
@@ -377,7 +381,8 @@ function children_list($node, $types)
 
 function save_change_info($connection, $type, $id)
 {
-    session_start();
+    if (!isset($_SESSION))
+        session_start();
     $user_id = $_SESSION['id'];
     $field = $type . "_id";
     $query = "INSERT INTO `changes` (`$field`, `change_user_id`) VALUES ('$id', '$user_id')";

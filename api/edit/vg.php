@@ -9,6 +9,7 @@ if (isset($_POST['name']) && isset($_POST['in_percent']) && isset($_POST['out_pe
     $out = clean($_POST['out_percent']);
     $vg_id = clean($_POST['vg_id']);
     $key = clean($_POST['key']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $branch_id = $_SESSION['branch_id'];

@@ -13,6 +13,7 @@ function rollbackModal($data)
   <p>
 <select id="clientField" data-validation="required">
   <option value="" selected disabled>Выберите клиента</option>';
+    if(array_key_exists("clients", $data))
     foreach ($data['clients'] as $key => $var) {
         $output .= '<option sum="' . $var['rollback_sum'] . '" fiat="' . $var['fiat_id'] . '" value="' . $var['id'] . '">' . $var['client_name'] . ' (' . $var['login'] . ')</option>';
     }
@@ -25,6 +26,7 @@ function rollbackModal($data)
    <p>
 <select id="methodField" data-validation="required">
   <option value="" selected disabled>Выберите метод оплаты</option>';
+    if(array_key_exists("methods", $data))
     foreach ($data['methods'] as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }
@@ -35,6 +37,7 @@ function rollbackModal($data)
   <input class="modal-submit" type="submit" value="Выплатить">
   </form>
 </div>';
+    if(!isset($_SESSION))
     session_start();
     if (iCan(2)) {
         $output .= rollbackEditModal($data);
@@ -51,6 +54,7 @@ function rollbackEditModal($data)
   <p>
 <select id="editClientField" data-validation="required">
   <option value="" selected disabled>Выберите клиента</option>';
+    if(array_key_exists("clients", $data))
     foreach ($data['clients'] as $key => $var) {
         $output .= '<option sum="' . $var['rollback_sum'] . '" fiat="' . $var['fiat_id'] . '" value="' . $var['id'] . '">' . $var['client_name'] . ' (' . $var['login'] . ')</option>';
     }
@@ -63,6 +67,7 @@ function rollbackEditModal($data)
    <p>
 <select id="editMethodField" data-validation="required">
   <option value="" selected disabled>Выберите метод оплаты</option>';
+    if(array_key_exists("methods", $data))
     foreach ($data['methods'] as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }

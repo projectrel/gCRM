@@ -11,7 +11,8 @@ $outgo_type = !empty($_POST['outgo_type']) ? $_POST['outgo_type'] : "NULL";
 $outgo_id = $_POST['outgo_id'];
 $description = !empty($_POST['description']) ? $_POST['description'] : "NULL";
 
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $user_id = $_SESSION['user_id'];
 $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));
 if (!heCan($user_data['role'], 2))

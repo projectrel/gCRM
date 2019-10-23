@@ -7,6 +7,7 @@ if (isset($_POST['method_id'], $_POST['vg_id'], $_POST['currency_sum'])) {
     $vg_id = clean($_POST['vg_id']);
     $method_id = clean($_POST['method_id']);
     $currency_sum = clean($_POST['currency_sum']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $branch_id = $_SESSION['branch_id'];

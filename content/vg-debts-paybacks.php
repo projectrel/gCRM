@@ -10,7 +10,8 @@ $options['type'] = 'VGPaybackDebt';
 $options['text'] = 'История выплат по задолжностям';
 $options['edit'] = 1;
 $options['btn'] = 1000;
-session_start();
+if(!isset($_SESSION))
+    session_start();
 //$options['btn-max'] = 2;
 $options['btn-text'] = 'Выплатить';
 $branch_id = $_SESSION['branch_id'];

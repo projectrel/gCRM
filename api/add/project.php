@@ -3,6 +3,7 @@ include_once("../../funcs.php");
 if (isset($_POST['name'])) {
     include_once("../../db.php");
     $name = clean($_POST['name']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $branch_id = $_SESSION['branch_id'];

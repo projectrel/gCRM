@@ -4,7 +4,8 @@ include_once("../../db.php");
 if (!isset($_POST['vg_id'], $_POST['vg_sum'], $_POST['fiat_id'])) {
     return error("empty");
 }
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $branch_id = $_SESSION['branch_id'];
 $user_id = $_SESSION['id'];
 $sum_vg = clean($_POST['vg_sum']);

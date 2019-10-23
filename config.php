@@ -1,4 +1,5 @@
 <?php
+//error_reporting(E_ERROR | E_PARSE);
 define("VG_PURCHASE_TYPE", 0);
 define("ROOT_TYPE", 1);
 define("DB_HOST", "localhost");

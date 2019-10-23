@@ -1,6 +1,7 @@
 <?php
 function outgoModal($data, $more_data)
 {
+
     $output = '
 <div id="Outgo-Modal" class="modal" action="" role="form">
 <form id="add-outgo-form">
@@ -22,7 +23,7 @@ function outgoModal($data, $more_data)
 <p>
   <select id="typeField">
   <option value="" selected >Выберите тип расхода(опц)</option>';
-    if($more_data['types']){
+    if(array_key_exists("types", $more_data)){
         foreach ($more_data['types'] as $key => $var) {
             $spaces = strlen($var['id']) - 1;
             $spacesstr = str_repeat('&nbsp;', $spaces);
@@ -35,7 +36,8 @@ function outgoModal($data, $more_data)
 <p>
   <select id="projectField">
   <option value="" selected >Выберите проект(опц)</option>';
-    if($more_data['projects']){
+
+    if(array_key_exists("projects", $more_data)){
         foreach ($more_data['projects'] as $key => $var) {
             $output .= '<option value="' . $var['project_id'] . '">' . $var['project_name'] . '</option>';
         }
@@ -59,6 +61,7 @@ function outgoModal($data, $more_data)
   <input class="modal-submit" type="submit" value="Добавить">
   </form>
 </div>';
+    if(!isset($_SESSION))
     session_start();
     if (iCan(2)) {
         $output .= outgoEditModal($data,$more_data);
@@ -89,7 +92,7 @@ function outgoEditModal($data, $more_data)
 <p>
   <select id="editTypeField">
   <option value="" selected >Выберите тип расхода(опц)</option>';
-    if($more_data['types']){
+    if(array_key_exists("types", $more_data)){
         foreach ($more_data['types'] as $key => $var) {
             $spaces = strlen($var['id']) - 1;
             $spacesstr = str_repeat('&nbsp;', $spaces);
@@ -102,7 +105,7 @@ function outgoEditModal($data, $more_data)
 <p>
   <select id="editProjectField">
   <option value="" selected >Выберите проект(опц)</option>';
-    if($more_data['projects']){
+    if(array_key_exists("projects", $more_data)){
         foreach ($more_data['projects'] as $key => $var) {
             $output .= '<option value="' . $var['project_id'] . '">' . $var['project_name'] . '</option>';
         }

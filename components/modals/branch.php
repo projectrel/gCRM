@@ -21,6 +21,7 @@ function branchAddModal($data)
     </form>
 </div>
 ';
+    if(!isset($_SESSION))
     session_start();
     if (iCan(2))
         $output .= branchEditModal();

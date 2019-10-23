@@ -2,7 +2,8 @@
 include_once '../../funcs.php';
 if (!isAuthorized()) header("Location: ./login.php");
 include_once '../../db.php';
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $branch_id = $_SESSION['branch_id'];
 
 $select = "SELECT concat(UU.user_id, '-', FF.fiat_id) AS `id`, concat(UU.first_name, ' ', UU.last_name) AS `владелец`, FF.full_name AS `валюта`";
@@ -195,8 +196,6 @@ JOIN fiats FF
 GROUP BY V.vg_id, FF.fiat_id
 ORDER BY V.name";
 
-include_once '../../dev/ChromePhp.php';
-ChromePhp::log($querry);
 $result .= display_data($connection->query($querry), $options);
 
 

@@ -8,7 +8,8 @@ include_once '../../db.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 'on');
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $login = clean($_POST['login']);
 $debt = clean($_POST['debt']);
 $password = clean($_POST['password']);

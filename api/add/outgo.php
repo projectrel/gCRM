@@ -8,6 +8,7 @@ if (isset($_POST['sum'], $_POST['method_id'])) {
     $project_id = clean($_POST['project_id']);
     $type = clean($_POST['type']);
     $description = clean($_POST['description']);
+    if(!isset($_SESSION))
     session_start();
     $branch_id = $_SESSION['branch_id'];
     $user_id = $_SESSION['id'];

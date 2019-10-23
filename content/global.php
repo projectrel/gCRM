@@ -16,7 +16,8 @@ $options2['text'] = 'Статистика';
 $options2['edit'] = 13;
 $options2['btn'] = 13;
 $options2['btn-text'] = 'Добавить';
-session_start();
+if(!isset($_SESSION))
+    session_start();
 
 
 

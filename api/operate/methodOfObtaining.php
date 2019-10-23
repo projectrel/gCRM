@@ -5,6 +5,7 @@ if (isset($_POST['id'], $_POST['active'], $_POST['participates_in_balance'])) {
     $method_id = clean($_POST['id']);
     $active = clean($_POST['active']);
     $participates_in_balance = clean($_POST['participates_in_balance']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $user_data = $connection->query("SELECT * FROM users WHERE user_id='$user_id'");

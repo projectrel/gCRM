@@ -10,7 +10,8 @@ $options['info'] = true;
 $options['btn-max'] = 2;
 $options['btn-text'] = 'Добавить';
 $options['btn'] = 1;
-session_start();
+if(!isset($_SESSION))
+    session_start();
 switch(accessLevel()){
     case 3:
         $clients = $connection->query('

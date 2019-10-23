@@ -42,6 +42,7 @@ function debtModal($data)
   <input class="modal-submit" type="submit" value="Выплатить">
   </form>
 </div>';
+    if(!isset($_SESSION))
     session_start();
     if (iCan(2)) {
         $output .= debtEditModal($data);

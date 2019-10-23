@@ -9,7 +9,8 @@ $options['type'] = 'VGDebt';
 $options['text'] = 'Задолженность по VG';
 $options['edit'] = 0;
 $options['btn'] = 1;
-session_start();
+if(!isset($_SESSION))
+    session_start();
 //$options['btn-max'] = 2;
 $options['btn-text'] = 'Выплатить';
 

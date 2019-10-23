@@ -8,6 +8,7 @@ if (isset($_POST['sum'], $_POST['client_id'], $_POST['method_id'])) {
     $sum = clean($_POST['sum']);
     $client_id = clean($_POST['client_id']);
 
+    if(!isset($_SESSION))
     session_start();
     $branch_id = $_SESSION['branch_id'];
     $date = date('Y-m-d H:i:s');

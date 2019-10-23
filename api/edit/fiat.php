@@ -6,6 +6,7 @@ if (isset($_POST['name']) && isset($_POST['fiat'])&& isset($_POST['full_name']) 
     $name = clean($_POST['name']);
     $full_name = clean($_POST['full_name']);
     $code = clean($_POST['code']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));

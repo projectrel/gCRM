@@ -1,6 +1,7 @@
 <?php
 function globalVgAddModal()
 {
+    if(!isset($_SESSION))
     session_start();
     if (iCan(3))
         $output = '

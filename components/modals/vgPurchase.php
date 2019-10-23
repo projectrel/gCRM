@@ -33,6 +33,7 @@ function vgPurchaseAddModal($data)
   <input class="modal-submit" type="submit" value="Добавить">
   </form>
 </div>';
+    if(!isset($_SESSION))
     session_start();
     if (iCan(1))
         $output .= vgPurchaseEditModal($data);

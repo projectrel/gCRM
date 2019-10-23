@@ -1,5 +1,6 @@
 <?php
-session_start();
+if(!isset($_SESSION))
+    session_start();
 if (isset($_SESSION['id'])) {
     $user_id = $_SESSION['id'];
     $branch_id = $_SESSION['branch_id'];

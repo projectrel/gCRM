@@ -9,7 +9,8 @@ $options['type'] = 'Fiat';
 $options['text'] = 'Фиатные валюты';
 $options['edit'] = 3;
 $options['btn'] = 3;
-session_start();
+if(!isset($_SESSION))
+    session_start();
 //$options['btn-max'] = 2;
 $options['btn-text'] = 'Добавить';
 

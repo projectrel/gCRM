@@ -1,7 +1,8 @@
 <?php
 include_once("../../db.php");
 include_once("../../funcs.php");
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $branch_id = $_SESSION['branch_id'];
 $query_get_methods = "
 SELECT MOO.method_id, concat(MOO.method_name,'(',F.full_name,')') AS `full_name` FROM `methods_of_obtaining` MOO 

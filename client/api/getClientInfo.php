@@ -46,7 +46,8 @@ $vg = mysqli_fetch_assoc($connection->query("
 $vg_name = $vg['name'];
 $vg_perc = $vg['outp'];
 $fiat_id = $vg['fiat_id'];
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $_SESSION['vg_id'] = $vg['vg_id'];
 $_SESSION['fiat_id'] = $fiat_id;
 

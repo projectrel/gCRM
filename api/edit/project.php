@@ -4,6 +4,7 @@ if (isset($_POST['name']) && isset($_POST['project_id'])) {
     include_once("../../db.php");
     $name = clean($_POST['name']);
     $project_id = clean($_POST['project_id']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));

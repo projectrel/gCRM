@@ -3,6 +3,7 @@ if (isset($_POST['client_id'])) {
     include_once("../../db.php");
     include_once("../../funcs.php");
     $client_id = clean($_POST['client_id']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $user_data = mysqli_fetch_assoc($connection->query("

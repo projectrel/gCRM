@@ -5,6 +5,7 @@ if (isset($_POST['method_name'], $_POST['fiat_id'])) {
     $method_name = clean($_POST['method_name']);
     $fiat_id = clean($_POST['fiat_id']);
 
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['user_id'];
     $branch_id = $_SESSION['branch_id'];

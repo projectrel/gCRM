@@ -8,7 +8,8 @@ include_once("../../db.php");
 $name = clean($_POST['name']);
 $parentId = clean($_POST['parentId']);
 
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $branch_id = $_SESSION['branch_id'];
 
 $siblings = mysqli_fetch_assoc($connection->query("

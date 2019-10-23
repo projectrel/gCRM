@@ -4,6 +4,7 @@ if (isset($_POST['vg_id']) && isset($_POST['client_id'])) {
     include_once("../../../funcs.php");
     $vg_id = clean($_POST['vg_id']);
     $client_id = clean($_POST['client_id']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $branch_name = $_SESSION['branch'];

@@ -4,7 +4,8 @@ if (!isAuthorized()) header("Location: ../login.php");
 include_once '../components/templates/template.php';
 include_once '../db.php';
 
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $branch_name = $_SESSION['branch'];
 $branch_id = $_SESSION['branch_id'];
 switch (accessLevel()) {

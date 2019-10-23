@@ -5,6 +5,7 @@ if (isset($_POST['method_name'], $_POST['method_id'], $_POST['fiat_id'])) {
     $method_name = clean($_POST['method_name']);
     $method_id = clean($_POST['method_id']);
     $fiat_id = clean($_POST['fiat_id']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['user_id'];
     $user_data = mysqli_fetch_assoc($connection->query("SELECT * FROM users WHERE user_id='$user_id'"));

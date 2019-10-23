@@ -23,6 +23,7 @@ if (isset($_POST['login']) && isset($_POST['password'])) {
         error("inactive");
         return false;
     }
+    if(!isset($_SESSION))
     session_start();
     $_SESSION['name'] = $user_data['first_name'] . ' ' . $user_data['last_name'];
     $_SESSION['login'] = $user_data['login'];

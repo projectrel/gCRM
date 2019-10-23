@@ -112,6 +112,7 @@ function orderAddModal($data, $more_data)
   </form>
 </div>';
     //edit modal
+    if(!isset($_SESSION))
     session_start();
     if (iCan(2)) {
         $output .= orderEditModal($more_data);

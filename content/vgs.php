@@ -9,7 +9,8 @@ $options['type'] = 'VG';
 $options['text'] = 'VG';
 $options['edit'] = 2;
 $options['btn'] = 2;
-session_start();
+if(!isset($_SESSION))
+    session_start();
 //$options['btn-max'] = 2;
 $options['btn-text'] = 'Добавить';
 

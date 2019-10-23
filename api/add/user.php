@@ -13,6 +13,7 @@ if (isset($_POST['login']) && isset($_POST['password']) && isset($_POST['role'])
     $telegram = clean($_POST['telegram']);
     $email = clean($_POST['email']);
 
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $branch = $_POST['branch'] ? clean($_POST['branch']) : $_SESSION['branch_id'];

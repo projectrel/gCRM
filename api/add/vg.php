@@ -8,6 +8,7 @@ if (isset($_POST['name']) && isset($_POST['in']) && isset($_POST['out'])) {
     $key = clean($_POST['key']);
     $in = clean($_POST['in']);
     $out = clean($_POST['out']);
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $branch_id = $_SESSION['branch_id'];

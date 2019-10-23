@@ -28,7 +28,8 @@ $in_percent = mysqli_fetch_assoc($connection->query("
 $rollback_sum = $_POST['enter_manually'] === true || $_POST['enter_manually'] === "true" ? $sum_manually * ($rollback_1 / 100) :
     (($out_percent - $in_percent) / 100) * ($sum_vg) - (($out_percent - $in_percent - $rollback_1) / 100) * ($sum_vg);
 $shares = $_POST['shares'];
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $user_id = $_SESSION['id'];
 $branch_id = $_SESSION['branch_id'];
 

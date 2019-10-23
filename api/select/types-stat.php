@@ -2,7 +2,8 @@
 include_once '../../funcs.php';
 if (!isAuthorized()) header("Location: ./login.php");
 include_once '../../db.php';
-session_start();
+if(!isset($_SESSION))
+    session_start();
 $branch_id = $_SESSION['branch_id'];
 
 

@@ -33,7 +33,8 @@ $date = date('Y-m-d H:i:s');
 $fiat = clean($_POST['fiat']);
 
 
-session_start();
+if (!isset($_SESSION))
+    session_start();
 $user_id = $_POST['user_id'] ? $_POST['user_id'] : $_SESSION['id'];
 $branch_id = $_SESSION['branch_id'];
 $user_data = mysqli_fetch_assoc($connection->query("
@@ -116,16 +117,15 @@ set_error_handler(
     }
 
 );
-
 try {
     $result = json_decode(file_get_contents($vg_url));
-
     if ($result->{'success'} == false) {
         $result->{'url'} = $vg_url;
         $result->{'status'} = "success";
         echo json_encode($result);
         return false;
     }
+    setVgApiAmount($connection, $vg, $result->{'credit'});
 } catch (Exception $e) {
     $response['url'] = $vg_url;
     $response['success'] = false;
@@ -159,8 +159,10 @@ function parse_vg_url($vg_url_in, $sum_vg, $key, $login_by_vg)
         $md5 = md5($vg_url_4md5 . ":" . $key);
         $vg_url = $vg_url . "&sign=" . $md5;
     } else {
-        $vg_url = str_replace("%clientlogin%", $login_by_vg, $vg_url_in);
-        $vg_url = str_replace("%sum%", $sum_vg, $vg_url);
+        $vg_url .= "/api/users/" . $login_by_vg . "/set-balance?";
+        $vg_url .= "balance=" . $sum_vg . "&";
+        $vg_url .= "rand=" . rand (  10000 , 1000000 ) . "&";
+        $vg_url .= "token=" . $key;
     }
     return $vg_url;
 
@@ -223,4 +225,12 @@ function addRollback($connection, $fiat, $callmaster, $rollback_sum)
                              VALUES('$fiat', '$rollback_sum', '$callmaster') ");
 
     return $update_payments_rollback;
+}
+
+function setVgApiAmount($connection, $vg_data_id, $amount)
+{
+    return $connection->
+    query("UPDATE  `vg_data`
+                                  SET `vg_api_amount` = $amount
+                                  WHERE `vg_data_id` = '$vg_data_id'");
 }

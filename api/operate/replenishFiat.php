@@ -2,6 +2,7 @@
 include_once("../../funcs.php");
 if (isset($_POST['method_id']) && isset($_POST['sum']) && isset($_POST['owner'])) {
     include_once("../../db.php");
+    if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
     $branch_id = $_SESSION['branch_id'];
