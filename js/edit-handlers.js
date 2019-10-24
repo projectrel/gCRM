@@ -827,10 +827,11 @@ function editGlobalVG() {
     });
 }
 
-function createAlertTable(alertType, text) {
+function createAlertTable(alertType, text, isSuccess = false) {
     if ($('.custom-alert').hasClass('custom-alert--active'))
         $('.custom-alert').removeClass('custom-alert--active');
     if ($('.custom-alert').hasClass('bg-green')) $('.custom-alert').removeClass('bg-green');
+    if(isSuccess) $('.custom-alert').addClass('bg-green');
     switch (alertType) {
         case "exists":
             $('.custom-alert .alert-text-box').text(`${text} с таким логином уже существует`);

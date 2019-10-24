@@ -5,7 +5,7 @@ if (isset($_POST['login']) && isset($_POST['role'])
     include_once("../../db.php");
     include_once("../../funcs.php");
     $login = clean($_POST['login']);
-    if($_POST['password'])
+    if(isset($_POST['password']))
         $password =  password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     $role = clean($_POST['role']);

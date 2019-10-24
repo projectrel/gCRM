@@ -1,7 +1,8 @@
 $(document).ready(function () {
-
     $('#create-report-btn').click(function (event) {
+        $('.loader').show();
         event.preventDefault();
+
         $.ajax({
             url: "../api/select/branch.php",
             type: "GET",
@@ -16,15 +17,21 @@ $(document).ready(function () {
                     cache: false,
                     dataType: 'JSON',
                     success: function (res2) {
-                      alert("Отчет создан")
+                        $('.loader').fadeOut('fast');
+                        if (res2["success"])
+                            createAlertTable("custom", "Отчет создан", true);
+                        else
+                            createAlertTable("custom", "Отчет создан c ошибками");
                     },
                     error: function (res) {
-                        alert("Не удалось создать отчет")
+                        $('.loader').fadeOut('fast');
+                        createAlertTable("custom", "Не удалось создать отчет");
                     }
                 });
             },
             error: function (res) {
-                alert("Не удалось создать отчет")
+                $('.loader').fadeOut('fast');
+                createAlertTable("custom", "Не удалось создать отчет");
             }
         });
     });

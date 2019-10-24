@@ -180,45 +180,44 @@ addMethodReport($connection, $unique_key, $method_data_select, $method_processin
 addDebtReport($connection, $unique_key, $vg_fiat_in_branch_combinations_data_select, $debt_processing_data);
 addFiatReport($connection, $unique_key, $fiat_processing_data);
 
-echo json_encode(array('success' => true));
-return false;
 //SENDING TO OWNERS
 $owners_emails = array_filter(array_column($owners, "email"), "stringIsNotEmpty");
 
 // Instantiation and passing `true` enables exceptions
-$mail = new PHPMailer(true);
+$mail = new PHPMailer();
 
 try {
-    //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
-    $mail->isSMTP();                                            // Send using SMTP
-    $mail->Host = $_SERVER['DOCUMENT_ROOT'];                    // Set the SMTP server to send through
-    $mail->SMTPAuth = true;                                     // Enable SMTP authentication
-    //$mail->Username = '';                                     // SMTP username
-    // $mail->Password = '';                                    // SMTP password
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
-    //$mail->Port = 587;                                          // TCP port to connect to
+    $mail->isSMTP();
+    $mail->SMTPAuth = true;
+
+    $mail->Host = SMTP_HOST;
+    $mail->Username = SMTP_MAIL_LOGIN;
+    $mail->Password = SMTP_MAIL_PASS;
+    $mail->Port = SMTP_MAIL_PORT;
+
+    $mail->CharSet = 'utf-8';
+    $mail->SMTPSecure = 'tls';
 
     //Recipients
-    $mail->setFrom('from@example.com', 'Mailer');
+    $mail->setFrom(SMTP_MAIL_LOGIN, 'Mailer');
     foreach ($owners_emails as $key => $val) {
         $mail->addAddress($val);
     }
-    $mail->addReplyTo('info@example.com', 'Information');
+    $mail->addReplyTo(SMTP_MAIL_LOGIN, 'Information');
 
     // Attachments
     $mail->addAttachment($file_name, 'report.xlsx');         // Add attachments
 
     // Content
-    $mail->isHTML(false);                                  // Set email format to HTML
-    $mail->Subject = 'Отчет';
-    $mail->Body = 'Отчет';
-    $mail->AltBody = 'Отчет';
+    $mail->isHTML(false);
+    $mail->Subject = $is_weekly ? REPORT_MAIL_WEEKLY_SUBJECT : REPORT_MAIL_SUBJECT;
+    $mail->Body = $is_weekly ? REPORT_MAIL_WEEKLY_BODY : REPORT_MAIL_BODY;
 
     $mail->send();
-    echo 'Message has been sent';
+    echo json_encode(array("success" => true));
 } catch (Exception $e) {
-    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+    echo $e;
+    echo "FAILED";
 }
 
 
@@ -261,8 +260,8 @@ function addSection($sheet, $title, $headers, $content, $color = "FFFFFF")
     $sheet->setCellValueByColumnAndRow(1, $GLOBALS['current_row'], $title);
     $GLOBALS['current_row']++;
     $sheet->getRowDimension($GLOBALS['current_row'])->setRowHeight(ROW_HEIGHT);
-    for ($i = 1; $i <= 1 + count($headers); $i++) {
-        $sheet->getStyleByColumnAndRow($i - 1, $GLOBALS['current_row'])->applyFromArray(getSheetStyles($color));
+    for ($i = 1; $i <= count($headers); $i++) {
+        $sheet->getStyleByColumnAndRow($i, $GLOBALS['current_row'])->applyFromArray(getSheetStyles($color));
         $sheet->getStyleByColumnAndRow($i, $GLOBALS['current_row'])->getAlignment()->setWrapText(true);
         $sheet->setCellValueByColumnAndRow($i, $GLOBALS['current_row'], $headers[$i - 1]);
 
@@ -368,7 +367,7 @@ function getVgApiBalanceCurr($connection, $vg_data_id)
     query("
 SELECT `vg_api_amount` 
 FROM `vg_data`
-WHERE vg_data_id = '$vg_data_id'"))['vg_amount']);
+WHERE vg_data_id = '$vg_data_id'"))['vg_api_amount']);
 }
 
 function getVgBoughtAmount($connection, $fiat_id, $vg_data_id, $prev_report_date)

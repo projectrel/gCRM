@@ -27,3 +27,15 @@ define("SECOND_SECTION_HEADERS", ["Тип расхода", "Метод опла�
 define("THIRD_SECTION_HEADERS", ["", "Остаток на настоящий момент", "остаток на момент предыдущего отчета", "Расходы фиата", "Продажи(+фиата)", "Разница"]);
 define("FOURTH_SECTION_HEADERS", ["VG/валюта", "Сумма"]);
 define("FIFTH_SECTION_HEADERS",["Валюта", "Долги нам на настоящий момент", "Невыплаченные откаты", "Невыплаченная прибыль владельцев"]);
+
+
+//MAIL
+define("SMTP_HOST","smtp.gmail.com");
+define("SMTP_MAIL_LOGIN", "rshchybryk@gmail.com");
+define("SMTP_MAIL_PASS", "roma8121999");
+define("SMTP_MAIL_PORT", 587);
+
+define("REPORT_MAIL_WEEKLY_SUBJECT", "Недельный отчет");
+define("REPORT_MAIL_WEEKLY_BODY", "Недельный отчет");
+define("REPORT_MAIL_SUBJECT", "Отчет");
+define("REPORT_MAIL_BODY", "Отчет");

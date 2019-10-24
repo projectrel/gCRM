@@ -256,6 +256,7 @@ $(document).ready(function () {
         $.ajax({
             url: "../api/add/order.php",
             type: "POST",
+            timeout: 3000,
             data: {
                 client,
                 rollback_1,
