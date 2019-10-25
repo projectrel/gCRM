@@ -50,7 +50,7 @@ function outgoModal($data, $more_data)
   </p>
   <p>
   <select id="methodField">
-  <option data-validation="required" value="" selected >Выберите метод оплаты</option>';
+  <option data-validation="required" value="" selected >Выберите счет</option>';
     foreach ($more_data['methods'] as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }
@@ -118,7 +118,7 @@ function outgoEditModal($data, $more_data)
   </p>
   <p>
   <select id="editMethodField">
-  <option data-validation="required" value="" selected >Выберите метод оплаты</option>';
+  <option data-validation="required" value="" selected >Выберите счет</option>';
     foreach ($more_data['methods'] as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }

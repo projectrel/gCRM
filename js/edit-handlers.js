@@ -227,13 +227,13 @@ function editMethodOfObtaining() {
                 createAlertTable(res.error, res.info);
                 return
             } else if (res.error) {
-                createAlertTable(res.error, "Метод оплаты");
+                createAlertTable(res.error, "счет");
                 return
             }
-            createAlertTable(res.status, "Метод оплаты");
+            createAlertTable(res.status, "счет");
         },
         error: function () {
-            createAlertTable("connectionError", "Метод оплаты");
+            createAlertTable("connectionError", "счет");
         },
         complete: function () {
             setTimeout(function () {

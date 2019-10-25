@@ -5,7 +5,7 @@ function methodOfObtainingModal($data)
 <div id="MethodsOfObtaining-Modal" class="modal" action="" role="form">
 <form id="add-method-of-obtaining-form">
 
-  <h2 class="modal-title">Добавить метод оплаты</h2>
+  <h2 class="modal-title">Добавить счет</h2>
   <div class="modal-inputs">
   <p>
   <input id="method-name" data-validation="required"  placeholder="Название" type="text" name="name" >
@@ -34,7 +34,7 @@ function methodOfObtainingEditModal($data)
     $output = '
 <div id="MethodsOfObtaining-edit-Modal" class="modal" action="" role="form">
 <form id="method-of-obtaining-edit-form">
-  <h2 class="modal-title">Редактировать метод оплаты</h2>
+  <h2 class="modal-title">Редактировать счет</h2>
   <div class="modal-inputs">
   <p>
   <input id="method-edit-name" data-validation="required"  placeholder="Название" type="text" name="name" >

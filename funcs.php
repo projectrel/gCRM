@@ -143,44 +143,64 @@ function chooseAddModal($name, $data, $more_data = NULL)
     foreach (glob($_SERVER['DOCUMENT_ROOT'] . "/components/modals/*.php") as $filename) {
         include_once $filename;
     }
+    $output = "";
     switch ($name) {
         case "User":
-            return userAddModal($data, $more_data);
+            $output = userAddModal($data, $more_data);
+            break;
         case "Client":
-            return clientAddModal($data);
+            $output = clientAddModal($data);
+            break;
         case "Outgo":
-            return outgoModal($data, $more_data);
+            $output = outgoModal($data, $more_data);
+            break;
         case "Project":
-            return projectAddModal();
+            $output = projectAddModal();
+            break;
         case "Order":
-            return orderAddModal($data, $more_data) . '' . clientAddModal($data);
+            $output = orderAddModal($data, $more_data) . '' . clientAddModal($data);
+            break;
         case "VG":
-            return vgAddModal($more_data);
+            $output = vgAddModal($more_data);
+            break;
         case "Rollback":
-            return rollbackModal($more_data);
+            $output = rollbackModal($more_data);
+            break;
         case "Debt":
-            return debtModal($more_data);
+            $output = debtModal($more_data);
+            break;
         case "Owner":
-            return ownerAddModal($more_data);
+            $output = ownerAddModal($more_data);
+            break;
         case "Owner-Stats":
-            return ownerAddModal($more_data) . outgoModal($data, $more_data);
+            $output = ownerAddModal($more_data) . outgoModal($data, $more_data);
+            break;
         case "Branch":
-            return branchAddModal($data);
+            $output = branchAddModal($data);
+            break;
         case "Fiat":
-            return fiatAddModal($data);
+            $output = fiatAddModal($data);
+            break;
         case "VGPaybackDebt":
-            return vgDebtPaybackEditModal($more_data);
+            $output = vgDebtPaybackEditModal($more_data);
+            break;
         case "VGPurchase":
-            return vgPurchaseAddModal($more_data);
+            $output = vgPurchaseAddModal($more_data);
+            break;
         case "VGDebt":
-            return vgPaybackDebtModal($more_data);
+            $output = vgPaybackDebtModal($more_data);
+            break;
         case "globalVG":
-            return globalVgAddModal();
+            $output = globalVgAddModal();
+            break;
         case "MethodsOfObtaining":
-            return methodOfObtainingModal($more_data);
+            $output = methodOfObtainingModal($more_data);
+            break;
         default:
-            return null;
+            $output = "";
     }
+    $output .= transferFiatModal(get_all_methods_of_branch());
+    return $output;
 }
 
 function accessLevel($role = false)
@@ -387,6 +407,19 @@ function save_change_info($connection, $type, $id)
     $field = $type . "_id";
     $query = "INSERT INTO `changes` (`$field`, `change_user_id`) VALUES ('$id', '$user_id')";
     return $connection->query($query);
+}
+
+function get_all_methods_of_branch()
+{
+    if (!isset($_SESSION))
+        session_start();
+    $branch_id = $_SESSION['branch_id'];
+    include_once $_SERVER['DOCUMENT_ROOT'] . "/db.php";
+    return mysqliToArray($GLOBALS['connection']->query("
+SELECT MOO.method_id AS `id`, concat(MOO.method_name,'(',P.sum, ' ', F.full_name,')') AS `name` FROM `methods_of_obtaining` MOO 
+INNER JOIN payments P ON MOO.method_id = P.method_id
+INNER JOIN fiats F ON P.fiat_id = F.fiat_id
+WHERE MOO.branch_id = '$branch_id' AND MOO.is_active = 1"));
 }
 
 

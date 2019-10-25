@@ -11,7 +11,12 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
                 </a>
             </li>
             <li>
-                <a href="../.." class=<?php echo(!$curPage ? '"active" disabled' : '') ?>>Главная</a></li>
+                <a class="btn-main transfer-color" id="transfer-fiat-btn" rel="modal:open" href="#Transfer-Modal">Перевести деньги
+                </a>
+            </li>
+            <li>
+                <a href="../.." class=<?php echo(!$curPage || $curPage == "" ? '"active" disabled' : '') ?>>Главная</a>
+            </li>
             <li><a href="../../content/clients.php"
                    class=<?php echo($curPage === 'clients' ? '"active" disabled' : '') ?>>Клиенты</a>
             </li>
@@ -25,13 +30,16 @@ $curPage = substr($_SERVER['REQUEST_URI'], 9, -4);
             <?php if (iCan(3))
                 echo '<li><a href="../../content/branches.php"
               class=' . ($curPage === 'branches' ? '"active" disabled' : '') . '>Предприятия</a></li>
-        <li><a href="../../content/global.php" class=' . ($curPage === 'global' ? '"active" disabled' : '') . '>Глобальное
-                VG</a></li>
+        
         <li><a href="../../content/fiats.php" class=' . ($curPage === 'fiats' ? '"active" disabled' : '') . '>Валюты</a>
         </li>';
             else echo '' ?>
             <li class="drop-list"><a>VG <i id="arrow" class="fa fa-arrow-down"></i></a>
                 <ul id="drop-down">
+                    <?php if (iCan(3))
+                        echo '<li><a href="../../content/global.php" class=' . "submenu" . ($curPage === 'global' ? '"active" disabled' : '') . '>Глобальное
+                        VG</a></li>';
+                    else echo '' ?>
                     <li class="submenu"><a href="../../content/vg-purchases.php">Закупки VG</a></li>
                     <li class="submenu info-submenu"><a href="../../content/vgs.php">Инфо</a></li>
                     <li class="submenu vg-debt-submenu"><a href="../../content/vg-debts.php">Задолженность</a></li>

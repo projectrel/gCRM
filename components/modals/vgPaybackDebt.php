@@ -17,7 +17,7 @@ function vgPaybackDebtModal($data)
     $output .= '</select>
   </p><p>
   <select id="methodDebtField" data-validation="required">
-  <option value="" disabled selected>Выберите метод оплаты</option>';
+  <option value="" disabled selected>Выберите счет</option>';
 
     if (isset($data['methods']))
         foreach ($data['methods'] as $key => $var) {
@@ -54,7 +54,7 @@ function vgDebtPaybackEditModal($data)
     $output .= '</select>
   </p><p>
   <select id="editMethodDebtField" data-validation="required">
-  <option value="" disabled selected>Выберите метод оплаты</option>';
+  <option value="" disabled selected>Выберите счет</option>';
 
     if (isset($data['methods']))
         foreach ($data['methods'] as $key => $var) {

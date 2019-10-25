@@ -524,7 +524,7 @@ input[disabled] {
 }
 
 #menu.menu--open, #menu-invisible.menu--open {
-    width: 180px;
+    width: 210px;
 }
 
 .loader {
@@ -1016,6 +1016,6 @@ nav.vertical a {
     text-decoration: none;
 }
 
-_.btn_sum-manually_opened {
-
+.transfer-color{
+    background-color: seagreen;
 }

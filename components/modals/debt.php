@@ -30,7 +30,7 @@ function debtModal($data)
   </p>
   <p>
 <select id="methodField" data-validation="required">
-  <option value="" selected disabled>Выберите метод оплаты</option>';
+  <option value="" selected disabled>Выберите счет</option>';
 
     foreach ($data["methods"] as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
@@ -72,7 +72,7 @@ function debtEditModal($data)
   </p>
   <p>
 <select id="editMethodField" data-validation="required">
-  <option value="" selected disabled>Выберите метод оплаты</option>';
+  <option value="" selected disabled>Выберите счет</option>';
     foreach ($data["methods"] as $key => $var) {
         $output .= '<option value="' . $var['method_id'] . '">' . $var['method_name'] . '</option>';
     }

@@ -57,7 +57,6 @@ $(document).ready(function () {
         lang: 'ru',
         onSuccess: function () {
             replenishFiat();
-            // return false;
         }
     });
 

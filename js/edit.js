@@ -656,7 +656,7 @@ function fillMethodOfObtainingInfo(target) {
         cache: false,
         success: function (res) {
             if (res.error) {
-                createAlertTable(res.error, "Метод оплаты");
+                createAlertTable(res.error, "счет");
                 return;
             }
             $('#method-of-obtaining-edit-form .modal-title').text(`Изменить данные метода оплаты ${res['method_name']}`).attr('method-id', res['method_id']);

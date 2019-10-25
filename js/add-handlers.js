@@ -863,7 +863,7 @@ $(document).ready(function () {
                     createAlertTable(res.error, 'Методы оплаты');
                     return;
                 }
-                createAlertTable(res.status, "Метод оплаты");
+                createAlertTable(res.status, "счет");
             },
             error: function () {
                 createAlertTable("connectionError", "MethodOfObtaining");
@@ -954,6 +954,55 @@ $(document).ready(function () {
         input.attr('max', sum);
         input.attr('min', 0);
     });
+
+
+    $.validate({
+        form: '#transfer-fiat-form',
+        modules: 'security',
+        lang: 'ru',
+        onSuccess: function () {
+            transferFiat();
+            return false;
+        }
+    });
+
+    function transferFiat() {
+        $(".loader").show();
+        $(".modal-submit").prop("disabled", true);
+        const method_from = $("#transfer-fiat-form #fromMethodField").val();
+        const method_to = $("#transfer-fiat-form #toMethodField").val();
+        const sum_from = $("#transfer-fiat-form #sumFromField").val();
+        const sum_to = $("#transfer-fiat-form #sumToField").val();
+        $.ajax({
+            url: "../api/operate/transferFiat.php",
+            type: "POST",
+            data: {
+                method_from,
+                method_to,
+                sum_from,
+                sum_to,
+            },
+            dataType: "JSON",
+            cache: false,
+            success: function (res) {
+                if (res.error) {
+                    createAlertTable(res.error, "Обмен");
+                    return;
+                }
+                createAlertTable(res.status, "Обмен");
+            },
+            error: function () {
+                createAlertTable("connectionError", "Пользователь");
+            },
+            complete: function () {
+                setTimeout(function () {
+                    $(".modal-submit").prop("disabled", false);
+                    $(".loader").fadeOut("slow");
+                }, 100);
+            }
+        });
+
+    }
 
     function paybackDebt() {
         $(".loader").show();

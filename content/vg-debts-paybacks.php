@@ -28,7 +28,7 @@ INNER JOIN fiats F ON P.fiat_id = F.fiat_id
 WHERE `branch_id` = '$branch_id'");
 
 echo template(display_data($connection->query("
-SELECT O.outgo_id AS id, VD.name AS `vg`, O.sum AS `сумма`, MOO.method_name AS 'метод оплаты', F.full_name AS 'валюта', O.date AS `дата`, IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
+SELECT O.outgo_id AS id, VD.name AS `vg`, O.sum AS `сумма`, MOO.method_name AS 'счет', F.full_name AS 'валюта', O.date AS `дата`, IFNULL(MAX(LC.change_date),'-') AS 'пос. редакт.'
 FROM outgo O
 INNER JOIN vg_data VD ON VD.vg_data_id = O.vg_data_id
 INNER JOIN methods_of_obtaining MOO ON MOO.method_id = O.method_id
