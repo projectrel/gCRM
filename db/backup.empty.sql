@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Окт 09 2019 г., 10:07
+-- Время создания: Окт 24 2019 г., 14:30
 -- Версия сервера: 5.6.41
--- Версия PHP: 5.6.38
+-- Версия PHP: 7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- База данных: `crm6.empty`
+-- База данных: `test1`
 --
 
 -- --------------------------------------------------------
@@ -40,7 +40,7 @@ CREATE TABLE `branch` (
 --
 
 INSERT INTO `branch` (`branch_id`, `branch_name`, `active`, `ik_id`) VALUES
-(1, 'MAIN', 1, NULL);
+(1, 'main', 1, 'das42qfedfasd');
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,9 @@ CREATE TABLE `changes` (
   `vg_data_id` int(11) DEFAULT NULL,
   `vg_id` int(11) DEFAULT NULL,
   `vg_purchase_id` int(11) DEFAULT NULL,
-  `outgo_id` int(11) DEFAULT NULL
+  `outgo_id` int(11) DEFAULT NULL,
+  `rollback_paying_id` int(11) DEFAULT NULL,
+  `debt_history_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -99,7 +101,7 @@ CREATE TABLE `clients` (
 
 CREATE TABLE `debts_processing_reports` (
   `debt_processing_report_id` int(11) NOT NULL,
-  `debt_processing_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `report_unique_key` varchar(200) NOT NULL,
   `vg_data_id` int(11) NOT NULL,
   `fiat_id` int(11) NOT NULL,
   `debt_processing_report_sum` decimal(15,2) NOT NULL
@@ -128,9 +130,9 @@ CREATE TABLE `debt_history` (
 
 CREATE TABLE `fiats` (
   `fiat_id` int(11) NOT NULL,
-  `code` int(11) NOT NULL,
-  `name` varchar(5) NOT NULL,
-  `full_name` varchar(30) NOT NULL
+  `code` bigint(50) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `full_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -170,15 +172,12 @@ CREATE TABLE `methods_of_obtaining` (
 
 CREATE TABLE `methods_processing_reports` (
   `methods_processing_report_id` int(11) NOT NULL,
-  `methods_processing_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `report_unique_key` varchar(200) NOT NULL,
   `method_id` int(11) NOT NULL,
-  `fiat_id` int(11) NOT NULL,
+  `methods_processing_fiat_amount` int(11) NOT NULL,
   `methods_processing_report_fiat_income` decimal(15,2) NOT NULL,
   `methods_processing_report_fiat_outgo` decimal(15,2) NOT NULL,
-  `methods_processing_report_fiat_diff` decimal(15,2) NOT NULL,
-  `methods_processing_report_debtors_debt` decimal(15,2) NOT NULL COMMENT 'Клиенты(предприятию',
-  `methods_processing_report_rollback_debt` decimal(15,2) NOT NULL COMMENT 'Клиентам',
-  `methods_processing_report_owners_profit_debt` decimal(15,2) NOT NULL COMMENT 'Владельцам'
+  `methods_processing_report_fiat_diff` decimal(15,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -233,10 +232,9 @@ CREATE TABLE `outgo` (
 
 CREATE TABLE `outgoes_processing_reports` (
   `outgoes_processing_report_id` int(11) NOT NULL,
-  `outgoes_processing_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `report_unique_key` varchar(200) NOT NULL,
   `outgo_type_id` varchar(200) NOT NULL,
   `method_id` int(11) NOT NULL,
-  `fiat_id` int(11) NOT NULL,
   `outgo_processing_report_sum` decimal(15,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -281,7 +279,7 @@ CREATE TABLE `outgo_types_relative` (
 CREATE TABLE `payments` (
   `payment_id` int(11) NOT NULL,
   `fiat_id` int(11) NOT NULL,
-  `sum` decimal(15,2) NOT NULL,
+  `sum` decimal(15,2) NOT NULL DEFAULT '0.00',
   `client_rollback_id` int(11) DEFAULT NULL,
   `client_debt_id` int(11) DEFAULT NULL,
   `vg_data_debt_id` int(11) DEFAULT NULL,
@@ -304,6 +302,18 @@ CREATE TABLE `projects` (
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `reports`
+--
+
+CREATE TABLE `reports` (
+  `report_unique_key` varchar(200) NOT NULL,
+  `is_weekly` tinyint(1) NOT NULL DEFAULT '0',
+  `report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `report_shares`
 --
 
@@ -320,7 +330,7 @@ CREATE TABLE `report_shares` (
 --
 
 CREATE TABLE `rollback_paying` (
-  `rollack_paying_id` int(11) NOT NULL,
+  `rollback_paying_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `rollback_sum` decimal(10,2) NOT NULL,
@@ -358,15 +368,16 @@ CREATE TABLE `users` (
   `login` varchar(100) DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1',
   `is_owner` tinyint(1) NOT NULL DEFAULT '0',
-  `telegram` varchar(30) DEFAULT NULL
+  `telegram` varchar(30) DEFAULT NULL,
+  `email` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=cp1251;
 
 --
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`user_id`, `first_name`, `last_name`, `role`, `branch_id`, `pass_hash`, `login`, `active`, `is_owner`, `telegram`) VALUES
-(2, 'Test', 'Moder', 'moder', 1, '$2y$10$2zCpMmzWdYudw5LkeSSq7.ZK26fup.eAU5h3aZk3WyOHZU/J/1EP2', 'moder', 1, 0, 'asdffs');
+INSERT INTO `users` (`user_id`, `first_name`, `last_name`, `role`, `branch_id`, `pass_hash`, `login`, `active`, `is_owner`, `telegram`, `email`) VALUES
+(1, 'Moder', 'Test', 'moder', 1, '$2y$10$2zCpMmzWdYudw5LkeSSq7.ZK26fup.eAU5h3aZk3WyOHZU/J/1EP2', 'moder', 1, 0, 'sdafsdfsa', 'rafs@dasdas.com');
 
 -- --------------------------------------------------------
 
@@ -378,8 +389,8 @@ CREATE TABLE `vg_data` (
   `vg_data_id` int(11) NOT NULL,
   `vg_id` int(11) NOT NULL,
   `branch_id` int(11) NOT NULL,
-  `vg_amount` int(11) NOT NULL,
-  `vg_api_amount` int(11) NOT NULL,
+  `vg_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
+  `vg_api_amount` decimal(15,2) NOT NULL DEFAULT '0.00',
   `name` varchar(100) NOT NULL,
   `api_url_regexp` varchar(300) DEFAULT NULL,
   `access_key` varchar(100) DEFAULT NULL,
@@ -397,6 +408,7 @@ CREATE TABLE `vg_data` (
 
 CREATE TABLE `vg_processing_reports` (
   `vg_processing_report_id` int(11) NOT NULL,
+  `report_unique_key` varchar(200) NOT NULL,
   `fiat_id` int(11) NOT NULL,
   `vg_data_id` int(11) NOT NULL,
   `vg_balance` int(20) NOT NULL,
@@ -405,8 +417,7 @@ CREATE TABLE `vg_processing_reports` (
   `vg_purchased` int(20) NOT NULL,
   `vg_sold` int(20) NOT NULL,
   `vg_sold_in_fiat` int(20) NOT NULL,
-  `vg_callmasters_sum` int(20) NOT NULL,
-  `vg_processing_report_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+  `vg_callmasters_sum` int(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -468,7 +479,9 @@ ALTER TABLE `changes`
   ADD KEY `vg_id` (`vg_id`),
   ADD KEY `vg_purchase_id` (`vg_purchase_id`),
   ADD KEY `outgo_type_id` (`outgo_type_id`),
-  ADD KEY `outgo_id` (`outgo_id`);
+  ADD KEY `outgo_id` (`outgo_id`),
+  ADD KEY `rollack_paying_id` (`rollback_paying_id`),
+  ADD KEY `debt_history_id` (`debt_history_id`);
 
 --
 -- Индексы таблицы `clients`
@@ -483,7 +496,8 @@ ALTER TABLE `clients`
 ALTER TABLE `debts_processing_reports`
   ADD PRIMARY KEY (`debt_processing_report_id`),
   ADD KEY `fiat_id` (`fiat_id`),
-  ADD KEY `vg_data_id` (`vg_data_id`);
+  ADD KEY `vg_data_id` (`vg_data_id`),
+  ADD KEY `report_unique_key` (`report_unique_key`);
 
 --
 -- Индексы таблицы `debt_history`
@@ -521,8 +535,8 @@ ALTER TABLE `methods_of_obtaining`
 --
 ALTER TABLE `methods_processing_reports`
   ADD PRIMARY KEY (`methods_processing_report_id`),
-  ADD KEY `fiat_id` (`fiat_id`),
-  ADD KEY `method_id` (`method_id`);
+  ADD KEY `method_id` (`method_id`),
+  ADD KEY `report_unique_key` (`report_unique_key`);
 
 --
 -- Индексы таблицы `orders`
@@ -554,9 +568,9 @@ ALTER TABLE `outgo`
 --
 ALTER TABLE `outgoes_processing_reports`
   ADD PRIMARY KEY (`outgoes_processing_report_id`),
-  ADD KEY `fiat_id` (`fiat_id`),
   ADD KEY `outgo_type_id` (`outgo_type_id`),
-  ADD KEY `method_id` (`method_id`);
+  ADD KEY `method_id` (`method_id`),
+  ADD KEY `report_unique_key` (`report_unique_key`);
 
 --
 -- Индексы таблицы `outgo_types`
@@ -591,6 +605,12 @@ ALTER TABLE `projects`
   ADD KEY `branch_id` (`branch_id`);
 
 --
+-- Индексы таблицы `reports`
+--
+ALTER TABLE `reports`
+  ADD PRIMARY KEY (`report_unique_key`);
+
+--
 -- Индексы таблицы `report_shares`
 --
 ALTER TABLE `report_shares`
@@ -601,9 +621,9 @@ ALTER TABLE `report_shares`
 -- Индексы таблицы `rollback_paying`
 --
 ALTER TABLE `rollback_paying`
-  ADD PRIMARY KEY (`rollack_paying_id`),
-  ADD UNIQUE KEY `rollack_paying_id` (`rollack_paying_id`),
-  ADD UNIQUE KEY `rollack_paying_id_2` (`rollack_paying_id`),
+  ADD PRIMARY KEY (`rollback_paying_id`),
+  ADD UNIQUE KEY `rollack_paying_id` (`rollback_paying_id`),
+  ADD UNIQUE KEY `rollack_paying_id_2` (`rollback_paying_id`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `client_id` (`client_id`),
   ADD KEY `Rollback_paying_ibfk_22` (`method_id`);
@@ -638,7 +658,8 @@ ALTER TABLE `vg_data`
 ALTER TABLE `vg_processing_reports`
   ADD PRIMARY KEY (`vg_processing_report_id`),
   ADD KEY `fiat_id` (`fiat_id`),
-  ADD KEY `vg_data_id` (`vg_data_id`);
+  ADD KEY `vg_data_id` (`vg_data_id`),
+  ADD KEY `report_unique_key` (`report_unique_key`);
 
 --
 -- Индексы таблицы `vg_purchases`
@@ -754,7 +775,7 @@ ALTER TABLE `report_shares`
 -- AUTO_INCREMENT для таблицы `rollback_paying`
 --
 ALTER TABLE `rollback_paying`
-  MODIFY `rollack_paying_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `rollback_paying_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `shares`
@@ -766,7 +787,7 @@ ALTER TABLE `shares`
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `vg_data`
@@ -806,6 +827,8 @@ ALTER TABLE `changes`
   ADD CONSTRAINT `changes_ibfk_12` FOREIGN KEY (`vg_purchase_id`) REFERENCES `vg_purchases` (`vg_purchase_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `changes_ibfk_13` FOREIGN KEY (`outgo_type_id`) REFERENCES `outgo_types` (`outgo_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `changes_ibfk_14` FOREIGN KEY (`outgo_id`) REFERENCES `outgo` (`outgo_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `changes_ibfk_15` FOREIGN KEY (`rollback_paying_id`) REFERENCES `rollback_paying` (`rollback_paying_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `changes_ibfk_16` FOREIGN KEY (`debt_history_id`) REFERENCES `debt_history` (`debt_history_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `changes_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `changes_ibfk_3` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `changes_ibfk_4` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -826,7 +849,8 @@ ALTER TABLE `clients`
 --
 ALTER TABLE `debts_processing_reports`
   ADD CONSTRAINT `debts_processing_reports_ibfk_1` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `debts_processing_reports_ibfk_2` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `debts_processing_reports_ibfk_2` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `debts_processing_reports_ibfk_3` FOREIGN KEY (`report_unique_key`) REFERENCES `reports` (`report_unique_key`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `debt_history`
@@ -854,8 +878,8 @@ ALTER TABLE `methods_of_obtaining`
 -- Ограничения внешнего ключа таблицы `methods_processing_reports`
 --
 ALTER TABLE `methods_processing_reports`
-  ADD CONSTRAINT `methods_processing_reports_ibfk_1` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `methods_processing_reports_ibfk_2` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `methods_processing_reports_ibfk_2` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `methods_processing_reports_ibfk_3` FOREIGN KEY (`report_unique_key`) REFERENCES `reports` (`report_unique_key`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `orders`
@@ -883,9 +907,9 @@ ALTER TABLE `outgo`
 -- Ограничения внешнего ключа таблицы `outgoes_processing_reports`
 --
 ALTER TABLE `outgoes_processing_reports`
-  ADD CONSTRAINT `outgoes_processing_reports_ibfk_1` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `outgoes_processing_reports_ibfk_2` FOREIGN KEY (`outgo_type_id`) REFERENCES `outgo_types` (`outgo_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `outgoes_processing_reports_ibfk_3` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `outgoes_processing_reports_ibfk_3` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `outgoes_processing_reports_ibfk_4` FOREIGN KEY (`report_unique_key`) REFERENCES `reports` (`report_unique_key`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `outgo_types`
@@ -899,71 +923,6 @@ ALTER TABLE `outgo_types`
 ALTER TABLE `outgo_types_relative`
   ADD CONSTRAINT `outgo_types_relative_ibfk_1` FOREIGN KEY (`parent_id`) REFERENCES `outgo_types` (`outgo_type_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `outgo_types_relative_ibfk_2` FOREIGN KEY (`son_id`) REFERENCES `outgo_types` (`outgo_type_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `payments`
---
-ALTER TABLE `payments`
-  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`client_debt_id`) REFERENCES `clients` (`client_id`),
-  ADD CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`client_rollback_id`) REFERENCES `clients` (`client_id`),
-  ADD CONSTRAINT `payments_ibfk_4` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`),
-  ADD CONSTRAINT `payments_ibfk_5` FOREIGN KEY (`vg_data_debt_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `payments_ibfk_6` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `projects`
---
-ALTER TABLE `projects`
-  ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Ограничения внешнего ключа таблицы `report_shares`
---
-ALTER TABLE `report_shares`
-  ADD CONSTRAINT `report_shares_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Ограничения внешнего ключа таблицы `rollback_paying`
---
-ALTER TABLE `rollback_paying`
-  ADD CONSTRAINT `Rollback_paying_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `Rollback_paying_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`),
-  ADD CONSTRAINT `Rollback_paying_ibfk_22` FOREIGN KEY (`method_id`) REFERENCES `methods_of_obtaining` (`method_id`);
-
---
--- Ограничения внешнего ключа таблицы `shares`
---
-ALTER TABLE `shares`
-  ADD CONSTRAINT `shares_ibfk_2` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
-  ADD CONSTRAINT `shares_ibfk_3` FOREIGN KEY (`user_as_owner_id`) REFERENCES `users` (`user_id`);
-
---
--- Ограничения внешнего ключа таблицы `users`
---
-ALTER TABLE `users`
-  ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
-
---
--- Ограничения внешнего ключа таблицы `vg_data`
---
-ALTER TABLE `vg_data`
-  ADD CONSTRAINT `vg_data_ibfk_1` FOREIGN KEY (`vg_id`) REFERENCES `virtualgood` (`vg_id`),
-  ADD CONSTRAINT `vg_data_ibfk_2` FOREIGN KEY (`branch_id`) REFERENCES `branch` (`branch_id`);
-
---
--- Ограничения внешнего ключа таблицы `vg_processing_reports`
---
-ALTER TABLE `vg_processing_reports`
-  ADD CONSTRAINT `vg_processing_reports_ibfk_1` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`),
-  ADD CONSTRAINT `vg_processing_reports_ibfk_2` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`);
-
---
--- Ограничения внешнего ключа таблицы `vg_purchases`
---
-ALTER TABLE `vg_purchases`
-  ADD CONSTRAINT `vg_purchases_ibfk_1` FOREIGN KEY (`vg_data_id`) REFERENCES `vg_data` (`vg_data_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `vg_purchases_ibfk_2` FOREIGN KEY (`fiat_id`) REFERENCES `fiats` (`fiat_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `vg_purchases_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -276,38 +276,38 @@ $(document).ready(function () {
             dataType: "JSON",
             cache: false,
             success: function (res) {
-                // try {
-                //     if (res.error) {
-                //         createAlertTable(res.error, "Заказ и транзакция")
-                //         return;
-                //     }
-                //     if (res['success'] == false) {
-                //         createAlertTable('success', "Заказ");
-                //         $('#Order-transaction-info-modal #error-url').text(res['url']).attr('href', res['url']);
-                //         $('#Order-transaction-info-modal').append(`<div>Код ошибки: ${res['code'] || "неизвестен"}</div>`)
-                //         $('#Order-transaction-info-modal').append(`<div>Ошибка: ${res['message'] || "неизвестна"}</div>`)
-                //         $('#Order-transaction-info-modal').modal({
-                //             fadeDuration: 500,
-                //             fadeDelay: 0
-                //         });
-                //     } else {
-                //         createAlertTable("success", "Заказ и транзакция");
-                //         setTimeout(() => location.reload(), 600)
-                //     }
-                // } catch {
-                //     createAlertTable("success", "Заказ и транзакция");
-                //     setTimeout(() => location.reload(), 600);
-                // }
+                try {
+                    if (res.error) {
+                        createAlertTable(res.error, "Заказ и транзакция")
+                        return;
+                    }
+                    if (res['success'] == false) {
+                        createAlertTable('success', "Заказ");
+                        $('#Order-transaction-info-modal #error-url').text(res['url']).attr('href', res['url']);
+                        $('#Order-transaction-info-modal').append(`<div>Код ошибки: ${res['code'] || "неизвестен"}</div>`)
+                        $('#Order-transaction-info-modal').append(`<div>Ошибка: ${res['message'] || "неизвестна"}</div>`)
+                        $('#Order-transaction-info-modal').modal({
+                            fadeDuration: 500,
+                            fadeDelay: 0
+                        });
+                    } else {
+                        createAlertTable("success", "Заказ и транзакция");
+                        setTimeout(() => location.reload(), 600)
+                    }
+                } catch {
+                    createAlertTable("success", "Заказ и транзакция");
+                    setTimeout(() => location.reload(), 600);
+                }
 
             },
             error: function () {
-              //  createAlertTable("connectionError", "Заказ");
+               createAlertTable("connectionError", "Заказ");
             },
             complete: function () {
-                // setTimeout(function () {
-                //     $(".modal-submit").prop("disabled", false);
-                //     $(".loader").fadeOut("slow");
-                // }, 100);
+                setTimeout(function () {
+                    $(".modal-submit").prop("disabled", false);
+                    $(".loader").fadeOut("slow");
+                }, 100);
             }
         });
 

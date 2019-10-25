@@ -19,7 +19,5 @@ $querry = "
         WHERE ((O.date >= '" . $start . "' AND O.date <= '" . $end . "') OR O.outgo_type_id IS NULL) AND OT.branch_id = '$branch_id' AND OT.outgo_type_id != 1
         GROUP BY OT.outgo_type_id, F.fiat_id
         ORDER BY OT.outgo_type_id, F.fiat_id";
-//include "../../dev/ChromePhp.php";
-//ChromePhp::log($querry);
 $result = mysqliToArray($connection->query($querry));
 echo json_encode($result);

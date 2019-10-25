@@ -35,7 +35,7 @@ $fiat = clean($_POST['fiat']);
 
 if (!isset($_SESSION))
     session_start();
-$user_id = $_POST['user_id'] ? $_POST['user_id'] : $_SESSION['id'];
+$user_id = isset($_POST['user_id']) ? $_POST['user_id'] : $_SESSION['id'];
 $branch_id = $_SESSION['branch_id'];
 $user_data = mysqli_fetch_assoc($connection->query("
         SELECT *

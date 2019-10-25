@@ -4,7 +4,6 @@ if (isset($_POST['name'])) {
     include_once("../../funcs.php");
     $name = clean($_POST['name']);
     $ik_id = clean($_POST['ik_id']);
-    $money = clean($_POST['money']);
     if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];

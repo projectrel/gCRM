@@ -1,7 +1,6 @@
 <?php
 include_once("../../db.php");
 include_once("../../funcs.php");
-include_once("../../dev/ChromePhp.php");
 
 $type_id = 1;
 $types = getOutGoTypes($connection);

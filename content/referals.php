@@ -56,7 +56,7 @@ WHERE  P.sum > 0 AND user_id IN(SELECT user_id FROM users WHERE branch_id="'.$br
     case 1:
         $info = $connection -> query("
 SELECT concat(U.last_name, ' ', U.first_name) AS `агент`,  U.login AS 'логин агента', concat(C.last_name, ' ', C.first_name) AS `клиент`, 
-concat(O.rollback_sum, ' ', F.name) AS `сумма`, MOO.method_name AS 'кошелек', O.date AS `дата`
+concat(O.rollback_sum, ' ', F.name) AS `сумма`, MOO.method_name AS 'кошелек', O.date AS `дата`,  O.rollback_paying_id AS 'id'
 FROM rollback_paying O
 INNER JOIN clients C ON C.client_id = O.client_id 
 INNER JOIN users U ON U.user_id = O.user_id

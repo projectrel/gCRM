@@ -3,7 +3,6 @@ if (isset($_POST['user_id'])) {
     include_once("../../db.php");
     include_once("../../funcs.php");
     $newOwnerId = clean($_POST['user_id']);
-    $branch = clean($_POST['branch']);
     if(!isset($_SESSION))
     session_start();
     $user_id = $_SESSION['id'];
