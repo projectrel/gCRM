@@ -8,7 +8,6 @@ $(document).ready(function () {
             cache: false,
             dataType: 'JSON',
             success: function (res) {
-                console.log(res);
                 if ($('#replenish-fiat-Modal #replenishMethodSelect').empty()) {
                     if(res.error){
                         createAlertTable(res.error, "Данные фиата");

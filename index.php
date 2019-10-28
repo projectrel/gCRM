@@ -27,7 +27,7 @@ LEFT JOIN (
 	    INNER JOIN methods_of_obtaining MOO ON MOO.method_id = OU.method_id
 		INNER JOIN payments P ON P.method_id = MOO.method_id
 		INNER JOIN users U ON U.user_id = OU.user_id
-		WHERE user_as_owner_id IS NULL AND OU.branch_id IS NULL AND U.branch_id = ' . $branch_id . '
+		WHERE user_as_owner_id IS NULL AND OU.branch_id IS NOT NULL AND U.branch_id = ' . $branch_id . '
 		GROUP BY P.fiat_id
 	) T ON T.fiat_id = PPP.fiat_id OR PPP.fiat_id IS NULL
 	WHERE U.is_owner = 1 AND U.branch_id = ' . $branch_id . '
