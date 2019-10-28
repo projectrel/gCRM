@@ -87,10 +87,6 @@ function userEditModal($more_data)
   <p>
   Логин
   <input id="editLoginField" autocomplete="username" data-validation="required length alphanumeric" data-validation-length="min3" placeholder="Логин (только англ)" type="text" name="login">
-  </p>
-  <p>
-  Деньги
-  <input id="editMoneyField"    step="0.01" placeholder="Деньги" type="number" name="money">
   </p>';
     $i = 0;
     foreach ($more_data as $key => $var) {

@@ -5,7 +5,7 @@ if (isset($_POST['name']) && isset($_POST['in_percent']) && isset($_POST['out_pe
     include_once("../../funcs.php");
     $name = clean($_POST['name']);
     $url = clean($_POST['url']);
-    $in = clean($_POST['in_percent']);
+    $in = isset($_POST['in_percent']) || $_POST['in_percent'] != "" || $_POST['in_percent'] != " " ? clean($_POST['in_percent']) : 0;
     $out = clean($_POST['out_percent']);
     $vg_id = clean($_POST['vg_id']);
     $key = clean($_POST['key']);
